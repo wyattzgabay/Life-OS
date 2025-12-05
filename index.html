@@ -11,12 +11,26 @@
     <meta name="apple-mobile-web-app-title" content="OS">
     <meta name="theme-color" content="#000000">
     <meta name="color-scheme" content="dark">
+    
+    <!-- Open Graph for rich link previews -->
+    <meta property="og:title" content="Life OS - Your Fitness Companion">
+    <meta property="og:description" content="Track workouts, nutrition, and progress. Open in Safari → Add to Home Screen">
+    <meta property="og:image" content="https://wyattzgabay.github.io/Life-OS/icon-512.png">
+    <meta property="og:url" content="https://wyattzgabay.github.io/Life-OS/">
+    <meta property="og:type" content="website">
+    
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary">
+    <meta name="twitter:title" content="Life OS - Your Fitness Companion">
+    <meta name="twitter:description" content="Track workouts, nutrition, and progress. Open in Safari → Add to Home Screen">
+    <meta name="twitter:image" content="https://wyattzgabay.github.io/Life-OS/icon-512.png">
+    
     <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/svg+xml" href="icon.svg?v=3">
     <link rel="apple-touch-icon" href="icon-180.png?v=1">
     <title>Life OS</title>
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/styles.css?t=1057">
+    <link rel="stylesheet" href="css/styles.css?t=1058">
     
     <!-- Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
@@ -24,6 +38,41 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
 </head>
 <body style="background: #000; color: #fff;">
+    <!-- Install Instructions Overlay (for invite links) -->
+    <div id="install-overlay" style="display:none; position:fixed; inset:0; background:#000; z-index:9999; padding:40px 24px; text-align:center;">
+        <img src="icon-180.png" alt="Life OS" style="width:100px; height:100px; border-radius:22px; margin-bottom:24px;">
+        <h1 style="font-family:'JetBrains Mono',monospace; font-size:28px; margin-bottom:8px; color:#fff;">Life OS</h1>
+        <p style="color:#888; font-size:14px; margin-bottom:40px;">Your personal fitness companion</p>
+        
+        <div style="background:#111; border-radius:16px; padding:24px; text-align:left; margin-bottom:24px;">
+            <div style="font-family:'JetBrains Mono',monospace; font-size:11px; color:#888; letter-spacing:0.1em; margin-bottom:16px;">INSTALL ON iPHONE</div>
+            
+            <div style="display:flex; align-items:center; gap:16px; margin-bottom:20px;">
+                <div style="width:32px; height:32px; background:#22c55e; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold; flex-shrink:0;">1</div>
+                <div style="color:#fff; font-size:15px;">Make sure you're in <strong>Safari</strong></div>
+            </div>
+            
+            <div style="display:flex; align-items:center; gap:16px; margin-bottom:20px;">
+                <div style="width:32px; height:32px; background:#22c55e; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold; flex-shrink:0;">2</div>
+                <div style="color:#fff; font-size:15px;">Tap the <strong>Share</strong> button <span style="font-size:20px;">⬆</span></div>
+            </div>
+            
+            <div style="display:flex; align-items:center; gap:16px;">
+                <div style="width:32px; height:32px; background:#22c55e; border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:bold; flex-shrink:0;">3</div>
+                <div style="color:#fff; font-size:15px;">Tap <strong>"Add to Home Screen"</strong></div>
+            </div>
+        </div>
+        
+        <button onclick="document.getElementById('install-overlay').style.display='none'" style="background:#22c55e; color:#000; border:none; padding:16px 32px; border-radius:12px; font-size:16px; font-weight:600; cursor:pointer; width:100%;">GOT IT</button>
+    </div>
+    
+    <script>
+        // Show install overlay if ?invite parameter present and not in standalone mode
+        if (window.location.search.includes('invite') && !window.navigator.standalone) {
+            document.getElementById('install-overlay').style.display = 'block';
+        }
+    </script>
+
     <!-- Sync Indicator -->
     <div id="sync-indicator" class="sync-indicator"></div>
     
@@ -92,26 +141,26 @@
     </nav>
 
     <!-- Scripts - Order matters! (timestamp bust: 1733362000) -->
-    <script src="js/firebase-config.js?t=1057"></script>
-    <script src="js/config.js?t=1057"></script>
-    <script src="js/state.js?t=1057"></script>
-    <script src="js/utils.js?t=1057"></script>
+    <script src="js/firebase-config.js?t=1058"></script>
+    <script src="js/config.js?t=1058"></script>
+    <script src="js/state.js?t=1058"></script>
+    <script src="js/utils.js?t=1058"></script>
     <script>console.log('Utils loaded:', typeof Utils, Utils ? 'OK' : 'MISSING');</script>
-    <script src="js/ui/onboarding.js?t=1057"></script>
-    <script src="js/ui/daily.js?t=1057"></script>
-    <script src="js/ui/food.js?t=1057"></script>
-    <script src="js/ui/stats.js?t=1057"></script>
-    <script src="js/ui/profile.js?t=1057"></script>
-    <script src="js/ui/running.js?t=1057"></script>
-    <script src="js/ui/reading.js?t=1057"></script>
-    <script src="js/ui/alcohol.js?t=1057"></script>
-    <script src="js/components/header.js?t=1057"></script>
-    <script src="js/components/logger.js?t=1057"></script>
-    <script src="js/components/workout.js?t=1057"></script>
-    <script src="js/components/lift-logger.js?t=1057"></script>
-    <script src="js/ai-nutrition.js?t=1057"></script>
-    <script src="js/ai-briefings.js?t=1057"></script>
-    <script src="js/app.js?t=1057"></script>
+    <script src="js/ui/onboarding.js?t=1058"></script>
+    <script src="js/ui/daily.js?t=1058"></script>
+    <script src="js/ui/food.js?t=1058"></script>
+    <script src="js/ui/stats.js?t=1058"></script>
+    <script src="js/ui/profile.js?t=1058"></script>
+    <script src="js/ui/running.js?t=1058"></script>
+    <script src="js/ui/reading.js?t=1058"></script>
+    <script src="js/ui/alcohol.js?t=1058"></script>
+    <script src="js/components/header.js?t=1058"></script>
+    <script src="js/components/logger.js?t=1058"></script>
+    <script src="js/components/workout.js?t=1058"></script>
+    <script src="js/components/lift-logger.js?t=1058"></script>
+    <script src="js/ai-nutrition.js?t=1058"></script>
+    <script src="js/ai-briefings.js?t=1058"></script>
+    <script src="js/app.js?t=1058"></script>
     
     <!-- API key should be set in Profile > Settings -->
 </body>
