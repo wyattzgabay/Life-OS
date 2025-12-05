@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="OS">
+    <meta name="theme-color" content="#000000">
+    <meta name="color-scheme" content="dark">
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/svg+xml" href="icon.svg?v=3">
+    <link rel="apple-touch-icon" href="icon-180.png?v=1">
+    <title>Life OS</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css?t=1055">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+</head>
+<body style="background: #000; color: #fff;">
+    <!-- Sync Indicator -->
+    <div id="sync-indicator" class="sync-indicator"></div>
+    
+    <div id="app">
+        <!-- Onboarding Screen -->
+        <div id="onboarding-screen" class="screen"></div>
+
+        <!-- Main App -->
+        <div id="main-app" class="hidden">
+            <!-- Views -->
+            <div id="daily-view" class="view active"></div>
+            <div id="food-view" class="view"></div>
+            <div id="stats-view" class="view"></div>
+            <div id="skills-view" class="view"></div>
+            <div id="profile-view" class="view"></div>
+            <div id="reading-view" class="view"></div>
+            
+            <!-- Main content area for full-screen views -->
+            <div id="main-content"></div>
+        </div>
+
+        <!-- Modals -->
+        <div id="logger-modal" class="modal"></div>
+        <div id="goals-modal" class="modal"></div>
+        <div id="restore-modal" class="modal"></div>
+        <div id="ai-nutrition-modal" class="modal"></div>
+
+        <!-- Overlays -->
+        <div id="completion-overlay" class="overlay"></div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <nav id="bottom-nav" class="bottom-nav hidden">
+        <button class="nav-item active" data-view="daily">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+            </svg>
+            <span class="nav-text">TODAY</span>
+        </button>
+        <button class="nav-item" data-view="food">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M18 8h1a4 4 0 0 1 0 8h-1"/>
+                <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/>
+                <line x1="6" y1="1" x2="6" y2="4"/>
+                <line x1="10" y1="1" x2="10" y2="4"/>
+                <line x1="14" y1="1" x2="14" y2="4"/>
+            </svg>
+            <span class="nav-text">FOOD</span>
+        </button>
+        <button class="nav-item" data-view="stats">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="18" y1="20" x2="18" y2="10"/>
+                <line x1="12" y1="20" x2="12" y2="4"/>
+                <line x1="6" y1="20" x2="6" y2="14"/>
+            </svg>
+            <span class="nav-text">STATS</span>
+        </button>
+        <button class="nav-item" data-view="profile">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                <circle cx="12" cy="7" r="4"/>
+            </svg>
+            <span class="nav-text">YOU</span>
+        </button>
+    </nav>
+
+    <!-- Scripts - Order matters! (timestamp bust: 1733362000) -->
+    <script src="js/firebase-config.js?t=1055"></script>
+    <script src="js/config.js?t=1055"></script>
+    <script src="js/state.js?t=1055"></script>
+    <script src="js/utils.js?t=1055"></script>
+    <script>console.log('Utils loaded:', typeof Utils, Utils ? 'OK' : 'MISSING');</script>
+    <script src="js/ui/onboarding.js?t=1055"></script>
+    <script src="js/ui/daily.js?t=1055"></script>
+    <script src="js/ui/food.js?t=1055"></script>
+    <script src="js/ui/stats.js?t=1055"></script>
+    <script src="js/ui/profile.js?t=1055"></script>
+    <script src="js/ui/running.js?t=1055"></script>
+    <script src="js/ui/reading.js?t=1055"></script>
+    <script src="js/ui/alcohol.js?t=1055"></script>
+    <script src="js/components/header.js?t=1055"></script>
+    <script src="js/components/logger.js?t=1055"></script>
+    <script src="js/components/workout.js?t=1055"></script>
+    <script src="js/components/lift-logger.js?t=1055"></script>
+    <script src="js/ai-nutrition.js?t=1055"></script>
+    <script src="js/ai-briefings.js?t=1055"></script>
+    <script src="js/app.js?t=1055"></script>
+    
+    <!-- API key should be set in Profile > Settings -->
+</body>
+</html>
+
