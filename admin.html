@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Life OS - Admin Feedback</title>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            background: #000;
+            color: #fff;
+            font-family: 'Inter', sans-serif;
+            padding: 24px;
+            min-height: 100vh;
+        }
+        
+        h1 {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+        
+        .subtitle {
+            color: #888;
+            margin-bottom: 24px;
+            font-size: 14px;
+        }
+        
+        .stats {
+            display: flex;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        
+        .stat-card {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 16px 24px;
+        }
+        
+        .stat-value {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 32px;
+            font-weight: 700;
+            color: #22c55e;
+        }
+        
+        .stat-label {
+            font-size: 12px;
+            color: #888;
+            margin-top: 4px;
+        }
+        
+        .feedback-list {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+        
+        .feedback-item {
+            background: #111;
+            border: 1px solid #333;
+            border-radius: 12px;
+            padding: 20px;
+        }
+        
+        .feedback-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        
+        .feedback-user {
+            font-weight: 600;
+            color: #22c55e;
+        }
+        
+        .feedback-date {
+            font-size: 12px;
+            color: #666;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .feedback-text {
+            font-size: 15px;
+            line-height: 1.6;
+            color: #ddd;
+        }
+        
+        .feedback-meta {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid #222;
+            font-size: 11px;
+            color: #555;
+            font-family: 'JetBrains Mono', monospace;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 60px;
+            color: #888;
+        }
+        
+        .error {
+            background: #1a0000;
+            border: 1px solid #ff4444;
+            color: #ff8888;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+        }
+        
+        .refresh-btn {
+            background: #22c55e;
+            color: #000;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 24px;
+        }
+        
+        .refresh-btn:hover {
+            background: #16a34a;
+        }
+        
+        .empty {
+            text-align: center;
+            padding: 60px;
+            color: #666;
+        }
+        
+        .copy-all-btn {
+            background: #333;
+            color: #fff;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-left: 12px;
+        }
+    </style>
+</head>
+<body>
+    <h1>📬 User Feedback</h1>
+    <p class="subtitle">Bug reports and feature requests from Life OS users</p>
+    
+    <div class="stats" id="stats">
+        <div class="stat-card">
+            <div class="stat-value" id="total-count">-</div>
+            <div class="stat-label">Total Submissions</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="today-count">-</div>
+            <div class="stat-label">Today</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value" id="unique-users">-</div>
+            <div class="stat-label">Unique Users</div>
+        </div>
+    </div>
+    
+    <button class="refresh-btn" onclick="loadFeedback()">↻ Refresh</button>
+    <button class="copy-all-btn" onclick="copyAll()">📋 Copy All</button>
+    
+    <div id="feedback-container">
+        <div class="loading">Loading feedback...</div>
+    </div>
+    
+    <script>
+        // Firebase config
+        const firebaseConfig = {
+            apiKey: "AIzaSyBtD4sGzu6sPbPUelnRb45dwwqUj0bcso4",
+            authDomain: "life-os-ba21f.firebaseapp.com",
+            projectId: "life-os-ba21f",
+            storageBucket: "life-os-ba21f.firebasestorage.app",
+            messagingSenderId: "404201213742",
+            appId: "1:404201213742:web:24d5dfe5bd869b865af4bf"
+        };
+        
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        
+        let allFeedback = [];
+        
+        async function loadFeedback() {
+            const container = document.getElementById('feedback-container');
+            container.innerHTML = '<div class="loading">Loading feedback...</div>';
+            
+            try {
+                const snapshot = await db.collection('feedback')
+                    .orderBy('timestamp', 'desc')
+                    .limit(100)
+                    .get();
+                
+                allFeedback = [];
+                snapshot.forEach(doc => {
+                    allFeedback.push({ id: doc.id, ...doc.data() });
+                });
+                
+                renderFeedback(allFeedback);
+                updateStats(allFeedback);
+                
+            } catch (error) {
+                console.error('Error loading feedback:', error);
+                container.innerHTML = `
+                    <div class="error">
+                        <strong>Error loading feedback:</strong><br>
+                        ${error.message}<br><br>
+                        Make sure Firestore rules allow read access to the feedback collection.
+                    </div>
+                `;
+            }
+        }
+        
+        function renderFeedback(feedback) {
+            const container = document.getElementById('feedback-container');
+            
+            if (feedback.length === 0) {
+                container.innerHTML = '<div class="empty">No feedback yet. Users can submit feedback in Profile → Bug Reports.</div>';
+                return;
+            }
+            
+            container.innerHTML = '<div class="feedback-list">' + 
+                feedback.map(f => `
+                    <div class="feedback-item">
+                        <div class="feedback-header">
+                            <span class="feedback-user">${f.userName || 'Anonymous'}</span>
+                            <span class="feedback-date">${formatDate(f.timestamp)}</span>
+                        </div>
+                        <div class="feedback-text">${escapeHtml(f.text)}</div>
+                        <div class="feedback-meta">
+                            ID: ${f.userId || 'N/A'} · ${f.userAgent || 'Unknown device'}
+                        </div>
+                    </div>
+                `).join('') +
+            '</div>';
+        }
+        
+        function updateStats(feedback) {
+            document.getElementById('total-count').textContent = feedback.length;
+            
+            // Today's count
+            const today = new Date().toISOString().split('T')[0];
+            const todayCount = feedback.filter(f => f.date === today).length;
+            document.getElementById('today-count').textContent = todayCount;
+            
+            // Unique users
+            const uniqueUsers = new Set(feedback.map(f => f.userId || f.userName)).size;
+            document.getElementById('unique-users').textContent = uniqueUsers;
+        }
+        
+        function formatDate(timestamp) {
+            if (!timestamp) return 'Unknown';
+            const date = new Date(timestamp);
+            return date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+        
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/\n/g, '<br>');
+        }
+        
+        function copyAll() {
+            const text = allFeedback.map(f => 
+                `[${formatDate(f.timestamp)}] ${f.userName || 'Anonymous'}:\n${f.text}\n`
+            ).join('\n---\n\n');
+            
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Copied all feedback to clipboard!');
+            }).catch(() => {
+                // Fallback
+                const textarea = document.createElement('textarea');
+                textarea.value = text;
+                document.body.appendChild(textarea);
+                textarea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textarea);
+                alert('Copied!');
+            });
+        }
+        
+        // Load on page load
+        loadFeedback();
+    </script>
+</body>
+</html>
+

@@ -1847,20 +1847,47 @@ const State = {
     },
 
     /**
-     * Add feedback
+     * Add feedback - saves locally AND to shared Firebase collection
      */
     addFeedback(text) {
         if (!this._data.feedback) {
             this._data.feedback = [];
         }
         
-        this._data.feedback.push({
+        const feedbackItem = {
             text: text,
             timestamp: Date.now(),
-            date: this.getTodayKey()
-        });
+            date: this.getTodayKey(),
+            userName: this._data.profile?.name || 'Anonymous',
+            userAgent: navigator.userAgent.substring(0, 100)
+        };
         
+        this._data.feedback.push(feedbackItem);
         this.save();
+        
+        // Also save to shared Firebase collection (if available)
+        this.sendFeedbackToFirebase(feedbackItem);
+    },
+    
+    /**
+     * Send feedback to shared Firebase collection for admin viewing
+     */
+    async sendFeedbackToFirebase(feedbackItem) {
+        if (!Firebase.isConfigured() || !Firebase.db) {
+            console.log('Firebase not available for feedback');
+            return;
+        }
+        
+        try {
+            await Firebase.db.collection('feedback').add({
+                ...feedbackItem,
+                sentAt: new Date().toISOString(),
+                userId: Firebase.user?.uid || 'anonymous'
+            });
+            console.log('Feedback sent to Firebase');
+        } catch (e) {
+            console.error('Failed to send feedback to Firebase:', e);
+        }
     },
     
     /**
