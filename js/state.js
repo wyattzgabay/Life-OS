@@ -1856,8 +1856,17 @@ const State = {
         
         // Get user identifier - prefer email, then profile name, then 'Anonymous'
         let userName = 'Anonymous';
-        if (Firebase.user?.email) {
-            userName = Firebase.user.email.split('@')[0]; // Just the part before @
+        
+        // Debug logging
+        console.log('Firebase.user:', Firebase.user);
+        console.log('Firebase.user?.email:', Firebase.user?.email);
+        console.log('localStorage user_email:', localStorage.getItem('user_email'));
+        
+        // Try multiple sources for email
+        const email = Firebase.user?.email || localStorage.getItem('user_email');
+        
+        if (email) {
+            userName = email.split('@')[0]; // Just the part before @
         } else if (this._data.profile?.name) {
             userName = this._data.profile.name;
         }
@@ -1867,7 +1876,7 @@ const State = {
             timestamp: Date.now(),
             date: this.getTodayKey(),
             userName: userName,
-            userEmail: Firebase.user?.email || null,
+            userEmail: email || null,
             userAgent: navigator.userAgent.substring(0, 100)
         };
         
