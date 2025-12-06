@@ -1873,20 +1873,38 @@ const State = {
      * Send feedback to shared Firebase collection for admin viewing
      */
     async sendFeedbackToFirebase(feedbackItem) {
-        if (!Firebase.isConfigured() || !Firebase.db) {
-            console.log('Firebase not available for feedback');
+        console.log('Attempting to send feedback to Firebase...');
+        console.log('Firebase.isConfigured:', Firebase.isConfigured());
+        console.log('Firebase.db:', Firebase.db ? 'exists' : 'null');
+        console.log('Firebase.initialized:', Firebase.initialized);
+        
+        // Try to get db directly if not available via Firebase object
+        let db = Firebase.db;
+        if (!db && typeof firebase !== 'undefined' && firebase.firestore) {
+            try {
+                db = firebase.firestore();
+                console.log('Got Firestore directly');
+            } catch (e) {
+                console.log('Could not get Firestore:', e);
+            }
+        }
+        
+        if (!db) {
+            console.log('Firebase Firestore not available for feedback');
             return;
         }
         
         try {
-            await Firebase.db.collection('feedback').add({
+            const docRef = await db.collection('feedback').add({
                 ...feedbackItem,
                 sentAt: new Date().toISOString(),
                 userId: Firebase.user?.uid || 'anonymous'
             });
-            console.log('Feedback sent to Firebase');
+            console.log('✅ Feedback sent to Firebase! Doc ID:', docRef.id);
         } catch (e) {
-            console.error('Failed to send feedback to Firebase:', e);
+            console.error('❌ Failed to send feedback to Firebase:', e);
+            console.error('Error code:', e.code);
+            console.error('Error message:', e.message);
         }
     },
     
