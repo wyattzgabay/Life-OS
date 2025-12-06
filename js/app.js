@@ -13,6 +13,21 @@ const App = {
     async init() {
         console.log('App.init starting...');
         
+        // Check for DEMO mode first
+        if (window.location.search.includes('demo')) {
+            console.log('🎬 Demo mode detected');
+            State.load(); // Initialize State structure
+            if (typeof DemoMode !== 'undefined') {
+                DemoMode.init();
+            }
+            this.hideAuthScreen();
+            this.showMainApp();
+            this.setupNavigation();
+            this.setupDayChangeListener();
+            this.render();
+            return; // Skip all other init logic
+        }
+        
         // Check for WIPE parameter (intentional data clear - use carefully!)
         if (window.location.search.includes('wipe=true')) {
             if (confirm('This will DELETE ALL DATA. Are you sure?')) {
