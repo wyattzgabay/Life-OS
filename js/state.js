@@ -1854,11 +1854,20 @@ const State = {
             this._data.feedback = [];
         }
         
+        // Get user identifier - prefer email, then profile name, then 'Anonymous'
+        let userName = 'Anonymous';
+        if (Firebase.user?.email) {
+            userName = Firebase.user.email.split('@')[0]; // Just the part before @
+        } else if (this._data.profile?.name) {
+            userName = this._data.profile.name;
+        }
+        
         const feedbackItem = {
             text: text,
             timestamp: Date.now(),
             date: this.getTodayKey(),
-            userName: this._data.profile?.name || 'Anonymous',
+            userName: userName,
+            userEmail: Firebase.user?.email || null,
             userAgent: navigator.userAgent.substring(0, 100)
         };
         
