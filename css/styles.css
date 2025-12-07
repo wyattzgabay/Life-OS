@@ -7529,8 +7529,58 @@ body {
     font-size: 11px;
     color: var(--text-muted);
     text-align: center;
-    margin-bottom: 12px;
+    margin-bottom: 10px;
     min-height: 14px;
+}
+
+/* Effort Section */
+.effort-section {
+    margin-bottom: 12px;
+}
+
+.effort-section label {
+    display: block;
+    font-size: 9px;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+    letter-spacing: 0.05em;
+}
+
+.effort-row {
+    display: flex;
+    gap: 4px;
+}
+
+.eff-btn {
+    flex: 1;
+    padding: 10px 0;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    color: var(--text-muted);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.eff-btn.default {
+    border-color: var(--text-dim);
+    color: var(--text);
+}
+
+.eff-btn.active {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
+}
+
+.effort-hints {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 4px;
+    font-size: 9px;
+    color: var(--text-dim);
+    padding: 0 2px;
 }
 
 /* Pain Row */

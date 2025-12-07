@@ -204,28 +204,38 @@ const CardioLogger = {
                     `).join('')}
                 </div>
                 
-                <!-- Inputs Row -->
+                <!-- Distance & Time -->
                 <div class="cardio-row">
                     <div class="cardio-input-group">
-                        <label>DIST</label>
+                        <label>DISTANCE (${config.unit})</label>
                         <input type="number" id="cardio-distance" 
                                value="${isRest ? '' : rx.distance}"
                                placeholder="0" step="0.1" inputmode="decimal"
                                style="color-scheme: dark;">
                     </div>
                     <div class="cardio-input-group">
-                        <label>TIME</label>
-                        <input type="text" id="cardio-time" placeholder="mm:ss"
-                               style="color-scheme: dark;">
-                    </div>
-                    <div class="cardio-input-group">
-                        <label>EFFORT</label>
-                        <input type="number" id="cardio-effort" value="5" 
-                               min="1" max="10" inputmode="numeric"
+                        <label>TIME (mm:ss)</label>
+                        <input type="text" id="cardio-time" placeholder="25:00"
                                style="color-scheme: dark;">
                     </div>
                 </div>
-                <div class="pace-line" id="pace-display">${rx.pace ? 'Target: ' + rx.pace : ''}</div>
+                <div class="pace-line" id="pace-display">${rx.pace ? 'Target pace: ' + rx.pace : ''}</div>
+                
+                <!-- Effort Scale -->
+                <div class="effort-section">
+                    <label>EFFORT</label>
+                    <div class="effort-row">
+                        ${[1,2,3,4,5,6,7,8,9,10].map(n => `
+                            <button class="eff-btn ${n === 5 ? 'default' : ''}" 
+                                    data-effort="${n}"
+                                    onclick="CardioLogger.selectEffort(${n})">${n}</button>
+                        `).join('')}
+                    </div>
+                    <div class="effort-hints">
+                        <span>Easy</span><span>Moderate</span><span>Hard</span><span>Max</span>
+                    </div>
+                    <input type="hidden" id="cardio-effort" value="5">
+                </div>
                 
                 <!-- Pain Toggle (collapsed) -->
                 <div class="pain-row" onclick="CardioLogger.togglePainPanel()">
