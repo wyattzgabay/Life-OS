@@ -252,7 +252,7 @@ body {
     font-family: 'JetBrains Mono', monospace;
     font-size: 10px;
     font-weight: 700;
-    background: var(--text);
+    background: var(--accent);
     color: var(--bg);
     padding: 4px 8px;
     border-radius: 4px;
@@ -437,8 +437,9 @@ body {
 .section-badge {
     font-family: 'JetBrains Mono', monospace;
     font-size: 10px;
-    color: var(--text);
+    color: var(--accent);
     background: var(--surface-2);
+    border: 1px solid var(--accent);
     padding: 4px 10px;
     border-radius: 4px;
     letter-spacing: 0.05em;
@@ -2123,7 +2124,7 @@ body {
     transition: color 0.15s;
 }
 
-.nav-item.active { color: var(--text); }
+.nav-item.active { color: var(--accent); }
 
 .nav-icon {
     width: 22px;
