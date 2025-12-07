@@ -11,11 +11,8 @@ const App = {
      * BULLETPROOF: Checks ALL data sources before showing onboarding
      */
     async init() {
-        console.log('App.init starting...');
-        
         // Check for DEMO mode first
         if (window.location.search.includes('demo')) {
-            console.log('🎬 Demo mode detected');
             State.load(); // Initialize State structure
             if (typeof DemoMode !== 'undefined') {
                 DemoMode.init();
@@ -44,14 +41,11 @@ const App = {
         
         // STEP 1: Try to load from localStorage
         let hasData = State.load();
-        console.log('localStorage data:', hasData ? 'found' : 'empty');
         
         // STEP 2: If no localStorage, try IndexedDB recovery
         if (!hasData) {
-            console.log('Trying IndexedDB recovery...');
             const recovered = await State.tryRecoverData();
             if (recovered) {
-                console.log('Data recovered from:', recovered.source);
                 hasData = true;
             }
         }
@@ -63,15 +57,12 @@ const App = {
         }
 
         // STEP 3: Initialize Firebase and check cloud
-        console.log('Initializing Firebase...');
         await State.initFirebase();
         
         // STEP 4: If still no data but we have Firebase user, try cloud
         if (!hasData && Firebase.user) {
-            console.log('Trying to load from cloud for user:', Firebase.user.uid);
             const cloudData = await Firebase.loadData();
             if (cloudData && cloudData.profile) {
-                console.log('Restored data from cloud!');
                 State._data = cloudData;
                 State.saveLocal();
                 State.saveToIndexedDB(cloudData);
@@ -81,34 +72,29 @@ const App = {
         
         // STEP 5: Determine what to show
         const isOnboarded = hasData && State.isOnboarded();
-        console.log('Final state - hasData:', hasData, 'isOnboarded:', isOnboarded);
         
         // If no local data and no authenticated user, show auth screen
         if (!hasData && !Firebase.user) {
-            console.log('No data, no user - showing auth screen');
             this.showAuthScreen();
             return;
         }
         
         // If authenticated but no data, proceed to onboarding
         if (!isOnboarded) {
-            console.log('Not onboarded - showing onboarding');
             this.showOnboarding();
         } else {
-            console.log('Showing main app');
-            
             // Process any missed days first (wrapped in try-catch)
             try {
                 Utils.processMissedDays();
             } catch (e) {
-                console.error('Error in processMissedDays:', e);
+                // Silent fail
             }
             
             // Check exercise cycling (weekly rotation)
             try {
                 Utils.checkExerciseCycling();
             } catch (e) {
-                console.error('Error in checkExerciseCycling:', e);
+                // Silent fail
             }
             
             // Check midnight reset
@@ -336,30 +322,25 @@ const App = {
         }
         
         if (result.success) {
-            console.log('Auth successful, user:', Firebase.user?.uid);
             submitBtn.textContent = 'Syncing data...';
             
-            // STEP 1: Try to load from cloud FIRST
+            // Try to load from cloud FIRST
             const cloudData = await Firebase.loadData();
             const cloudCount = State.countDataEntries(cloudData);
-            console.log('Cloud data:', cloudCount, 'entries');
             
-            // STEP 2: Check local data
+            // Check local data
             const localHasData = State.load();
             const localCount = State.countDataEntries(State._data);
-            console.log('Local data:', localCount, 'entries');
             
-            // STEP 3: Check IndexedDB
+            // Check IndexedDB
             const idbData = await State.loadFromIndexedDB();
             const idbCount = State.countDataEntries(idbData);
-            console.log('IndexedDB data:', idbCount, 'entries');
             
-            // STEP 4: Check backups
+            // Check backups
             const backups = State.getBackups();
             const backupCount = backups.length > 0 ? State.countDataEntries(backups[0].data) : 0;
-            console.log('Backup data:', backupCount, 'entries');
             
-            // STEP 5: Use the best data source
+            // Use the best data source
             const sources = [
                 { name: 'cloud', data: cloudData, count: cloudCount },
                 { name: 'local', data: State._data, count: localCount },
@@ -372,8 +353,6 @@ const App = {
             
             if (sources.length > 0) {
                 const best = sources[0];
-                console.log('Using best data source:', best.name, 'with', best.count, 'entries');
-                
                 State._data = best.data;
                 State.saveLocal();
                 State.saveToIndexedDB(best.data);
@@ -390,7 +369,6 @@ const App = {
             }
             
             // No data found anywhere - truly new user
-            console.log('No existing data found - showing onboarding');
             this.showOnboarding();
         } else {
             errorDiv.textContent = result.message;
@@ -449,7 +427,6 @@ const App = {
                     break;
             }
         } catch (e) {
-            console.error('Render error:', e);
             // Show error in app instead of black screen
             const main = document.getElementById('main-content') || document.getElementById('daily-view');
             if (main) {

@@ -375,9 +375,6 @@ const Onboarding = {
 
                 // Calculate nutrition targets - with inline fallback if Utils not loaded
                 try {
-                    console.log('Utils available:', typeof Utils !== 'undefined');
-                    console.log('Calculating targets with:', this.data.weight, this.data.targetWeight, this.data.height, this.data.age);
-                    
                     if (typeof Utils !== 'undefined' && Utils.calculateTargets) {
                         this.data.targets = Utils.calculateTargets(
                             this.data.weight,
@@ -422,9 +419,8 @@ const Onboarding = {
                             explanation: explanation
                         };
                     }
-                    console.log('Targets calculated:', this.data.targets);
                 } catch (e) {
-                    console.error('Error calculating targets:', e);
+                    // Silent fail - defaults will be used
                     alert('Error calculating targets: ' + e.message);
                     return false;
                 }

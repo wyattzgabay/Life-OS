@@ -50,7 +50,6 @@ const State = {
         try {
             const idbData = await this.loadFromIndexedDB();
             if (idbData && idbData.profile) {
-                console.log('Recovered data from IndexedDB!');
                 this._data = idbData;
                 this.saveLocal(); // Restore to localStorage
                 return true;
@@ -72,7 +71,6 @@ const State = {
         // 2. Check backups
         const backups = this.getBackups();
         if (backups.length > 0 && backups[0].data?.profile) {
-            console.log('Recovered data from backup!');
             this._data = backups[0].data;
             this.saveLocal();
             return { source: 'backup', data: this._data };
@@ -294,32 +292,26 @@ const State = {
                     const localCount = this.countDataEntries(this._data);
                     const cloudCount = this.countDataEntries(cloudData);
                     
-                    console.log(`Data comparison - Local: ${localCount} entries, Cloud: ${cloudCount} entries`);
-                    
                     const cloudHasMoreData = cloudCount > localCount;
                     const cloudIsNewer = cloudTimestamp > localTimestamp;
                     const localHasSignificantlyMoreData = localCount > cloudCount + 5;
                     
                     // ALWAYS restore from cloud if local is empty/minimal
                     if (localCount < 3 && cloudCount > 3) {
-                        console.log('Local empty, restoring from cloud');
                         this._data = cloudData;
                         this.saveLocal();
                         this.saveToIndexedDB(cloudData);
                         return true;
                     } else if (cloudHasMoreData || (cloudIsNewer && !localHasSignificantlyMoreData)) {
-                        console.log('Cloud has better data, syncing from cloud');
                         this.createBackup('pre-cloud-sync');
                         this._data = cloudData;
                         this.saveLocal();
                         this.saveToIndexedDB(cloudData);
                         return true;
                     } else if (this._data) {
-                        console.log('Local data is better, syncing to cloud');
                         this.syncToCloud();
                     }
                 } else if (this._data) {
-                    console.log('No cloud data, syncing local to cloud');
                     this.syncToCloud();
                 }
 
@@ -1857,11 +1849,6 @@ const State = {
         // Get user identifier - prefer email, then profile name, then 'Anonymous'
         let userName = 'Anonymous';
         
-        // Debug logging
-        console.log('Firebase.user:', Firebase.user);
-        console.log('Firebase.user?.email:', Firebase.user?.email);
-        console.log('localStorage user_email:', localStorage.getItem('user_email'));
-        
         // Try multiple sources for email
         const email = Firebase.user?.email || localStorage.getItem('user_email');
         
@@ -1891,24 +1878,17 @@ const State = {
      * Send feedback to shared Firebase collection for admin viewing
      */
     async sendFeedbackToFirebase(feedbackItem) {
-        console.log('Attempting to send feedback to Firebase...');
-        console.log('Firebase.isConfigured:', Firebase.isConfigured());
-        console.log('Firebase.db:', Firebase.db ? 'exists' : 'null');
-        console.log('Firebase.initialized:', Firebase.initialized);
-        
         // Try to get db directly if not available via Firebase object
         let db = Firebase.db;
         if (!db && typeof firebase !== 'undefined' && firebase.firestore) {
             try {
                 db = firebase.firestore();
-                console.log('Got Firestore directly');
             } catch (e) {
-                console.log('Could not get Firestore:', e);
+                // Silent fail - local backup exists
             }
         }
         
         if (!db) {
-            console.log('Firebase Firestore not available for feedback');
             return;
         }
         

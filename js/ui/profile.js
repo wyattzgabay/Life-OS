@@ -900,11 +900,7 @@ const ProfileView = {
         const height = profile?.height || 70;
         const age = profile?.age || 28;
         
-        console.log('Recalculating macros with:', { currentWeight, targetWeight, height, age });
-        
         const targets = Utils.calculateTargets(currentWeight, targetWeight, height, age);
-        
-        console.log('Calculated targets:', targets);
         
         document.getElementById('edit-calories').value = targets.calories;
         document.getElementById('edit-protein').value = targets.protein;

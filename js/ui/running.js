@@ -621,7 +621,6 @@ const RunningView = {
             lastAdjustmentReason: `Completed ${actual}mi of ${prescribed}mi prescribed`
         });
         
-        console.log(`Running program adjusted: factor now ${newFactor}`);
     },
 
     /**

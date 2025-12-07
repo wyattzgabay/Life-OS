@@ -39,7 +39,6 @@ const Firebase = {
      */
     isConfigured() {
         if (FIREBASE_TEST_MODE) {
-            console.log('Firebase TEST MODE - using localStorage only');
             return false;
         }
         return FIREBASE_CONFIG.apiKey !== "YOUR_API_KEY";
@@ -50,50 +49,30 @@ const Firebase = {
      */
     async init() {
         if (!this.isConfigured()) {
-            console.log('Firebase not configured - using localStorage only');
             return false;
         }
 
         try {
-            // Initialize Firebase app
             this.app = firebase.initializeApp(FIREBASE_CONFIG);
-            console.log('Firebase app initialized');
-            
             this.auth = firebase.auth();
-            console.log('Firebase auth ready');
-            
             this.db = firebase.firestore();
-            console.log('Firestore ready');
             
             // Enable offline persistence
             await this.db.enablePersistence({ synchronizeTabs: true })
                 .catch(err => {
-                    if (err.code === 'failed-precondition') {
-                        console.log('Firestore persistence failed: multiple tabs open');
-                    } else if (err.code === 'unimplemented') {
-                        console.log('Firestore persistence not available');
-                    }
+                    // Persistence may fail in multi-tab or unsupported browsers - not critical
                 });
 
             // Check if user is already authenticated (persistent session)
-            console.log('Checking existing auth...');
             const existingUser = await this.checkExistingAuth();
             
             if (existingUser) {
-                console.log('Found existing user:', existingUser.uid);
                 this.user = existingUser;
-            } else {
-                console.log('No existing auth session');
-                // Don't auto sign-in anymore - let the app handle auth flow
             }
             
             this.initialized = true;
-            console.log('Firebase initialized successfully');
             return true;
         } catch (error) {
-            console.error('Firebase init error:', error);
-            console.error('Error code:', error.code);
-            console.error('Error message:', error.message);
             this.updateSyncIndicator('error');
             return false;
         }
@@ -110,7 +89,6 @@ const Firebase = {
             localStorage.setItem('user_email', email);
             return { success: true, user: this.user };
         } catch (error) {
-            console.error('Sign in error:', error);
             return { success: false, error: error.code, message: this.getAuthErrorMessage(error.code) };
         }
     },
@@ -126,7 +104,6 @@ const Firebase = {
             localStorage.setItem('user_email', email);
             return { success: true, user: this.user };
         } catch (error) {
-            console.error('Create account error:', error);
             return { success: false, error: error.code, message: this.getAuthErrorMessage(error.code) };
         }
     },
@@ -174,7 +151,6 @@ const Firebase = {
             localStorage.removeItem('user_email');
             return true;
         } catch (error) {
-            console.error('Sign out error:', error);
             return false;
         }
     },
@@ -199,7 +175,6 @@ const Firebase = {
      */
     async saveData(data) {
         if (!this.initialized || !this.user) {
-            console.log('Cannot save: initialized=', this.initialized, 'user=', this.user);
             return false;
         }
 
@@ -225,7 +200,6 @@ const Firebase = {
             
             return true;
         } catch (error) {
-            console.error('Save error:', error.message);
             this.syncing = false;
             
             // Only show error indicator for real failures, not network blips

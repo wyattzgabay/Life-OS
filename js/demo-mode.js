@@ -18,8 +18,6 @@ const DemoMode = {
     init() {
         if (!this.isActive()) return false;
         
-        console.log('🎬 Demo Mode Active');
-        
         // Generate demo data
         const demoData = this.generateDemoData();
         
@@ -27,7 +25,7 @@ const DemoMode = {
         State._data = demoData;
         
         // Don't save to localStorage in demo mode
-        State.save = () => console.log('Demo mode: save disabled');
+        State.save = () => {};
         
         return true;
     },

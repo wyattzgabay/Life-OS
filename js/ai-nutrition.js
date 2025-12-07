@@ -148,8 +148,6 @@ Response format (JSON only):
                     throw new Error('No response from AI');
                 }
                 
-                console.log('AI raw response:', content); // Debug log
-                
                 // Parse JSON from response - try multiple patterns
                 let jsonMatch = content.match(/\{[\s\S]*\}/);
                 if (!jsonMatch) {
