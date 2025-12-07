@@ -204,8 +204,10 @@ const RecoveryLogger = {
         this.currentExercise = exerciseName;
         this.exerciseIndex = index;
         this.selectedAreas = new Set();
-        this.loggedSets = [];
         this.exerciseData = this.getExerciseData(exerciseName);
+        
+        // Load existing sets from today's recovery log (persistence!)
+        this.loggedSets = this.loadTodaySets(exerciseName);
 
         const modal = document.getElementById('logger-modal');
         if (!modal) return;
@@ -214,10 +216,32 @@ const RecoveryLogger = {
         modal.classList.add('active');
         document.body.style.overflow = 'hidden';
         
+        // Update display to show loaded sets
+        this.updateSetDisplay();
+        
         // Enable pull-down-to-dismiss
         if (typeof ModalGestures !== 'undefined') {
             ModalGestures.init(modal, () => this.close());
         }
+    },
+    
+    /**
+     * Load today's sets for this exercise from State
+     */
+    loadTodaySets(exerciseName) {
+        const todayKey = State.getTodayKey();
+        const recoveryLog = State._data?.recoveryLog || [];
+        
+        // Find today's entry for this exercise
+        const todayEntry = recoveryLog.find(entry => 
+            entry.date === todayKey && entry.exercise === exerciseName
+        );
+        
+        if (todayEntry?.sets && todayEntry.sets.length > 0) {
+            return [...todayEntry.sets]; // Return a copy
+        }
+        
+        return [];
     },
 
     /**
@@ -458,7 +482,7 @@ const RecoveryLogger = {
     },
 
     /**
-     * Log recovery work to state
+     * Log recovery work to state - updates existing entry if present
      */
     logRecovery() {
         const todayKey = State.getTodayKey();
@@ -494,7 +518,18 @@ const RecoveryLogger = {
             logEntry.areaCount = this.selectedAreas.size;
         }
 
-        State._data.recoveryLog.push(logEntry);
+        // Find existing entry for today's exercise and UPDATE it, don't create duplicate
+        const existingIndex = State._data.recoveryLog.findIndex(entry =>
+            entry.date === todayKey && entry.exercise === this.currentExercise
+        );
+        
+        if (existingIndex >= 0) {
+            // Update existing entry
+            State._data.recoveryLog[existingIndex] = logEntry;
+        } else {
+            // Add new entry
+            State._data.recoveryLog.push(logEntry);
+        }
 
         // Keep last 100 entries
         if (State._data.recoveryLog.length > 100) {

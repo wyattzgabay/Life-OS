@@ -114,7 +114,9 @@ const DailyView = {
         }
         
         const activeInjury = adjustments.injuries[0];
-        const injuryId = activeInjury.id;
+        // Use 'key' not 'id' - that's what analyzeInjuries returns
+        const injuryId = activeInjury.key || activeInjury.id;
+        console.log('Active injury:', activeInjury.name, 'key:', injuryId);
         
         // Determine today's cardio type for context
         const running = State.getRunningData();

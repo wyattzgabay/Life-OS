@@ -26,14 +26,29 @@ const App = {
         
         // Injury test mode - loads pain data to test injury detection
         if (window.location.search.includes('test_injury')) {
-            State.load();
+            // Initialize State structure first (don't load from storage)
+            State.init();
+            
+            // Setup demo injury data
             if (typeof DemoMode !== 'undefined') {
                 DemoMode.initInjuryTest();
             }
+            
+            // Save so data persists during session
+            State.saveLocal();
+            
             this.hideAuthScreen();
             this.showMain();
             this.setupNavigation();
             this.setupDayChangeListener();
+            this.render();
+            
+            // Debug: log what injuries were detected
+            if (typeof InjuryIntelligence !== 'undefined') {
+                console.log('🩹 Injury Test - Pain history:', InjuryIntelligence.getPainHistory());
+                console.log('🩹 Injury Test - Analyzed injuries:', InjuryIntelligence.analyzeInjuries());
+                console.log('🩹 Injury Test - Training adjustments:', InjuryIntelligence.getTrainingAdjustments());
+            }
             return;
         }
         
