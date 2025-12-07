@@ -222,28 +222,35 @@ const RecoveryLogger = {
         const data = this.exerciseData;
         let setData = {};
 
-        if (data.type === 'stretch') {
-            // For stretches, log duration per side
-            const duration = document.getElementById('recovery-duration')?.value || 0;
-            setData = { duration: parseInt(duration), unit: 'seconds' };
-        } else if (data.type === 'posture' || data.type === 'strength') {
-            // For strength/posture, log reps (or duration for holds)
-            const isHold = (data.duration || '').includes('sec');
-            if (isHold) {
-                const duration = document.getElementById('recovery-duration')?.value || 0;
-                setData = { duration: parseInt(duration), unit: 'seconds' };
-            } else {
-                const reps = document.getElementById('recovery-reps')?.value || 0;
-                setData = { reps: parseInt(reps) };
+        // Check which input exists in the modal
+        const durationInput = document.getElementById('recovery-duration');
+        const repsInput = document.getElementById('recovery-reps');
+        
+        if (durationInput && durationInput.value) {
+            const duration = parseInt(durationInput.value) || 0;
+            if (duration > 0) {
+                setData = { duration: duration, unit: 'seconds' };
+            }
+        } else if (repsInput && repsInput.value) {
+            const reps = parseInt(repsInput.value) || 0;
+            if (reps > 0) {
+                setData = { reps: reps };
             }
         }
 
+        // Only add if we have valid data
         if (setData.duration > 0 || setData.reps > 0) {
             this.loggedSets.push(setData);
             this.updateSetDisplay();
-            // Clear input
-            const input = document.getElementById('recovery-duration') || document.getElementById('recovery-reps');
-            if (input) input.value = '';
+            
+            // Clear input and refocus for quick entry
+            if (durationInput) {
+                durationInput.value = '';
+                durationInput.focus();
+            } else if (repsInput) {
+                repsInput.value = '';
+                repsInput.focus();
+            }
         }
     },
 
@@ -777,9 +784,23 @@ const RecoveryLogger = {
                         ${data.instruction || 'Complete this exercise with good form.'}
                     </div>
                     
+                    <div class="recovery-log-section">
+                        <div class="targets-label">LOG YOUR SETS</div>
+                        <div class="recovery-input-row">
+                            <input type="number" id="recovery-reps" 
+                                placeholder="10" 
+                                class="recovery-input" 
+                                inputmode="numeric"
+                                style="color-scheme: dark;">
+                            <span class="recovery-input-unit">reps</span>
+                            <button class="recovery-add-btn" onclick="RecoveryLogger.addSet()">+ ADD</button>
+                        </div>
+                        <div id="logged-sets-container" class="logged-sets-container"></div>
+                    </div>
+                    
                     <div class="recovery-actions">
                         <button class="recovery-complete-btn" onclick="RecoveryLogger.complete()">
-                            COMPLETE
+                            SKIP
                         </button>
                     </div>
                 </div>

@@ -102,6 +102,25 @@ const Workout = {
             targetSets = exercise.targetSets;
         }
         
+        // Check recovery exercise status
+        const isRecovery = this.isRecoveryExercise(exercise.name);
+        const recoveryLog = State._data?.recoveryLog || [];
+        const todayRecoveryEntry = recoveryLog.find(e => 
+            e.date === todayKey && e.exercise === exercise.name
+        );
+        const recoverySetCount = todayRecoveryEntry?.setCount || todayRecoveryEntry?.areaCount || 0;
+        
+        // Parse target for recovery exercises
+        let recoveryTarget = 3; // default
+        if (exercise.detail) {
+            const match = exercise.detail.match(/^(\d+)[×x]/i);
+            if (match) {
+                recoveryTarget = parseInt(match[1]);
+            } else if (exercise.detail.includes('each')) {
+                recoveryTarget = 2; // 2 sides
+            }
+        }
+        
         // Determine status: LOG, PARTIAL, COMPLETE
         let status = 'log';
         let statusText = 'LOG';
@@ -115,6 +134,20 @@ const Workout = {
             } else if (todaySets > 0) {
                 status = 'partial';
                 statusText = `${todaySets}/${targetSets}`;
+                statusClass = 'status-partial';
+            } else {
+                status = 'log';
+                statusText = 'LOG';
+                statusClass = '';
+            }
+        } else if (isRecovery) {
+            if (recoverySetCount >= recoveryTarget) {
+                status = 'complete';
+                statusText = 'DONE';
+                statusClass = 'status-complete';
+            } else if (recoverySetCount > 0) {
+                status = 'partial';
+                statusText = `${recoverySetCount}/${recoveryTarget}`;
                 statusClass = 'status-partial';
             } else {
                 status = 'log';
@@ -187,7 +220,7 @@ const Workout = {
                         ${exercise.detail}
                     </div>
                 </div>
-                ${isLift ? `
+                ${(isLift || isRecovery) ? `
                     <div class="workout-log-btn ${statusClass}">${statusText}</div>
                 ` : `
                     <div class="workout-xp">+${exercise.xp}</div>
