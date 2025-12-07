@@ -4,9 +4,23 @@
  * 
  * Tracks pain patterns over time, detects developing injuries,
  * adjusts training automatically, and provides recovery protocols.
+ * 
+ * RESEARCH SOURCES:
+ * - Hreljac, A. (2004). Impact and overuse injuries in runners. Medicine & Science in Sports & Exercise.
+ * - van Gent, R.N. et al. (2007). Incidence and determinants of lower extremity running injuries. British Journal of Sports Medicine.
+ * - Taunton, J.E. et al. (2002). A retrospective case-control analysis of 2002 running injuries. British Journal of Sports Medicine.
+ * - Fredericson, M. & Wolf, C. (2005). Iliotibial band syndrome in runners. Sports Medicine.
+ * - Alfredson, H. et al. (1998). Heavy-load eccentric calf muscle training for the treatment of chronic Achilles tendinosis. American Journal of Sports Medicine.
  */
 
 const InjuryIntelligence = {
+    
+    // XP rewards for completing recovery exercises
+    RECOVERY_XP: {
+        exercise: 5,      // Per exercise completed
+        fullProtocol: 15, // Completing all daily exercises
+        consistency: 25,  // 7-day streak of recovery work
+    },
     
     // ==========================================
     // COMPREHENSIVE INJURY DATABASE
@@ -288,50 +302,237 @@ const InjuryIntelligence = {
     },
     
     // ==========================================
-    // RECOVERY EXERCISES DATABASE
+    // RECOVERY EXERCISES DATABASE (Research-Backed)
     // ==========================================
     
     EXERCISES: {
-        // Plantar Fasciitis
-        plantar_roll: { name: 'Plantar Roll', description: 'Roll foot on tennis/lacrosse ball for 2 min each', frequency: 'Before runs & before bed' },
-        towel_scrunch: { name: 'Towel Scrunches', description: 'Scrunch towel with toes, 3x20', frequency: 'Daily' },
-        arch_strengthening: { name: 'Arch Strengthening', description: 'Short foot exercise, 3x10 holds', frequency: 'Daily' },
-        night_splint: { name: 'Night Splint', description: 'Wear dorsiflexion splint while sleeping', frequency: 'Nightly' },
+        // PLANTAR FASCIITIS - DiGiovanni et al. (2003) showed tissue-specific stretching superior to standard stretching
+        plantar_roll: { 
+            name: 'Plantar Fascia Roll', 
+            description: 'Roll foot on frozen water bottle or lacrosse ball, 2 min each foot',
+            frequency: 'Morning + before runs',
+            xp: 5,
+            science: 'Breaks up adhesions and increases blood flow to fascia'
+        },
+        towel_scrunch: { 
+            name: 'Towel Scrunches', 
+            description: 'Scrunch towel with toes, 3 sets of 20',
+            frequency: 'Daily',
+            xp: 5,
+            science: 'Strengthens intrinsic foot muscles that support the arch'
+        },
+        plantar_stretch: {
+            name: 'Plantar Fascia Stretch',
+            description: 'Cross leg, pull toes back toward shin, hold 30 sec. 10 reps before first steps.',
+            frequency: 'Before getting out of bed',
+            xp: 5,
+            science: 'DiGiovanni (2003): 52% improvement vs 22% with Achilles stretching alone'
+        },
         
-        // Achilles
-        eccentric_heel_drops: { name: 'Eccentric Heel Drops', description: 'Stand on step, lower heel slowly, 3x15 each leg', frequency: '2x daily' },
-        ankle_mobility: { name: 'Ankle Mobility', description: 'Ankle circles and alphabet, 2 min each foot', frequency: 'Daily' },
+        // ACHILLES - Alfredson Protocol (1998) - gold standard for Achilles tendinopathy
+        eccentric_heel_drops: { 
+            name: 'Alfredson Eccentric Heel Drops', 
+            description: 'Stand on step edge, raise on good leg, lower SLOWLY on injured leg. 3x15, twice daily.',
+            frequency: '2x daily for 12 weeks',
+            xp: 8,
+            science: 'Alfredson (1998): 89% of patients returned to pre-injury activity levels'
+        },
+        calf_stretch_gastric: {
+            name: 'Gastrocnemius Stretch',
+            description: 'Wall stretch with back knee straight, 30 sec holds, 3 reps each side',
+            frequency: 'Before & after runs',
+            xp: 3,
+            science: 'Targets the outer calf muscle that connects to Achilles'
+        },
+        calf_stretch_soleus: {
+            name: 'Soleus Stretch',
+            description: 'Wall stretch with back knee BENT, 30 sec holds, 3 reps each side',
+            frequency: 'Before & after runs',
+            xp: 3,
+            science: 'Targets deeper calf muscle - often neglected but crucial for Achilles health'
+        },
         
-        // General
-        calf_stretch: { name: 'Calf Stretch', description: 'Wall stretch, 30 sec each leg', frequency: 'Before & after runs' },
-        calf_raises: { name: 'Calf Raises', description: 'Slow controlled raises, 3x15', frequency: 'Every other day' },
-        foam_roll_calves: { name: 'Foam Roll Calves', description: '2 min each calf on foam roller', frequency: 'After runs' },
+        // IT BAND - Fredericson & Wolf (2005) showed hip abductor strengthening key
+        it_band_foam_roll: { 
+            name: 'IT Band & TFL Foam Roll', 
+            description: 'Roll from hip to just above knee, 2-3 min each side. Pause on tender spots.',
+            frequency: 'Daily, especially post-run',
+            xp: 5,
+            science: 'Reduces fascial adhesions. Roll the TFL (hip) not just the IT band itself.'
+        },
+        hip_abductor_strengthen: {
+            name: 'Hip Abductor Circuit',
+            description: 'Clamshells (3x15) + Side-lying leg raises (3x15) + Standing hip abduction (3x12)',
+            frequency: 'Daily during flare, 3x/week maintenance',
+            xp: 10,
+            science: 'Fredericson (2000): 6-week hip program resolved ITBS in 92% of runners'
+        },
+        single_leg_balance: {
+            name: 'Single Leg Balance',
+            description: 'Stand on one leg 60 sec, progress to eyes closed, then on pillow',
+            frequency: 'Daily',
+            xp: 3,
+            science: 'Improves hip stability and proprioception'
+        },
         
-        // Hip/Glute
-        clamshells: { name: 'Clamshells', description: 'Side lying, band above knees, 3x15 each side', frequency: 'Daily' },
-        glute_bridges: { name: 'Glute Bridges', description: 'Hold at top 3 sec, 3x12', frequency: 'Daily' },
-        hip_strengthening: { name: 'Hip Strengthening Circuit', description: 'Clamshells + fire hydrants + side leg raises', frequency: '3x/week' },
-        hip_flexor_stretch: { name: 'Hip Flexor Stretch', description: 'Kneeling lunge stretch, 60 sec each side', frequency: '2x daily' },
+        // RUNNER\'S KNEE - Powers (2003) emphasized VMO and glute strengthening
+        quad_sets: {
+            name: 'Quad Sets (VMO Focus)',
+            description: 'Seated, tighten quad pushing knee down, hold 10 sec. 3x20.',
+            frequency: 'Daily',
+            xp: 5,
+            science: 'Targets VMO (inner quad) which controls patellar tracking'
+        },
+        step_downs: { 
+            name: 'Slow Step Downs', 
+            description: 'Stand on step, slowly lower opposite heel to ground. 3x10 each leg.',
+            frequency: 'Daily',
+            xp: 8,
+            science: 'Eccentric quad loading - more effective than concentric for PFPS'
+        },
+        glute_bridges: { 
+            name: 'Glute Bridges', 
+            description: 'Squeeze glutes at top, hold 3 sec. Progress to single leg. 3x12.',
+            frequency: 'Daily',
+            xp: 5,
+            science: 'Weak glutes cause knee valgus (caving) which worsens PFPS'
+        },
         
-        // Knee
-        quad_strengthening: { name: 'Quad Strengthening', description: 'Wall sits + step downs + leg extensions', frequency: '3x/week' },
-        single_leg_squats: { name: 'Single Leg Squats', description: 'Pistol progressions, 3x8 each leg', frequency: '3x/week' },
-        step_downs: { name: 'Step Downs', description: 'Slow controlled step downs, 3x10 each leg', frequency: 'Daily' },
+        // SHIN SPLINTS - Winters et al. (2004) toe walking protocol
+        toe_walks: {
+            name: 'Toe Walks',
+            description: 'Walk on toes for 30m, then on heels for 30m. 3 sets.',
+            frequency: 'Daily',
+            xp: 5,
+            science: 'Strengthens tibialis anterior and posterior'
+        },
+        calf_raises_eccentric: {
+            name: 'Eccentric Calf Raises',
+            description: 'Rise on both feet, lower on one foot slowly. 3x15 each leg.',
+            frequency: 'Every other day',
+            xp: 8,
+            science: 'Builds calf strength to absorb impact'
+        },
         
-        // IT Band
-        it_band_foam_roll: { name: 'IT Band Foam Roll', description: '2-3 min each side, focus on tender spots', frequency: 'Daily' },
-        side_lying_leg_raises: { name: 'Side Lying Leg Raises', description: 'With band, 3x15 each side', frequency: 'Daily' },
+        // GENERAL
+        hip_flexor_stretch: { 
+            name: 'Hip Flexor Stretch', 
+            description: 'Half-kneeling, posterior pelvic tilt, lean forward. 60 sec each side.',
+            frequency: '2x daily',
+            xp: 5,
+            science: 'Tight hip flexors from sitting cause anterior pelvic tilt affecting running mechanics'
+        },
+        core_stability: { 
+            name: 'Core Stability Circuit', 
+            description: 'Dead bug (3x10) + Bird dog (3x10) + Plank (3x30sec)',
+            frequency: '3x/week',
+            xp: 10,
+            science: 'McGill (2007): Core stability reduces energy leakage and protects spine'
+        },
         
-        // Core
-        core_stability: { name: 'Core Stability Work', description: 'Planks + dead bugs + bird dogs', frequency: '3x/week' },
-        dead_bug: { name: 'Dead Bug', description: 'Slow controlled, 3x10 each side', frequency: 'Daily' },
-        bird_dog: { name: 'Bird Dog', description: 'Hold 5 sec each, 3x10 each side', frequency: 'Daily' },
+        // CHRONIC MANAGEMENT
+        chronic_warmup: {
+            name: 'Extended Warm-Up Protocol',
+            description: '10-15 min walk, dynamic stretches, activation exercises before every run',
+            frequency: 'Before every run',
+            xp: 5,
+            science: 'Chronic issues need more preparation time - rushing leads to flare-ups'
+        },
+        activity_modification: {
+            name: 'Activity Modification',
+            description: 'Avoid triggers identified in your pain log. Substitute with pain-free alternatives.',
+            frequency: 'Ongoing',
+            xp: 0,
+            science: 'Managing chronic issues means working around them, not through them'
+        },
         
-        // General
-        professional_evaluation: { name: 'See a Professional', description: 'Consider seeing a PT or sports medicine doctor', frequency: 'ASAP' },
-        rest: { name: 'Complete Rest', description: 'No running for at least 3-5 days', frequency: 'As needed' },
-        cross_train_only: { name: 'Cross Training Only', description: 'Bike, swim, or pool running instead', frequency: 'Until pain-free' },
-        ice_post_run: { name: 'Ice After Running', description: '15 min ice on affected area', frequency: 'After every run' }
+        // Professional referral
+        professional_evaluation: { 
+            name: 'See a Professional', 
+            description: 'PT or sports medicine doctor for proper diagnosis and treatment plan',
+            frequency: 'ASAP for moderate/severe',
+            xp: 0,
+            science: 'Some conditions need imaging or manual therapy beyond self-treatment'
+        }
+    },
+    
+    // ==========================================
+    // CHRONIC INJURY MANAGEMENT
+    // ==========================================
+    
+    CHRONIC_THRESHOLDS: {
+        daysToConsiderChronic: 30,  // If pain persists 30+ days
+        minOccurrences: 8,          // Or 8+ occurrences
+    },
+    
+    /**
+     * Check if an injury should be considered chronic
+     */
+    isChronicInjury(assessment) {
+        return assessment.daysSinceFirst >= this.CHRONIC_THRESHOLDS.daysToConsiderChronic ||
+               assessment.occurrences >= this.CHRONIC_THRESHOLDS.minOccurrences;
+    },
+    
+    /**
+     * Get chronic management protocol
+     */
+    getChronicManagement(injuryKey) {
+        const chronicProtocols = {
+            plantar_fasciitis: {
+                message: "Chronic plantar fasciitis requires ongoing management. It may never fully 'go away' but can be controlled.",
+                dailyPrevention: ['plantar_stretch', 'plantar_roll', 'calf_stretch_gastric'],
+                preRunRequired: ['plantar_roll', 'calf_stretch_gastric', 'calf_stretch_soleus'],
+                avoidForever: ['barefoot_running', 'minimalist_shoes', 'sudden_mileage_jumps'],
+                canStillDo: ['All run types with proper warm-up', 'Racing with taping', 'High mileage if gradual'],
+                lifestyleTips: [
+                    'Wear supportive shoes even at home',
+                    'Night splint during flare-ups',
+                    'Replace running shoes every 300-400 miles',
+                    'Consider custom orthotics'
+                ]
+            },
+            achilles_tendinitis: {
+                message: "Chronic Achilles tendinopathy is manageable. The tendon may always be sensitive but you can run pain-free.",
+                dailyPrevention: ['eccentric_heel_drops', 'calf_stretch_gastric', 'calf_stretch_soleus'],
+                preRunRequired: ['calf_stretch_gastric', 'calf_stretch_soleus', 'chronic_warmup'],
+                avoidForever: ['hill_repeats_when_sore', 'speed_work_without_warmup'],
+                canStillDo: ['Easy runs', 'Long runs (with care)', 'Speed work when symptom-free'],
+                lifestyleTips: [
+                    'Never skip eccentric heel drops',
+                    'Consider heel lifts in shoes',
+                    'Avoid walking barefoot on hard floors',
+                    'Ice after harder efforts'
+                ]
+            },
+            it_band_syndrome: {
+                message: "ITBS often becomes a recurring issue. Hip strength is your long-term solution.",
+                dailyPrevention: ['hip_abductor_strengthen', 'it_band_foam_roll'],
+                preRunRequired: ['it_band_foam_roll', 'single_leg_balance', 'chronic_warmup'],
+                avoidForever: ['excessive_downhill', 'running_same_side_of_road'],
+                canStillDo: ['Flat running', 'Track work', 'Racing'],
+                lifestyleTips: [
+                    'Hip strength is lifetime maintenance',
+                    'Vary running surfaces',
+                    'Alternate directions on track',
+                    'Consider gait analysis'
+                ]
+            },
+            runners_knee: {
+                message: "Runner's knee is often lifelong but very manageable with consistent quad/glute work.",
+                dailyPrevention: ['quad_sets', 'glute_bridges', 'step_downs'],
+                preRunRequired: ['quad_sets', 'glute_bridges'],
+                avoidForever: ['deep_squats_when_flared', 'excessive_stairs_when_sore'],
+                canStillDo: ['All run types with strong quads', 'Racing', 'High mileage'],
+                lifestyleTips: [
+                    'Quad strength is your insurance policy',
+                    'Avoid prolonged sitting with bent knees',
+                    'Consider patellar taping for long runs',
+                    'Keep quads/hips strong year-round'
+                ]
+            }
+        };
+        
+        return chronicProtocols[injuryKey] || null;
     },
     
     // ==========================================
@@ -568,12 +769,154 @@ const InjuryIntelligence = {
      */
     showNotification(notification) {
         // For now, just log. Can integrate with a proper notification system later
-        console.log('Injury Alert:', notification);
-        
         // Could show a modal or toast here
         if (notification.type === 'alert') {
             // High priority - could interrupt flow
         }
+    },
+    
+    // ==========================================
+    // DAILY EXERCISE INTEGRATION
+    // ==========================================
+    
+    /**
+     * Get today's prescribed recovery exercises
+     * This integrates with the daily workout view
+     */
+    getTodaysRecoveryExercises() {
+        const adjustments = this.getTrainingAdjustments();
+        if (!adjustments) return [];
+        
+        const exercises = [];
+        const todayKey = State.getTodayKey();
+        const completedToday = State._data?.recoveryExercisesCompleted?.[todayKey] || [];
+        
+        adjustments.exercises.forEach(ex => {
+            // Skip "see a professional" type exercises
+            if (ex.name === 'See a Professional') return;
+            
+            exercises.push({
+                id: ex.name.toLowerCase().replace(/\s+/g, '_'),
+                name: ex.name,
+                description: ex.description,
+                frequency: ex.frequency,
+                xp: ex.xp || 5,
+                science: ex.science,
+                completed: completedToday.includes(ex.name),
+                forInjury: adjustments.injuries[0]?.name
+            });
+        });
+        
+        return exercises;
+    },
+    
+    /**
+     * Mark a recovery exercise as complete
+     */
+    completeRecoveryExercise(exerciseName) {
+        const todayKey = State.getTodayKey();
+        
+        if (!State._data.recoveryExercisesCompleted) {
+            State._data.recoveryExercisesCompleted = {};
+        }
+        
+        if (!State._data.recoveryExercisesCompleted[todayKey]) {
+            State._data.recoveryExercisesCompleted[todayKey] = [];
+        }
+        
+        if (!State._data.recoveryExercisesCompleted[todayKey].includes(exerciseName)) {
+            State._data.recoveryExercisesCompleted[todayKey].push(exerciseName);
+            
+            // Award XP
+            const exercise = Object.values(this.EXERCISES).find(e => e.name === exerciseName);
+            const xp = exercise?.xp || this.RECOVERY_XP.exercise;
+            App.awardXP(xp, 'discipline');
+            
+            // Check if all exercises completed for bonus
+            const todaysExercises = this.getTodaysRecoveryExercises();
+            const allCompleted = todaysExercises.every(e => 
+                State._data.recoveryExercisesCompleted[todayKey].includes(e.name)
+            );
+            
+            if (allCompleted && todaysExercises.length >= 2) {
+                App.awardXP(this.RECOVERY_XP.fullProtocol, 'discipline');
+            }
+            
+            State.save();
+        }
+        
+        return true;
+    },
+    
+    /**
+     * Render recovery exercises for daily view
+     */
+    renderDailyRecoverySection() {
+        const exercises = this.getTodaysRecoveryExercises();
+        
+        if (exercises.length === 0) return '';
+        
+        const injury = exercises[0]?.forInjury || 'Recovery';
+        const completed = exercises.filter(e => e.completed).length;
+        const total = exercises.length;
+        
+        return `
+            <section class="section recovery-section">
+                <div class="section-header">
+                    <span class="section-title">RECOVERY PROTOCOL</span>
+                    <span class="section-badge warning">${injury}</span>
+                </div>
+                <div class="recovery-exercises-list">
+                    ${exercises.map(ex => `
+                        <div class="recovery-exercise-item ${ex.completed ? 'completed' : ''}"
+                             onclick="InjuryIntelligence.completeRecoveryExercise('${ex.name}'); App.render();">
+                            <div class="recovery-check">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                    <polyline points="20 6 9 17 4 12"/>
+                                </svg>
+                            </div>
+                            <div class="recovery-info">
+                                <div class="recovery-name">${ex.name}</div>
+                                <div class="recovery-desc">${ex.description}</div>
+                                <div class="recovery-freq">${ex.frequency}</div>
+                            </div>
+                            <div class="recovery-xp">+${ex.xp}</div>
+                        </div>
+                    `).join('')}
+                </div>
+                ${completed === total && total > 0 ? `
+                    <div class="recovery-complete-bonus">
+                        Protocol complete! +${this.RECOVERY_XP.fullProtocol} XP bonus
+                    </div>
+                ` : `
+                    <div class="recovery-progress">
+                        ${completed}/${total} exercises • Complete all for +${this.RECOVERY_XP.fullProtocol} bonus XP
+                    </div>
+                `}
+            </section>
+        `;
+    },
+    
+    // ==========================================
+    // ENHANCED PAIN TRACKING
+    // ==========================================
+    
+    /**
+     * Enhanced pain entry with more context
+     */
+    PAIN_INTENSITIES: {
+        1: { label: 'Barely noticeable', color: '#22c55e' },
+        2: { label: 'Mild discomfort', color: '#84cc16' },
+        3: { label: 'Noticeable', color: '#eab308' },
+        4: { label: 'Uncomfortable', color: '#f97316' },
+        5: { label: 'Significant pain', color: '#ef4444' },
+    },
+    
+    PAIN_TIMING: {
+        during: 'During the run',
+        after: 'Right after',
+        later: 'Hours later',
+        next_day: 'Next day',
     },
     
     /**
