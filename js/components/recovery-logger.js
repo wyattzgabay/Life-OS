@@ -2,8 +2,12 @@
  * RECOVERY-LOGGER.JS
  * Intelligent mobility/recovery tracking
  * 
- * Turns static "Foam Roll Full Body" into smart recommendations
- * based on training state and MRV proximity
+ * Each exercise has specific data:
+ * - type: 'foam_roll' (select areas), 'stretch' (fixed target), 'posture' (explains correction)
+ * - targets: muscles/areas it works
+ * - postureBenefit: for posture exercises, what it corrects
+ * - technique: brief form cue
+ * - science: research backing
  */
 
 const RecoveryLogger = {
@@ -11,7 +15,144 @@ const RecoveryLogger = {
     exerciseIndex: null,
     selectedAreas: new Set(),
 
-    // Body areas and their associated muscle groups
+    // Exercise database - each exercise analyzed independently
+    EXERCISE_DATA: {
+        // FOAM ROLLING - User selects which areas to roll
+        'Foam Roll Full Body': {
+            type: 'foam_roll',
+            instruction: 'Roll each area 60-90 seconds. Pause on tender spots.',
+            science: 'Self-myofascial release reduces DOMS and improves ROM (Cheatham et al. 2015)',
+            selectAreas: true
+        },
+
+        // HIP STRETCHES - Fixed targets
+        'Hip Flexor Stretch': {
+            type: 'stretch',
+            targets: ['Hip Flexors', 'Psoas', 'Rectus Femoris'],
+            muscles: ['quads', 'glutes'],
+            postureBenefit: 'Reduces anterior pelvic tilt. Tight hip flexors pull pelvis forward, causing lower back arch.',
+            technique: 'Posterior pelvic tilt (tuck tailbone), squeeze glute of back leg. Feel stretch in front of hip.',
+            science: 'Hip flexor tightness correlates with lower back pain (Janda 1987)',
+            duration: '2 min each side'
+        },
+        'Pigeon Stretch': {
+            type: 'stretch',
+            targets: ['Piriformis', 'Glute Medius', 'External Hip Rotators'],
+            muscles: ['glutes'],
+            technique: 'Keep hips square. Front shin angle based on flexibility. Fold forward to deepen.',
+            science: 'Targets deep hip rotators often tight from sitting. Relieves sciatic tension.',
+            duration: '2 min each side'
+        },
+        '90/90 Hip Stretch': {
+            type: 'stretch',
+            targets: ['Hip Internal Rotators', 'Hip External Rotators', 'Adductors'],
+            muscles: ['glutes', 'quads'],
+            technique: 'Both knees at 90°. Sit tall, rotate between internal and external rotation.',
+            science: 'Comprehensive hip mobility drill. Addresses both rotation patterns.',
+            duration: '90 sec each position'
+        },
+
+        // POSTURE EXERCISES - Explain the correction
+        'Wall Slides': {
+            type: 'posture',
+            targets: ['Lower Traps', 'Serratus Anterior', 'Rotator Cuff'],
+            muscles: ['shoulders', 'back'],
+            postureBenefit: 'Corrects rounded shoulders and forward head. Strengthens muscles that pull shoulders back and down.',
+            technique: 'Back flat against wall. Arms in "goal post" position. Slide up while keeping contact.',
+            science: 'Activates scapular stabilizers weakened by desk work (Sahrmann 2002)',
+            duration: '3 sets of 15'
+        },
+        'Thoracic Spine Extensions': {
+            type: 'posture',
+            targets: ['Thoracic Erectors', 'Thoracic Spine Mobility'],
+            muscles: ['back'],
+            postureBenefit: 'Reverses upper back kyphosis (hunching). Improves overhead mobility and breathing.',
+            technique: 'Foam roller at mid-back. Support head, extend over roller. Move roller up/down spine.',
+            science: 'Thoracic mobility critical for shoulder health and posture (Neumann 2010)',
+            duration: '2 sets of 10'
+        },
+        'Dead Hangs': {
+            type: 'posture',
+            targets: ['Lats', 'Shoulder Capsule', 'Grip', 'Spinal Decompression'],
+            muscles: ['back', 'shoulders'],
+            postureBenefit: 'Decompresses spine. Stretches lats which when tight contribute to rounded shoulders.',
+            technique: 'Full hang, relax shoulders. Let body weight create traction. Active hang = depress shoulders.',
+            science: 'Traction relieves disc pressure. Lat flexibility improves overhead position.',
+            duration: '3 sets of 30 sec'
+        },
+        'Band Pull-Aparts': {
+            type: 'posture',
+            targets: ['Rear Delts', 'Rhomboids', 'Middle Traps'],
+            muscles: ['shoulders', 'back'],
+            postureBenefit: 'Strengthens muscles that retract shoulder blades. Direct counter to forward shoulder posture.',
+            technique: 'Arms straight, pull band apart by squeezing shoulder blades. Control the return.',
+            science: 'Rear delt weakness common in desk workers. Key for shoulder balance.',
+            duration: '3 sets of 20'
+        },
+        'Cable Face Pulls': {
+            type: 'posture',
+            targets: ['Rear Delts', 'External Rotators', 'Lower Traps'],
+            muscles: ['shoulders'],
+            postureBenefit: 'Combines external rotation with retraction. Addresses both rounded shoulders and internal rotation.',
+            technique: 'Pull to face height, externally rotate at end. Elbows high, squeeze back.',
+            science: 'External rotation strength prevents shoulder impingement (Reinold et al. 2009)',
+            duration: '4 sets of 15'
+        },
+        'Reverse Pec Deck': {
+            type: 'posture',
+            targets: ['Rear Delts', 'Rhomboids'],
+            muscles: ['shoulders', 'back'],
+            postureBenefit: 'Strengthens posterior shoulder. Balances overdeveloped chest from pushing movements.',
+            technique: 'Chest against pad. Lead with elbows, squeeze shoulder blades at contraction.',
+            science: 'Posterior deltoid often undertrained relative to anterior (push/pull imbalance)',
+            duration: '3 sets of 15'
+        },
+        'Glute Bridge Hold': {
+            type: 'posture',
+            targets: ['Glutes', 'Core Stabilizers'],
+            muscles: ['glutes'],
+            postureBenefit: 'Activates glutes which are inhibited by sitting. Strong glutes reduce anterior pelvic tilt.',
+            technique: 'Drive through heels, squeeze glutes at top. Maintain neutral spine, don\'t hyperextend.',
+            science: 'Gluteal amnesia from prolonged sitting affects pelvic alignment (McGill 2007)',
+            duration: '3 sets of 30 sec'
+        },
+
+        // CORE/MOBILITY
+        'Plank Hold': {
+            type: 'strength',
+            targets: ['Transverse Abdominis', 'Rectus Abdominis', 'Obliques'],
+            muscles: ['core'],
+            technique: 'Straight line from head to heels. Brace core like expecting a punch. Breathe.',
+            science: 'Anti-extension exercise. Teaches core to resist spinal movement under load.',
+            duration: '3 sets of 45 sec'
+        },
+        'Cable Woodchops': {
+            type: 'strength',
+            targets: ['Obliques', 'Transverse Abdominis', 'Hip Rotators'],
+            muscles: ['core'],
+            technique: 'Rotate through core, not arms. Hips and shoulders move together. Control the return.',
+            science: 'Rotational core strength transfers to athletic movement and protects spine.',
+            duration: '3 sets of 12 each side'
+        },
+        'Hanging Knee Raises': {
+            type: 'strength',
+            targets: ['Hip Flexors', 'Lower Abs', 'Grip'],
+            muscles: ['core'],
+            technique: 'Control the swing. Curl pelvis up at top, don\'t just lift knees. Slow negative.',
+            science: 'Targets lower abdominals more than crunches. Decompresses spine while strengthening.',
+            duration: '3 sets of 12'
+        },
+        'Cable Crunch': {
+            type: 'strength',
+            targets: ['Rectus Abdominis'],
+            muscles: ['core'],
+            technique: 'Hips stay fixed. Crunch by flexing spine, not pulling with arms. Squeeze at bottom.',
+            science: 'Loaded spinal flexion. Effective for ab hypertrophy with proper form.',
+            duration: '3 sets of 15'
+        }
+    },
+
+    // Body areas for foam rolling (only used when type = 'foam_roll')
     BODY_AREAS: {
         'Upper Back': ['back', 'shoulders'],
         'Lower Back': ['back', 'glutes'],
@@ -29,6 +170,31 @@ const RecoveryLogger = {
     },
 
     /**
+     * Get exercise data, with fallback for unknown exercises
+     */
+    getExerciseData(name) {
+        // Direct match
+        if (this.EXERCISE_DATA[name]) {
+            return this.EXERCISE_DATA[name];
+        }
+        
+        // Partial match (e.g., "Hip Flexor Stretch" matches "hip flexor")
+        const lowerName = name.toLowerCase();
+        for (const [key, data] of Object.entries(this.EXERCISE_DATA)) {
+            if (lowerName.includes(key.toLowerCase()) || key.toLowerCase().includes(lowerName)) {
+                return data;
+            }
+        }
+        
+        // Fallback for unknown exercises
+        return {
+            type: 'unknown',
+            instruction: 'Complete this exercise with good form.',
+            duration: 'As prescribed'
+        };
+    },
+
+    /**
      * Open the recovery logger modal
      * @param {string} exerciseName - Name of the exercise
      * @param {number} index - Exercise index in today's workout
@@ -37,6 +203,7 @@ const RecoveryLogger = {
         this.currentExercise = exerciseName;
         this.exerciseIndex = index;
         this.selectedAreas = new Set();
+        this.exerciseData = this.getExerciseData(exerciseName);
 
         const modal = document.getElementById('logger-modal');
         if (!modal) return;
@@ -110,38 +277,6 @@ const RecoveryLogger = {
         return areaScores.sort((a, b) => b.score - a.score);
     },
 
-    /**
-     * Get exercise-specific instructions
-     */
-    getExerciseInstructions() {
-        const exerciseName = this.currentExercise?.toLowerCase() || '';
-        
-        if (exerciseName.includes('foam roll')) {
-            return {
-                title: 'FOAM ROLLING',
-                instruction: 'Roll each area for 60-90 seconds. Focus on tender spots.',
-                science: 'Foam rolling reduces muscle soreness and improves range of motion (Cheatham et al. 2015)'
-            };
-        } else if (exerciseName.includes('stretch')) {
-            return {
-                title: 'STRETCHING',
-                instruction: 'Hold each stretch for 30-60 seconds. Breathe deeply.',
-                science: 'Static stretching post-workout improves flexibility (Page 2012)'
-            };
-        } else if (exerciseName.includes('mobility')) {
-            return {
-                title: 'MOBILITY WORK',
-                instruction: 'Move through full range of motion with control.',
-                science: 'Active mobility improves joint health and movement quality'
-            };
-        }
-        
-        return {
-            title: 'RECOVERY',
-            instruction: 'Focus on areas that feel tight or fatigued.',
-            science: 'Targeted recovery accelerates adaptation'
-        };
-    },
 
     /**
      * Toggle selection of a body area
@@ -234,12 +369,30 @@ const RecoveryLogger = {
 
     /**
      * Render the recovery logger modal
+     * Different layouts based on exercise type
      */
     render() {
-        const prioritizedAreas = this.getPrioritizedAreas();
-        const instructions = this.getExerciseInstructions();
+        const data = this.exerciseData;
         
-        // Split into recommended (top 5) and other
+        // Route to appropriate renderer based on type
+        if (data.type === 'foam_roll' || data.selectAreas) {
+            return this.renderFoamRollModal(data);
+        } else if (data.type === 'posture') {
+            return this.renderPostureModal(data);
+        } else if (data.type === 'stretch') {
+            return this.renderStretchModal(data);
+        } else if (data.type === 'strength') {
+            return this.renderStrengthModal(data);
+        } else {
+            return this.renderGenericModal(data);
+        }
+    },
+
+    /**
+     * Render foam rolling modal (select areas based on fatigue)
+     */
+    renderFoamRollModal(data) {
+        const prioritizedAreas = this.getPrioritizedAreas();
         const recommended = prioritizedAreas.filter(a => a.score > 0.3).slice(0, 5);
         const other = prioritizedAreas.filter(a => !recommended.includes(a));
 
@@ -249,18 +402,18 @@ const RecoveryLogger = {
                     <div class="modal-handle"></div>
                     
                     <div class="recovery-header">
-                        <div class="recovery-title">${instructions.title}</div>
+                        <div class="recovery-title">FOAM ROLLING</div>
                         <div class="recovery-exercise">${this.currentExercise}</div>
                     </div>
                     
                     <div class="recovery-instruction">
-                        ${instructions.instruction}
+                        ${data.instruction}
                     </div>
                     
                     ${recommended.length > 0 ? `
                         <div class="recovery-section">
                             <div class="recovery-section-header">
-                                <span class="recovery-section-title">RECOMMENDED (Based on Training)</span>
+                                <span class="recovery-section-title">PRIORITY (Based on Training)</span>
                                 <button class="recovery-select-all" onclick="RecoveryLogger.selectRecommended()">
                                     SELECT ALL
                                 </button>
@@ -282,13 +435,161 @@ const RecoveryLogger = {
                         </div>
                     ` : ''}
                     
-                    <div class="recovery-science">
-                        ${instructions.science}
+                    <div class="recovery-science">${data.science}</div>
+                    
+                    <div class="recovery-actions">
+                        <button class="recovery-complete-btn" onclick="RecoveryLogger.complete()">
+                            ${this.selectedAreas.size > 0 ? `COMPLETE (${this.selectedAreas.size} AREAS)` : 'SKIP'}
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    },
+
+    /**
+     * Render stretch modal (shows fixed targets, technique, purpose)
+     */
+    renderStretchModal(data) {
+        return `
+            <div class="modal-overlay" onclick="RecoveryLogger.close()">
+                <div class="modal-sheet" onclick="event.stopPropagation()">
+                    <div class="modal-handle"></div>
+                    
+                    <div class="recovery-header">
+                        <div class="recovery-title">STRETCH</div>
+                        <div class="recovery-exercise">${this.currentExercise}</div>
+                        <div class="recovery-duration">${data.duration || ''}</div>
+                    </div>
+                    
+                    <div class="recovery-targets">
+                        <div class="targets-label">TARGETS</div>
+                        <div class="targets-list">
+                            ${(data.targets || []).map(t => `<span class="target-tag">${t}</span>`).join('')}
+                        </div>
+                    </div>
+                    
+                    <div class="recovery-technique">
+                        <div class="technique-label">TECHNIQUE</div>
+                        <div class="technique-text">${data.technique || 'Perform with controlled movement.'}</div>
+                    </div>
+                    
+                    <div class="recovery-science">${data.science || ''}</div>
+                    
+                    <div class="recovery-actions">
+                        <button class="recovery-complete-btn" onclick="RecoveryLogger.complete()">
+                            COMPLETE
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    },
+
+    /**
+     * Render posture modal (explains postural benefit prominently)
+     */
+    renderPostureModal(data) {
+        return `
+            <div class="modal-overlay" onclick="RecoveryLogger.close()">
+                <div class="modal-sheet" onclick="event.stopPropagation()">
+                    <div class="modal-handle"></div>
+                    
+                    <div class="recovery-header">
+                        <div class="recovery-title">POSTURE CORRECTION</div>
+                        <div class="recovery-exercise">${this.currentExercise}</div>
+                        <div class="recovery-duration">${data.duration || ''}</div>
+                    </div>
+                    
+                    <div class="posture-benefit">
+                        <div class="posture-benefit-label">WHY THIS MATTERS</div>
+                        <div class="posture-benefit-text">${data.postureBenefit || ''}</div>
+                    </div>
+                    
+                    <div class="recovery-targets">
+                        <div class="targets-label">TARGETS</div>
+                        <div class="targets-list">
+                            ${(data.targets || []).map(t => `<span class="target-tag">${t}</span>`).join('')}
+                        </div>
+                    </div>
+                    
+                    <div class="recovery-technique">
+                        <div class="technique-label">TECHNIQUE</div>
+                        <div class="technique-text">${data.technique || ''}</div>
+                    </div>
+                    
+                    <div class="recovery-science">${data.science || ''}</div>
+                    
+                    <div class="recovery-actions">
+                        <button class="recovery-complete-btn" onclick="RecoveryLogger.complete()">
+                            COMPLETE
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    },
+
+    /**
+     * Render strength exercise modal (core work, etc.)
+     */
+    renderStrengthModal(data) {
+        return `
+            <div class="modal-overlay" onclick="RecoveryLogger.close()">
+                <div class="modal-sheet" onclick="event.stopPropagation()">
+                    <div class="modal-handle"></div>
+                    
+                    <div class="recovery-header">
+                        <div class="recovery-title">CORE / ACCESSORY</div>
+                        <div class="recovery-exercise">${this.currentExercise}</div>
+                        <div class="recovery-duration">${data.duration || ''}</div>
+                    </div>
+                    
+                    <div class="recovery-targets">
+                        <div class="targets-label">TARGETS</div>
+                        <div class="targets-list">
+                            ${(data.targets || []).map(t => `<span class="target-tag">${t}</span>`).join('')}
+                        </div>
+                    </div>
+                    
+                    <div class="recovery-technique">
+                        <div class="technique-label">TECHNIQUE</div>
+                        <div class="technique-text">${data.technique || ''}</div>
+                    </div>
+                    
+                    <div class="recovery-science">${data.science || ''}</div>
+                    
+                    <div class="recovery-actions">
+                        <button class="recovery-complete-btn" onclick="RecoveryLogger.complete()">
+                            COMPLETE
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+    },
+
+    /**
+     * Render generic modal for unknown exercises
+     */
+    renderGenericModal(data) {
+        return `
+            <div class="modal-overlay" onclick="RecoveryLogger.close()">
+                <div class="modal-sheet" onclick="event.stopPropagation()">
+                    <div class="modal-handle"></div>
+                    
+                    <div class="recovery-header">
+                        <div class="recovery-title">EXERCISE</div>
+                        <div class="recovery-exercise">${this.currentExercise}</div>
+                    </div>
+                    
+                    <div class="recovery-instruction">
+                        ${data.instruction || 'Complete this exercise with good form.'}
                     </div>
                     
                     <div class="recovery-actions">
                         <button class="recovery-complete-btn" onclick="RecoveryLogger.complete()">
-                            SKIP
+                            COMPLETE
                         </button>
                     </div>
                 </div>

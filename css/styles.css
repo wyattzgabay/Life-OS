@@ -7251,3 +7251,70 @@ body {
     background: var(--accent-dark);
 }
 
+/* Recovery modal - duration */
+.recovery-duration {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    margin-top: 8px;
+}
+
+/* Recovery modal - targets */
+.recovery-targets {
+    margin-bottom: 16px;
+}
+
+.targets-label,
+.technique-label,
+.posture-benefit-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+}
+
+.targets-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.target-tag {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    font-size: 12px;
+    padding: 6px 12px;
+    border-radius: 20px;
+}
+
+/* Recovery modal - technique */
+.recovery-technique {
+    background: var(--surface-2);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+}
+
+.technique-text {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.5;
+}
+
+/* Recovery modal - posture benefit */
+.posture-benefit {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.05) 100%);
+    border: 1px solid var(--accent);
+    border-radius: 10px;
+    padding: 14px 16px;
+    margin-bottom: 16px;
+}
+
+.posture-benefit-text {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.5;
+}
+
