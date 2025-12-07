@@ -14,6 +14,7 @@ const RecoveryLogger = {
     currentExercise: null,
     exerciseIndex: null,
     selectedAreas: new Set(),
+    loggedSets: [], // Track sets/reps/duration
 
     // Exercise database - each exercise analyzed independently
     EXERCISE_DATA: {
@@ -203,6 +204,7 @@ const RecoveryLogger = {
         this.currentExercise = exerciseName;
         this.exerciseIndex = index;
         this.selectedAreas = new Set();
+        this.loggedSets = [];
         this.exerciseData = this.getExerciseData(exerciseName);
 
         const modal = document.getElementById('logger-modal');
@@ -211,6 +213,115 @@ const RecoveryLogger = {
         modal.innerHTML = this.render();
         modal.classList.add('active');
         document.body.style.overflow = 'hidden';
+    },
+
+    /**
+     * Add a set to the log
+     */
+    addSet() {
+        const data = this.exerciseData;
+        let setData = {};
+
+        if (data.type === 'stretch') {
+            // For stretches, log duration per side
+            const duration = document.getElementById('recovery-duration')?.value || 0;
+            setData = { duration: parseInt(duration), unit: 'seconds' };
+        } else if (data.type === 'posture' || data.type === 'strength') {
+            // For strength/posture, log reps (or duration for holds)
+            const isHold = (data.duration || '').includes('sec');
+            if (isHold) {
+                const duration = document.getElementById('recovery-duration')?.value || 0;
+                setData = { duration: parseInt(duration), unit: 'seconds' };
+            } else {
+                const reps = document.getElementById('recovery-reps')?.value || 0;
+                setData = { reps: parseInt(reps) };
+            }
+        }
+
+        if (setData.duration > 0 || setData.reps > 0) {
+            this.loggedSets.push(setData);
+            this.updateSetDisplay();
+            // Clear input
+            const input = document.getElementById('recovery-duration') || document.getElementById('recovery-reps');
+            if (input) input.value = '';
+        }
+    },
+
+    /**
+     * Remove a set from the log
+     */
+    removeSet(index) {
+        this.loggedSets.splice(index, 1);
+        this.updateSetDisplay();
+    },
+
+    /**
+     * Update the set display in the modal
+     */
+    updateSetDisplay() {
+        const container = document.getElementById('logged-sets-container');
+        const btn = document.querySelector('.recovery-complete-btn');
+        
+        if (container) {
+            container.innerHTML = this.loggedSets.map((set, idx) => `
+                <div class="logged-set-item">
+                    <span class="set-number">SET ${idx + 1}</span>
+                    <span class="set-value">${set.reps ? `${set.reps} reps` : `${set.duration}s`}</span>
+                    <button class="set-remove" onclick="RecoveryLogger.removeSet(${idx})">×</button>
+                </div>
+            `).join('');
+        }
+
+        if (btn) {
+            btn.textContent = this.loggedSets.length > 0 
+                ? `SAVE (${this.loggedSets.length} SETS)` 
+                : 'SKIP';
+        }
+    },
+
+    /**
+     * Parse target sets/reps from duration string
+     * e.g., "3 sets of 45 sec" -> { sets: 3, value: 45, unit: 'sec' }
+     * e.g., "3×15" -> { sets: 3, value: 15, unit: 'reps' }
+     * e.g., "2 min each side" -> { sets: 2, value: 120, unit: 'sec', perSide: true }
+     */
+    parseTarget(durationStr) {
+        if (!durationStr) return { sets: 1, value: 30, unit: 'sec' };
+        
+        const str = durationStr.toLowerCase();
+        
+        // "3 sets of 45 sec"
+        let match = str.match(/(\d+)\s*sets?\s*(?:of\s*)?(\d+)\s*(sec|min|reps?)?/i);
+        if (match) {
+            let value = parseInt(match[2]);
+            const unit = match[3]?.includes('min') ? 'sec' : (match[3]?.includes('rep') ? 'reps' : 'sec');
+            if (match[3]?.includes('min')) value *= 60;
+            return { sets: parseInt(match[1]), value, unit };
+        }
+        
+        // "3×15" or "3x15"
+        match = str.match(/(\d+)[×x](\d+)/i);
+        if (match) {
+            return { sets: parseInt(match[1]), value: parseInt(match[2]), unit: 'reps' };
+        }
+        
+        // "2 min each" or "90 sec each"
+        match = str.match(/(\d+)\s*(min|sec).*each/i);
+        if (match) {
+            let value = parseInt(match[1]);
+            if (match[2] === 'min') value *= 60;
+            return { sets: 2, value, unit: 'sec', perSide: true };
+        }
+        
+        // "30 sec" or "2 min"
+        match = str.match(/(\d+)\s*(min|sec)/i);
+        if (match) {
+            let value = parseInt(match[1]);
+            if (match[2] === 'min') value *= 60;
+            return { sets: 1, value, unit: 'sec' };
+        }
+        
+        return { sets: 3, value: 10, unit: 'reps' };
     },
 
     /**
@@ -226,6 +337,7 @@ const RecoveryLogger = {
         this.currentExercise = null;
         this.exerciseIndex = null;
         this.selectedAreas.clear();
+        this.loggedSets = [];
     },
 
     /**
@@ -327,13 +439,13 @@ const RecoveryLogger = {
      * Complete the exercise
      */
     complete() {
-        // Log the recovery work
-        if (this.selectedAreas.size > 0) {
+        // Log the recovery work if we have sets or areas
+        if (this.loggedSets.length > 0 || this.selectedAreas.size > 0) {
             this.logRecovery();
         }
 
-        // Mark exercise as done
-        if (this.exerciseIndex !== null) {
+        // Mark exercise as done if we logged something
+        if (this.exerciseIndex !== null && (this.loggedSets.length > 0 || this.selectedAreas.size > 0)) {
             App.toggleExercise(this.exerciseIndex);
         }
 
@@ -351,13 +463,34 @@ const RecoveryLogger = {
             State._data.recoveryLog = [];
         }
 
-        State._data.recoveryLog.push({
+        const logEntry = {
             date: todayKey,
             timestamp: new Date().toISOString(),
             exercise: this.currentExercise,
-            areas: Array.from(this.selectedAreas),
-            areaCount: this.selectedAreas.size
-        });
+            type: this.exerciseData?.type || 'unknown'
+        };
+
+        // Add sets data if logged
+        if (this.loggedSets.length > 0) {
+            logEntry.sets = [...this.loggedSets];
+            logEntry.setCount = this.loggedSets.length;
+            
+            // Calculate totals
+            const hasDuration = this.loggedSets[0]?.duration !== undefined;
+            if (hasDuration) {
+                logEntry.totalDuration = this.loggedSets.reduce((sum, s) => sum + (s.duration || 0), 0);
+            } else {
+                logEntry.totalReps = this.loggedSets.reduce((sum, s) => sum + (s.reps || 0), 0);
+            }
+        }
+
+        // Add foam roll areas if selected
+        if (this.selectedAreas.size > 0) {
+            logEntry.areas = Array.from(this.selectedAreas);
+            logEntry.areaCount = this.selectedAreas.size;
+        }
+
+        State._data.recoveryLog.push(logEntry);
 
         // Keep last 100 entries
         if (State._data.recoveryLog.length > 100) {
@@ -451,6 +584,9 @@ const RecoveryLogger = {
      * Render stretch modal (shows fixed targets, technique, purpose)
      */
     renderStretchModal(data) {
+        const target = this.parseTarget(data.duration);
+        const perSide = target.perSide ? ' (each side)' : '';
+        
         return `
             <div class="modal-overlay" onclick="RecoveryLogger.close()">
                 <div class="modal-sheet" onclick="event.stopPropagation()">
@@ -459,7 +595,7 @@ const RecoveryLogger = {
                     <div class="recovery-header">
                         <div class="recovery-title">STRETCH</div>
                         <div class="recovery-exercise">${this.currentExercise}</div>
-                        <div class="recovery-duration">${data.duration || ''}</div>
+                        <div class="recovery-duration">Target: ${data.duration || ''}</div>
                     </div>
                     
                     <div class="recovery-targets">
@@ -474,11 +610,25 @@ const RecoveryLogger = {
                         <div class="technique-text">${data.technique || 'Perform with controlled movement.'}</div>
                     </div>
                     
+                    <div class="recovery-log-section">
+                        <div class="targets-label">LOG YOUR SETS${perSide}</div>
+                        <div class="recovery-input-row">
+                            <input type="number" id="recovery-duration" 
+                                placeholder="${target.value}" 
+                                class="recovery-input" 
+                                inputmode="numeric"
+                                style="color-scheme: dark;">
+                            <span class="recovery-input-unit">sec</span>
+                            <button class="recovery-add-btn" onclick="RecoveryLogger.addSet()">+ ADD</button>
+                        </div>
+                        <div id="logged-sets-container" class="logged-sets-container"></div>
+                    </div>
+                    
                     <div class="recovery-science">${data.science || ''}</div>
                     
                     <div class="recovery-actions">
                         <button class="recovery-complete-btn" onclick="RecoveryLogger.complete()">
-                            COMPLETE
+                            SKIP
                         </button>
                     </div>
                 </div>
@@ -490,6 +640,12 @@ const RecoveryLogger = {
      * Render posture modal (explains postural benefit prominently)
      */
     renderPostureModal(data) {
+        const target = this.parseTarget(data.duration);
+        const isHold = (data.duration || '').toLowerCase().includes('sec');
+        const inputLabel = isHold ? 'Duration (sec)' : 'Reps';
+        const inputId = isHold ? 'recovery-duration' : 'recovery-reps';
+        const inputUnit = isHold ? 'sec' : 'reps';
+        
         return `
             <div class="modal-overlay" onclick="RecoveryLogger.close()">
                 <div class="modal-sheet" onclick="event.stopPropagation()">
@@ -498,7 +654,7 @@ const RecoveryLogger = {
                     <div class="recovery-header">
                         <div class="recovery-title">POSTURE CORRECTION</div>
                         <div class="recovery-exercise">${this.currentExercise}</div>
-                        <div class="recovery-duration">${data.duration || ''}</div>
+                        <div class="recovery-duration">Target: ${data.duration || ''}</div>
                     </div>
                     
                     <div class="posture-benefit">
@@ -518,11 +674,25 @@ const RecoveryLogger = {
                         <div class="technique-text">${data.technique || ''}</div>
                     </div>
                     
+                    <div class="recovery-log-section">
+                        <div class="targets-label">LOG YOUR SETS</div>
+                        <div class="recovery-input-row">
+                            <input type="number" id="${inputId}" 
+                                placeholder="${target.value}" 
+                                class="recovery-input" 
+                                inputmode="numeric"
+                                style="color-scheme: dark;">
+                            <span class="recovery-input-unit">${inputUnit}</span>
+                            <button class="recovery-add-btn" onclick="RecoveryLogger.addSet()">+ ADD</button>
+                        </div>
+                        <div id="logged-sets-container" class="logged-sets-container"></div>
+                    </div>
+                    
                     <div class="recovery-science">${data.science || ''}</div>
                     
                     <div class="recovery-actions">
                         <button class="recovery-complete-btn" onclick="RecoveryLogger.complete()">
-                            COMPLETE
+                            SKIP
                         </button>
                     </div>
                 </div>
@@ -534,6 +704,12 @@ const RecoveryLogger = {
      * Render strength exercise modal (core work, etc.)
      */
     renderStrengthModal(data) {
+        const target = this.parseTarget(data.duration);
+        const isHold = (data.duration || '').toLowerCase().includes('sec');
+        const inputLabel = isHold ? 'Duration (sec)' : 'Reps';
+        const inputId = isHold ? 'recovery-duration' : 'recovery-reps';
+        const inputUnit = isHold ? 'sec' : 'reps';
+        
         return `
             <div class="modal-overlay" onclick="RecoveryLogger.close()">
                 <div class="modal-sheet" onclick="event.stopPropagation()">
@@ -542,7 +718,7 @@ const RecoveryLogger = {
                     <div class="recovery-header">
                         <div class="recovery-title">CORE / ACCESSORY</div>
                         <div class="recovery-exercise">${this.currentExercise}</div>
-                        <div class="recovery-duration">${data.duration || ''}</div>
+                        <div class="recovery-duration">Target: ${data.duration || ''}</div>
                     </div>
                     
                     <div class="recovery-targets">
@@ -557,11 +733,25 @@ const RecoveryLogger = {
                         <div class="technique-text">${data.technique || ''}</div>
                     </div>
                     
+                    <div class="recovery-log-section">
+                        <div class="targets-label">LOG YOUR SETS</div>
+                        <div class="recovery-input-row">
+                            <input type="number" id="${inputId}" 
+                                placeholder="${target.value}" 
+                                class="recovery-input" 
+                                inputmode="numeric"
+                                style="color-scheme: dark;">
+                            <span class="recovery-input-unit">${inputUnit}</span>
+                            <button class="recovery-add-btn" onclick="RecoveryLogger.addSet()">+ ADD</button>
+                        </div>
+                        <div id="logged-sets-container" class="logged-sets-container"></div>
+                    </div>
+                    
                     <div class="recovery-science">${data.science || ''}</div>
                     
                     <div class="recovery-actions">
                         <button class="recovery-complete-btn" onclick="RecoveryLogger.complete()">
-                            COMPLETE
+                            SKIP
                         </button>
                     </div>
                 </div>
