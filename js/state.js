@@ -399,17 +399,28 @@ const State = {
     _saveTimer: null,
     
     /**
-     * Save data locally only (beta mode - no cloud sync)
+     * Save data with debounced cloud sync
      */
     save() {
         // Add timestamp
         this._data.lastModified = Date.now();
         
-        // Save to localStorage only (fastest)
+        // 1. Save to localStorage immediately (fast)
         this.saveLocal();
         
-        // Skip IndexedDB and cloud sync in beta for performance
-        // These can be re-enabled for production
+        // 2. Debounce IndexedDB save (500ms)
+        clearTimeout(this._idbSaveTimeout);
+        this._idbSaveTimeout = setTimeout(() => {
+            this.saveToIndexedDB(this._data);
+        }, 500);
+        
+        // 3. Debounce cloud sync (5 seconds - don't spam Firebase)
+        if (this._firebaseInitialized) {
+            clearTimeout(this._cloudSyncTimeout);
+            this._cloudSyncTimeout = setTimeout(() => {
+                this.syncToCloud();
+            }, 5000);
+        }
         
         return true;
     },
