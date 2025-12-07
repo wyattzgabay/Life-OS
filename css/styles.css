@@ -7434,9 +7434,9 @@ body {
    ========================================== */
 
 .cardio-logger {
+    width: 100%;
     max-height: 85vh;
     overflow-y: auto;
-    padding-bottom: calc(20px + var(--safe-bottom));
 }
 
 .cardio-header {

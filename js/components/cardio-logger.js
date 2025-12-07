@@ -184,9 +184,8 @@ const CardioLogger = {
         const isRest = rx.isRest;
         
         return `
-            <div class="modal-overlay" onclick="CardioLogger.close()">
-                <div class="modal-sheet cardio-logger" onclick="event.stopPropagation()">
-                    <div class="modal-handle"></div>
+            <div class="modal-sheet cardio-logger" onclick="event.stopPropagation()">
+                <div class="modal-handle"></div>
                     
                     <!-- Header -->
                     <div class="cardio-header">
@@ -298,7 +297,6 @@ const CardioLogger = {
                         </button>
                     </div>
                 </div>
-            </div>
         `;
     },
 
