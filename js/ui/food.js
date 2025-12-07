@@ -4,6 +4,56 @@
  */
 
 const FoodView = {
+    
+    /**
+     * Get today's meals from State (not localStorage)
+     * This ensures meals persist with all other data
+     */
+    getTodayMeals() {
+        const todayKey = State.getTodayKey();
+        
+        // First check State
+        if (State._data?.meals?.[todayKey]) {
+            return State._data.meals[todayKey];
+        }
+        
+        // Migration: check localStorage for old data
+        const localMeals = localStorage.getItem(`meals_${todayKey}`);
+        if (localMeals) {
+            const meals = JSON.parse(localMeals);
+            // Migrate to State
+            this.setTodayMeals(meals);
+            // Clean up old localStorage
+            localStorage.removeItem(`meals_${todayKey}`);
+            return meals;
+        }
+        
+        return [];
+    },
+    
+    /**
+     * Save today's meals to State
+     */
+    setTodayMeals(meals) {
+        const todayKey = State.getTodayKey();
+        
+        if (!State._data.meals) {
+            State._data.meals = {};
+        }
+        
+        State._data.meals[todayKey] = meals;
+        State.save();
+    },
+    
+    /**
+     * Add a meal to today's log
+     */
+    addMeal(meal) {
+        const meals = this.getTodayMeals();
+        meals.push(meal);
+        this.setTodayMeals(meals);
+    },
+    
     /**
      * Render the food view
      */
@@ -133,7 +183,7 @@ const FoodView = {
      */
     renderMealLog() {
         const todayKey = State.getTodayKey();
-        const meals = JSON.parse(localStorage.getItem(`meals_${todayKey}`) || '[]');
+        const meals = this.getTodayMeals();
         
         if (meals.length === 0) {
             return `
@@ -235,14 +285,14 @@ const FoodView = {
      */
     saveMealAsPreset(index) {
         const todayKey = State.getTodayKey();
-        const meals = JSON.parse(localStorage.getItem(`meals_${todayKey}`) || '[]');
+        const meals = this.getTodayMeals();
         
         if (index < 0 || index >= meals.length) return;
         
         const meal = meals[index];
         
         // Generate a default name from the items
-        const defaultName = meal.items.slice(0, 2).map(i => i.name).join(' + ');
+        const defaultName = meal.items?.slice(0, 2).map(i => i.name).join(' + ') || 'Meal';
         const name = prompt('Name this meal:', defaultName);
         
         if (!name) return;
@@ -274,7 +324,7 @@ const FoodView = {
         if (!confirm('Delete this meal?')) return;
         
         const todayKey = State.getTodayKey();
-        const meals = JSON.parse(localStorage.getItem(`meals_${todayKey}`) || '[]');
+        const meals = this.getTodayMeals();
         
         if (index < 0 || index >= meals.length) return;
         
@@ -282,9 +332,9 @@ const FoodView = {
         
         // Subtract from daily totals
         const todayData = State.getDayData();
-        const newCalories = Math.max(0, (todayData?.calories || 0) - meal.totals.calories);
-        const newProtein = Math.max(0, (todayData?.protein || 0) - meal.totals.protein);
-        const newCarbs = Math.max(0, (todayData?.carbs || 0) - (meal.totals.carbs || 0));
+        const newCalories = Math.max(0, (todayData?.calories || 0) - (meal.totals?.calories || meal.calories || 0));
+        const newProtein = Math.max(0, (todayData?.protein || 0) - (meal.totals?.protein || meal.protein || 0));
+        const newCarbs = Math.max(0, (todayData?.carbs || 0) - (meal.totals?.carbs || meal.carbs || 0));
         const newFats = Math.max(0, (todayData?.fats || 0) - (meal.totals.fats || 0));
         
         // Update totals using State.logValue (overwrites)
@@ -295,7 +345,7 @@ const FoodView = {
         
         // Remove meal from list
         meals.splice(index, 1);
-        localStorage.setItem(`meals_${todayKey}`, JSON.stringify(meals));
+        this.setTodayMeals(meals);
         
         App.showNotification('Meal deleted');
         this.render();
@@ -305,8 +355,7 @@ const FoodView = {
      * Render daily insights
      */
     renderInsights() {
-        const todayKey = State.getTodayKey();
-        const meals = JSON.parse(localStorage.getItem(`meals_${todayKey}`) || '[]');
+        const meals = this.getTodayMeals();
         const todayData = State.getDayData();
         const goals = State.getGoals();
         
@@ -474,10 +523,10 @@ const FoodView = {
         
         // Also save to meal log for today
         const todayKey = State.getTodayKey();
-        let meals = JSON.parse(localStorage.getItem(`meals_${todayKey}`) || '[]');
-        meals.push({
+        this.addMeal({
             timestamp: new Date().toISOString(),
             mealTime: 'quick',
+            name: meal.name,
             items: [{ name: meal.name, calories: meal.calories, protein: meal.protein }],
             totals: {
                 calories: meal.calories || 0,
@@ -487,7 +536,6 @@ const FoodView = {
             },
             description: meal.name
         });
-        localStorage.setItem(`meals_${todayKey}`, JSON.stringify(meals));
         
         App.showNotification(`${meal.name} logged`);
         this.render();

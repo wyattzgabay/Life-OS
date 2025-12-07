@@ -49,9 +49,9 @@ const DemoMode = {
                 distance: 3 + (i % 3),
                 time: '28:00',
                 effort: 6,
-                pain: ['it_band', 'knee'], // Pain matching IT Band earlySignals
+                pain: ['it_band', 'hip'], // IT band and hip progression - triggers ITBS not Runner's Knee
                 painDetails: [{
-                    region: 'knee',
+                    region: 'thigh',
                     subregion: 'outer',
                     timing: 'after_1_2_miles',
                     injury: 'it_band_syndrome'

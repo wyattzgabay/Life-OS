@@ -919,6 +919,203 @@ const InjuryIntelligence = {
         next_day: 'Next day',
     },
     
+    // ==========================================
+    // EFFORT-BASED TRAINING INTELLIGENCE
+    // ==========================================
+    
+    /**
+     * Analyze recent efforts to intelligently adjust training
+     * Research: Foster et al. (2001) - Session RPE for training load monitoring
+     * 
+     * Key insights:
+     * - High effort + under-distance = struggling, needs recovery
+     * - Low effort + at/over-distance = adapting well, can progress
+     * - Consistent high effort = risk of overtraining
+     */
+    analyzeEffortTrend() {
+        const cardioLog = State._data?.cardioLog || [];
+        const recentRuns = cardioLog
+            .filter(e => e.type === 'running')
+            .slice(-10) // Last 10 runs
+            .reverse(); // Most recent first
+        
+        if (recentRuns.length < 3) {
+            return { status: 'insufficient_data', adjustment: 0, message: 'Need more data' };
+        }
+        
+        let struggleCount = 0;
+        let easyCount = 0;
+        let totalEffort = 0;
+        let underPerformed = 0;
+        let overPerformed = 0;
+        
+        recentRuns.forEach(run => {
+            const effort = run.effort || 5;
+            totalEffort += effort;
+            
+            const prescribed = run.prescribed?.distance || 0;
+            const actual = run.distance || 0;
+            const completionRatio = prescribed > 0 ? actual / prescribed : 1;
+            
+            // High effort (8+) but under-performed (<80% of prescribed)
+            if (effort >= 8 && completionRatio < 0.8) {
+                struggleCount++;
+                underPerformed++;
+            }
+            // Low effort (1-4) and hit or exceeded distance
+            else if (effort <= 4 && completionRatio >= 1.0) {
+                easyCount++;
+            }
+            
+            // Track over/under performance
+            if (completionRatio < 0.8) underPerformed++;
+            if (completionRatio > 1.1) overPerformed++;
+        });
+        
+        const avgEffort = totalEffort / recentRuns.length;
+        
+        // Determine training adjustment
+        let adjustment = 0;
+        let status = 'on_track';
+        let message = '';
+        
+        // Struggling: High effort but under-performing
+        if (struggleCount >= 2 || (avgEffort >= 7.5 && underPerformed >= 2)) {
+            adjustment = -0.15; // Reduce by 15%
+            status = 'struggling';
+            message = 'Recent runs feel harder than expected. Reducing load to help recovery.';
+        }
+        // Overreaching risk: Consistently high effort
+        else if (avgEffort >= 8 && recentRuns.length >= 5) {
+            adjustment = -0.1;
+            status = 'overreaching';
+            message = 'Training load is high. Adding easy days to prevent burnout.';
+        }
+        // Adapting well: Low effort, hitting targets
+        else if (easyCount >= 3 && avgEffort <= 5) {
+            adjustment = 0.1; // Increase by 10%
+            status = 'progressing';
+            message = 'You\'re adapting well! Ready for slightly more challenge.';
+        }
+        // Slightly under-challenged
+        else if (avgEffort <= 4 && overPerformed >= 2) {
+            adjustment = 0.05;
+            status = 'under_challenged';
+            message = 'Workouts feeling easy. Small bump in intensity.';
+        }
+        
+        return {
+            status,
+            adjustment,
+            message,
+            avgEffort: avgEffort.toFixed(1),
+            recentRuns: recentRuns.length,
+            struggleCount,
+            easyCount
+        };
+    },
+    
+    /**
+     * Get today's running prescription with effort-based adjustments
+     */
+    getAdjustedPrescription(basePrescription) {
+        if (!basePrescription || basePrescription.type === 'rest') {
+            return basePrescription;
+        }
+        
+        // Get effort trend analysis
+        const effortAnalysis = this.analyzeEffortTrend();
+        
+        // Get injury adjustments
+        const injuryAdjustments = this.getTrainingAdjustments();
+        
+        // Combine adjustments (effort + injury)
+        let totalDistanceAdjustment = effortAnalysis.adjustment;
+        if (injuryAdjustments) {
+            totalDistanceAdjustment -= injuryAdjustments.mileageReduction;
+        }
+        
+        // Cap adjustments
+        totalDistanceAdjustment = Math.max(-0.5, Math.min(0.2, totalDistanceAdjustment));
+        
+        // Apply to prescription
+        const adjustedDistance = basePrescription.distance * (1 + totalDistanceAdjustment);
+        
+        // Check if workout type should be modified due to struggling
+        let adjustedType = basePrescription.type;
+        if (effortAnalysis.status === 'struggling' && ['tempo', 'intervals'].includes(basePrescription.type)) {
+            adjustedType = 'easy'; // Downgrade hard workouts when struggling
+        }
+        
+        // Check injury avoid types
+        if (injuryAdjustments?.avoidTypes?.includes(basePrescription.type)) {
+            adjustedType = 'easy';
+        }
+        
+        return {
+            ...basePrescription,
+            type: adjustedType,
+            originalType: basePrescription.type,
+            distance: Math.round(adjustedDistance * 10) / 10,
+            originalDistance: basePrescription.distance,
+            effortAdjustment: effortAnalysis,
+            injuryAdjustment: injuryAdjustments,
+            wasModified: adjustedType !== basePrescription.type || 
+                        Math.abs(adjustedDistance - basePrescription.distance) > 0.1
+        };
+    },
+    
+    /**
+     * Render effort analysis for CardioLogger or stats
+     */
+    renderEffortInsight() {
+        const analysis = this.analyzeEffortTrend();
+        
+        if (analysis.status === 'insufficient_data') {
+            return ''; // Don't show anything yet
+        }
+        
+        const icons = {
+            struggling: '⚠️',
+            overreaching: '🔥',
+            progressing: '📈',
+            under_challenged: '💪',
+            on_track: '✓'
+        };
+        
+        const colors = {
+            struggling: 'var(--warning)',
+            overreaching: 'var(--error)',
+            progressing: 'var(--success)',
+            under_challenged: 'var(--success)',
+            on_track: 'var(--text-muted)'
+        };
+        
+        return `
+            <div class="effort-insight" style="
+                background: var(--surface-2);
+                border: 1px solid var(--border);
+                border-radius: 8px;
+                padding: 12px;
+                margin-bottom: 16px;
+                font-size: 12px;
+            ">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                    <span style="font-size: 16px;">${icons[analysis.status]}</span>
+                    <span style="color: ${colors[analysis.status]}; font-weight: 600; text-transform: uppercase; font-size: 11px;">
+                        ${analysis.status.replace('_', ' ')}
+                    </span>
+                    <span style="color: var(--text-dim); margin-left: auto;">
+                        Avg effort: ${analysis.avgEffort}/10
+                    </span>
+                </div>
+                <div style="color: var(--text-muted);">
+                    ${analysis.message}
+                </div>
+            </div>
+        `;
+    },
+    
     /**
      * Render injury dashboard for profile/stats view
      */

@@ -185,11 +185,20 @@ const CardioLogger = {
      */
     render() {
         const config = this.ACTIVITY_TYPES[this.currentType];
-        const rx = this.prescription;
+        
+        // Get adjusted prescription based on effort + injury data
+        let rx = this.prescription;
+        if (typeof InjuryIntelligence !== 'undefined' && !rx.isRest) {
+            rx = InjuryIntelligence.getAdjustedPrescription(rx);
+        }
         const isRest = rx.isRest;
         
         // Check for active injury warning
         const warning = typeof InjuryIntelligence !== 'undefined' ? InjuryIntelligence.getActiveWarning() : null;
+        
+        // Get effort trend insight
+        const effortInsight = typeof InjuryIntelligence !== 'undefined' ? 
+            InjuryIntelligence.renderEffortInsight() : '';
         
         return `
             <div class="modal-sheet cardio-logger" onclick="event.stopPropagation()">
@@ -202,10 +211,12 @@ const CardioLogger = {
                     </div>
                 ` : ''}
                 
+                ${effortInsight}
+                
                 <!-- Header -->
                 <div class="cardio-header">
                     <span class="cardio-title">${isRest ? 'LOG RUN' : rx.type.toUpperCase() + ' RUN'}</span>
-                    <span class="cardio-rx">${isRest ? 'Rest day' : rx.distance + ' ' + config.unit}</span>
+                    <span class="cardio-rx">${isRest ? 'Rest day' : rx.distance + ' ' + config.unit}${rx.wasModified ? ' (adjusted)' : ''}</span>
                 </div>
                 
                 <!-- Workout Type - inline -->
@@ -214,7 +225,7 @@ const CardioLogger = {
                         <button class="wt-btn ${type === rx.type ? 'active' : ''}" 
                                 data-type="${type}"
                                 onclick="CardioLogger.selectWorkoutType('${type}')">
-                            ${type.charAt(0).toUpperCase() + type.slice(1, 4)}
+                            ${type.charAt(0).toUpperCase() + type.slice(1)}
                         </button>
                     `).join('')}
                 </div>
@@ -236,20 +247,21 @@ const CardioLogger = {
                 </div>
                 <div class="pace-line" id="pace-display">${rx.pace ? 'Target pace: ' + rx.pace : ''}</div>
                 
-                <!-- Effort Scale -->
+                <!-- Effort Slider -->
                 <div class="effort-section">
-                    <label>EFFORT</label>
-                    <div class="effort-row">
-                        ${[1,2,3,4,5,6,7,8,9,10].map(n => `
-                            <button class="eff-btn ${n === 5 ? 'default' : ''}" 
-                                    data-effort="${n}"
-                                    onclick="CardioLogger.selectEffort(${n})">${n}</button>
-                        `).join('')}
+                    <div class="effort-header">
+                        <label>EFFORT</label>
+                        <span class="effort-value" id="effort-display">5</span>
                     </div>
-                    <div class="effort-hints">
-                        <span>Easy</span><span>Moderate</span><span>Hard</span><span>Max</span>
+                    <input type="range" 
+                           id="cardio-effort" 
+                           class="effort-slider"
+                           min="1" max="10" value="5"
+                           oninput="CardioLogger.updateEffortDisplay(this.value)">
+                    <div class="effort-labels">
+                        <span>Easy</span>
+                        <span>Hard</span>
                     </div>
-                    <input type="hidden" id="cardio-effort" value="5">
                 </div>
                 
                 <!-- Smart Pain Drill-Down -->
@@ -341,14 +353,13 @@ const CardioLogger = {
     },
 
     /**
-     * Select effort level
+     * Update effort display from slider
      */
-    selectEffort(level) {
-        document.querySelectorAll('.eff-btn').forEach(btn => {
-            btn.classList.toggle('active', parseInt(btn.dataset.effort) === level);
-            btn.classList.remove('default');
-        });
-        document.getElementById('cardio-effort').value = level;
+    updateEffortDisplay(value) {
+        const display = document.getElementById('effort-display');
+        if (display) {
+            display.textContent = value;
+        }
     },
 
     // Pain drill-down state
@@ -674,19 +685,24 @@ const CardioLogger = {
      * Save the cardio entry
      */
     save() {
-        const config = this.ACTIVITY_TYPES[this.currentType];
-        const distance = parseFloat(document.getElementById('cardio-distance').value);
-        const time = document.getElementById('cardio-time').value;
-        const effort = parseInt(document.getElementById('cardio-effort').value) || 5;
-        
-        // Get selected workout type
-        const activeBtn = document.querySelector('.wt-btn.active');
-        const workoutType = activeBtn?.dataset.type || this.prescription.type || 'easy';
-        
-        if (!distance || distance <= 0) {
-            this.showError('Enter a distance');
-            return;
-        }
+        try {
+            const config = this.ACTIVITY_TYPES[this.currentType];
+            const distanceInput = document.getElementById('cardio-distance');
+            const timeInput = document.getElementById('cardio-time');
+            const effortInput = document.getElementById('cardio-effort');
+            
+            const distance = parseFloat(distanceInput?.value) || 0;
+            const time = timeInput?.value || '';
+            const effort = parseInt(effortInput?.value) || 5;
+            
+            // Get selected workout type
+            const activeBtn = document.querySelector('.wt-btn.active');
+            const workoutType = activeBtn?.dataset?.type || this.prescription?.type || 'easy';
+            
+            if (!distance || distance <= 0) {
+                alert('Enter a distance');
+                return;
+            }
         
         // Build entry
         const entry = {
@@ -708,12 +724,7 @@ const CardioLogger = {
         // Save to state
         this.logCardio(entry);
         
-        // Log pain data to InjuryIntelligence for pattern tracking
-        if (this.loggedPains.length > 0 && typeof InjuryIntelligence !== 'undefined') {
-            this.loggedPains.forEach(pain => {
-                InjuryIntelligence.logPain(this.currentType, workoutType, [pain.region + '_' + pain.subregion]);
-            });
-        }
+        // Pain logging is handled by the entry.pain array - no separate call needed
         
         // Award XP
         const baseXP = Math.round(distance * 10);
@@ -727,6 +738,10 @@ const CardioLogger = {
         // Trigger injury analysis if pain was logged
         if (this.painPoints.size > 0 && typeof InjuryIntelligence !== 'undefined') {
             InjuryIntelligence.onPainLogged(Array.from(this.painPoints), entry);
+        }
+        } catch (err) {
+            console.error('CardioLogger.save error:', err);
+            alert('Error saving run: ' + err.message);
         }
     },
 

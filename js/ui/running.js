@@ -18,7 +18,34 @@ const RunningView = {
         const trackStatus = this.getTrackStatus(running);
         const tomorrow = this.getTomorrowPreview(running);
         
+        // Check if run is logged today (even on rest days)
+        const todayData = State.getDayData();
+        const loggedDistance = todayData?.runDistance || 0;
+        
         if (!todaysRun || todaysRun.type === 'rest') {
+            // Show logged run on rest day if user ran anyway
+            if (loggedDistance > 0) {
+                return `
+                    <section class="section">
+                        <div class="section-header">
+                            <span class="section-title">TODAY'S RUN</span>
+                            <span class="section-badge run-complete">LOGGED</span>
+                        </div>
+                        <div class="run-card completed">
+                            ${this.renderTrackIndicator(trackStatus)}
+                            <div class="run-logged-display">
+                                <span class="run-distance-big">${loggedDistance.toFixed(2)}</span>
+                                <span class="run-unit">miles</span>
+                            </div>
+                            <div class="rest-message">Nice! You ran on a rest day.</div>
+                            <button class="log-run-btn secondary" onclick="CardioLogger.open('running')">
+                                LOG ANOTHER
+                            </button>
+                        </div>
+                    </section>
+                `;
+            }
+            
             return `
                 <section class="section">
                     <div class="section-header">
@@ -51,10 +78,6 @@ const RunningView = {
         // Get injury-adjusted distance
         const runInfo = this.getRunInfo(todaysRun, running);
         const injuryProtocol = this.getInjuryProtocol(running.injuries);
-        
-        // Check if run is logged today
-        const todayData = State.getDayData();
-        const loggedDistance = todayData?.runDistance || 0;
         const prescribedDistance = runInfo.distance;
         
         // Determine completion status

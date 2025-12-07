@@ -277,9 +277,9 @@ const RecoveryLogger = {
         }
 
         if (btn) {
-            btn.textContent = this.loggedSets.length > 0 
-                ? `SAVE (${this.loggedSets.length} SETS)` 
-                : 'SKIP';
+            const hasData = this.loggedSets.length > 0;
+            btn.textContent = hasData ? `SAVE (${this.loggedSets.length} SETS)` : 'SKIP';
+            btn.classList.toggle('has-data', hasData);
         }
     },
 

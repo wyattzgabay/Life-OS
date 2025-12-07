@@ -93,13 +93,23 @@ const DailyView = {
      * Render recovery section with context-aware exercises
      */
     renderRecoverySection(timing = 'post') {
-        if (typeof InjuryDatabase === 'undefined' || typeof InjuryIntelligence === 'undefined') {
+        console.log('renderRecoverySection called, timing:', timing);
+        
+        if (typeof InjuryDatabase === 'undefined') {
+            console.log('InjuryDatabase not defined');
+            return '';
+        }
+        if (typeof InjuryIntelligence === 'undefined') {
+            console.log('InjuryIntelligence not defined');
             return '';
         }
         
         // Get active injury from InjuryIntelligence
         const adjustments = InjuryIntelligence.getTrainingAdjustments();
+        console.log('InjuryIntelligence adjustments:', adjustments);
+        
         if (!adjustments || !adjustments.injuries || adjustments.injuries.length === 0) {
+            console.log('No injuries detected');
             return '';
         }
         

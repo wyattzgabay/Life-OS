@@ -751,11 +751,10 @@ Response format (JSON only):
             description: document.getElementById('food-description')?.value || ''
         };
         
-        // Get existing meals for today
-        const todayKey = State.getTodayKey();
-        let meals = JSON.parse(localStorage.getItem(`meals_${todayKey}`) || '[]');
-        meals.push(meal);
-        localStorage.setItem(`meals_${todayKey}`, JSON.stringify(meals));
+        // Get existing meals for today - use FoodView for proper State persistence
+        if (typeof FoodView !== 'undefined') {
+            FoodView.addMeal(meal);
+        }
         
         // Also save to historical meal data for analysis
         this.saveToMealHistory(meal);
@@ -919,8 +918,7 @@ Response format (JSON only):
         }
         
         // Award first log of the day bonus (only if this is the first food entry)
-        const todayKey = State.getTodayKey();
-        const meals = JSON.parse(localStorage.getItem(`meals_${todayKey}`) || '[]');
+        const meals = typeof FoodView !== 'undefined' ? FoodView.getTodayMeals() : [];
         if (meals.length === 1) { // Just added the first meal
             totalXP += 5;
         }

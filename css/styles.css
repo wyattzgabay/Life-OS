@@ -9,28 +9,65 @@
    ========================================== */
 
 :root {
-    /* MIDNIGHT GOLD - Life OS Brand Identity */
-    --bg: #0a0a0a;
-    --surface: #111111;
-    --surface-2: #1a1a1a;
-    --surface-3: #242424;
-    --border: #2a2a2a;
+    /* ═══════════════════════════════════════════
+       MIDNIGHT GOLD - Life OS Brand Identity
+       Premium dark theme with gold accents
+       ═══════════════════════════════════════════ */
+    
+    /* Background Layers */
+    --bg: #050505;
+    --surface: #0c0c0c;
+    --surface-2: #141414;
+    --surface-3: #1c1c1c;
+    --surface-elevated: #1a1a1a;
+    --border: #262626;
+    --border-light: #333333;
     
     /* Typography */
-    --text: #f5f5f5;
-    --text-2: #e0e0e0;
-    --text-muted: #808080;
-    --text-dim: #4a4a4a;
+    --text: #fafafa;
+    --text-2: #e5e5e5;
+    --text-muted: #737373;
+    --text-dim: #525252;
     
-    /* Accent - Midnight Gold */
+    /* Primary - Midnight Gold */
     --accent: #D4AF37;
-    --accent-light: #E5C158;
+    --accent-glow: rgba(212, 175, 55, 0.15);
+    --accent-light: #E8C547;
     --accent-dark: #B8960C;
+    --accent-muted: rgba(212, 175, 55, 0.6);
     
     /* Status Colors */
-    --success: #22c55e;
-    --warning: #eab308;
+    --success: #10b981;
+    --success-muted: rgba(16, 185, 129, 0.15);
+    --warning: #f59e0b;
+    --warning-muted: rgba(245, 158, 11, 0.15);
     --error: #ef4444;
+    --error-muted: rgba(239, 68, 68, 0.15);
+    --info: #3b82f6;
+    
+    /* Button States */
+    --btn-primary-bg: var(--accent);
+    --btn-primary-text: #0a0a0a;
+    --btn-secondary-bg: var(--surface-2);
+    --btn-secondary-text: var(--text);
+    --btn-ghost-bg: transparent;
+    --btn-ghost-text: var(--text-muted);
+    
+    /* Shadows */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.6);
+    --shadow-gold: 0 4px 20px rgba(212, 175, 55, 0.2);
+    
+    /* Gradients */
+    --gradient-gold: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
+    --gradient-surface: linear-gradient(180deg, var(--surface-2) 0%, var(--surface) 100%);
+    
+    /* Radius */
+    --radius-sm: 6px;
+    --radius-md: 10px;
+    --radius-lg: 16px;
+    --radius-xl: 24px;
     
     /* Safe Areas */
     --safe-top: env(safe-area-inset-top);
@@ -115,7 +152,14 @@ input, textarea, select {
 
 html, body {
     height: 100%;
+    /* Disable elastic scroll on body - keep tab bar static */
     overscroll-behavior: none;
+}
+
+/* Enable elastic scroll only on main content area */
+.view {
+    overscroll-behavior: auto;
+    -webkit-overflow-scrolling: touch;
 }
 
 body {
@@ -135,6 +179,126 @@ body {
 
 .hidden { display: none !important; }
 .mono { font-family: 'JetBrains Mono', monospace; }
+
+/* ==========================================
+   TACTILE BUTTON SYSTEM
+   Apple-inspired with depth and feedback
+   ========================================== */
+
+/* Base Button Reset */
+button, .btn {
+    font-family: inherit;
+    cursor: pointer;
+    border: none;
+    outline: none;
+    transition: all 0.15s ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+/* Primary Button - Gold, ONLY for main save/submit actions */
+.btn-primary {
+    background: var(--gradient-gold);
+    color: var(--bg);
+    font-weight: 600;
+    padding: 14px 24px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 13px;
+}
+
+.btn-primary:active {
+    transform: scale(0.98);
+    filter: brightness(0.95);
+}
+
+/* Secondary Button - Surface color, subtle */
+.btn-secondary {
+    background: var(--surface-2);
+    color: var(--text);
+    font-weight: 500;
+    padding: 12px 20px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--border);
+    box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255,255,255,0.03);
+}
+
+.btn-secondary:hover {
+    background: var(--surface-3);
+    border-color: var(--border-light);
+}
+
+.btn-secondary:active {
+    transform: scale(0.98);
+    background: var(--surface);
+}
+
+/* Ghost Button - Minimal, text-like */
+.btn-ghost {
+    background: transparent;
+    color: var(--text-muted);
+    padding: 10px 16px;
+    border-radius: var(--radius-sm);
+}
+
+.btn-ghost:hover {
+    background: var(--surface-2);
+    color: var(--text);
+}
+
+.btn-ghost:active {
+    background: var(--surface);
+}
+
+/* Chip/Toggle Buttons - Clean minimal style */
+.wt-btn, .pain-chip, .region-btn, .subregion-btn, .timing-btn {
+    background: transparent;
+    color: var(--text-muted);
+    padding: 10px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    border: 1px solid var(--border);
+    transition: all 0.15s ease;
+}
+
+.wt-btn:active, .pain-chip:active {
+    transform: scale(0.97);
+}
+
+/* Active state - subtle white fill */
+.wt-btn.active,
+.pain-chip.selected,
+.region-btn.selected,
+.subregion-btn.selected,
+.timing-btn.selected {
+    background: var(--text);
+    color: var(--bg);
+    border-color: var(--text);
+    font-weight: 600;
+}
+
+/* Effort buttons removed - using slider instead */
+.eff-btn {
+    display: none;
+}
+
+/* Status Buttons */
+.btn-success {
+    background: var(--success);
+    color: white;
+}
+
+.btn-warning {
+    background: var(--warning);
+    color: var(--bg);
+}
+
+.btn-danger {
+    background: var(--error);
+    color: white;
+}
 
 /* ==========================================
    SCREENS & VIEWS
@@ -423,15 +587,16 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 12px;
 }
 
 .section-title {
     font-family: 'JetBrains Mono', monospace;
     font-size: 10px;
     font-weight: 600;
-    color: var(--text-muted);
-    letter-spacing: 0.15em;
+    color: var(--text-dim);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
 }
 
 .section-badge {
@@ -1415,7 +1580,7 @@ body {
     border-radius: 16px 16px 0 0;
     width: 100%;
     padding: 20px;
-    padding-top: 28px; /* Extra space for drag handle */
+    padding-top: 12px;
     padding-bottom: calc(20px + var(--safe-bottom));
     animation: slideUp 0.2s ease-out;
     max-height: 85vh;
@@ -1426,31 +1591,18 @@ body {
     position: relative;
 }
 
-/* Drag handle for pull-to-dismiss (Apple-style) */
-.modal-sheet::before {
-    content: '';
-    position: absolute;
-    top: 10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 36px;
-    height: 5px;
-    background: var(--text-muted);
-    border-radius: 3px;
-    opacity: 0.5;
-}
-
 @keyframes slideUp {
     from { transform: translateY(100%); }
     to { transform: translateY(0); }
 }
 
 .modal-handle {
-    width: 36px;
-    height: 4px;
-    background: var(--border);
-    border-radius: 2px;
-    margin: 0 auto 16px;
+    width: 40px;
+    height: 5px;
+    background: var(--text-dim);
+    border-radius: 3px;
+    margin: 8px auto 16px;
+    opacity: 0.6;
 }
 
 .modal-title {
@@ -3337,6 +3489,37 @@ body {
 .rest-message {
     color: var(--text-muted);
     margin-bottom: 16px;
+}
+
+/* Logged run display (rest day override) */
+.run-logged-display {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    gap: 8px;
+    margin: 16px 0;
+}
+
+.run-distance-big {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 48px;
+    font-weight: 700;
+    color: var(--accent);
+    line-height: 1;
+}
+
+.run-unit {
+    font-size: 16px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.run-card.completed {
+    background: var(--surface-2);
+    border: 1px solid var(--success);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    text-align: center;
 }
 
 /* Run Logger Modal */
@@ -7082,10 +7265,11 @@ body {
 
 .recovery-title {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
+    font-size: 10px;
     letter-spacing: 0.15em;
-    color: var(--accent);
+    color: var(--text-dim);
     margin-bottom: 8px;
+    text-transform: uppercase;
 }
 
 .recovery-exercise {
@@ -7251,30 +7435,38 @@ body {
     padding-top: 10px;
 }
 
+/* Default state - subtle gray for SKIP */
 .recovery-complete-btn {
     width: 100%;
     padding: 16px;
-    background: var(--accent);
-    color: var(--bg);
-    border: none;
+    background: var(--surface-3);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
     border-radius: 12px;
     font-family: 'JetBrains Mono', monospace;
     font-size: 13px;
     font-weight: 600;
     letter-spacing: 0.1em;
     cursor: pointer;
-    transition: background 0.2s ease;
+    transition: all 0.15s ease;
+}
+
+/* When there's data to save - white button */
+.recovery-complete-btn.has-data {
+    background: var(--text);
+    color: var(--bg);
+    border-color: var(--text);
 }
 
 .recovery-complete-btn:active {
-    background: var(--accent-dark);
+    transform: scale(0.98);
 }
 
 /* Recovery modal - duration */
 .recovery-duration {
     font-family: 'JetBrains Mono', monospace;
     font-size: 12px;
-    color: var(--accent);
+    color: var(--text-muted);
     margin-top: 8px;
 }
 
@@ -7324,8 +7516,8 @@ body {
 
 /* Recovery modal - posture benefit */
 .posture-benefit {
-    background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, rgba(212, 175, 55, 0.05) 100%);
-    border: 1px solid var(--accent);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
     border-radius: 10px;
     padding: 14px 16px;
     margin-bottom: 16px;
@@ -7386,9 +7578,9 @@ body {
 }
 
 .recovery-add-btn {
-    background: var(--accent);
-    color: var(--bg);
-    border: none;
+    background: var(--surface-3);
+    color: var(--text);
+    border: 1px solid var(--border);
     border-radius: 8px;
     padding: 12px 16px;
     font-size: 14px;
@@ -7397,7 +7589,8 @@ body {
 }
 
 .recovery-add-btn:active {
-    background: var(--accent-dark);
+    background: var(--surface-2);
+    transform: scale(0.98);
 }
 
 /* Logged sets display */
@@ -7459,44 +7652,49 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
 }
 
 .cardio-title {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 14px;
-    font-weight: 700;
+    font-size: 13px;
+    font-weight: 600;
     color: var(--text);
+    letter-spacing: 0.05em;
 }
 
 .cardio-rx {
     font-size: 12px;
-    color: var(--accent);
+    color: var(--text-muted);
 }
 
 /* Workout Type Row */
 .workout-type-row {
     display: flex;
     gap: 6px;
-    margin-bottom: 12px;
+    margin-bottom: 16px;
 }
 
-.wt-btn {
+/* Workout type buttons in cardio logger */
+.cardio-logger .wt-btn {
     flex: 1;
-    padding: 8px 4px;
-    background: var(--surface-2);
+    padding: 12px 8px;
+    background: transparent;
     border: 1px solid var(--border);
-    border-radius: 6px;
+    border-radius: 8px;
     color: var(--text-muted);
-    font-size: 10px;
-    font-weight: 600;
+    font-size: 12px;
+    font-weight: 500;
     cursor: pointer;
+    transition: all 0.15s ease;
 }
 
-.wt-btn.active {
-    background: var(--accent);
+.cardio-logger .wt-btn.active {
+    background: var(--text);
     color: var(--bg);
-    border-color: var(--accent);
+    border-color: var(--text);
+    font-weight: 600;
 }
 
 /* Inputs Row */
@@ -7538,7 +7736,7 @@ body {
 
 .cardio-input-group input:focus {
     outline: none;
-    border-color: var(--accent);
+    border-color: var(--text-muted);
 }
 
 .pace-line {
@@ -7664,20 +7862,87 @@ body {
 }
 
 /* Save Button */
+/* Effort Slider - Apple style */
+.effort-section {
+    margin: 16px 0;
+}
+
+.effort-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.effort-header label {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-dim);
+    letter-spacing: 0.1em;
+}
+
+.effort-value {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.effort-slider {
+    width: 100%;
+    height: 6px;
+    -webkit-appearance: none;
+    appearance: none;
+    background: var(--surface-3);
+    border-radius: 3px;
+    outline: none;
+}
+
+.effort-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 24px;
+    height: 24px;
+    background: var(--text);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.effort-slider::-moz-range-thumb {
+    width: 24px;
+    height: 24px;
+    background: var(--text);
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+}
+
+.effort-labels {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 8px;
+    font-size: 11px;
+    color: var(--text-dim);
+}
+
 .cardio-save-btn {
     width: 100%;
-    padding: 14px;
-    background: var(--accent);
+    padding: 16px;
+    background: var(--text);
     color: var(--bg);
     border: none;
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     font-size: 14px;
-    font-weight: 700;
+    font-weight: 600;
     cursor: pointer;
+    transition: all 0.15s ease;
+    margin-top: 16px;
 }
 
 .cardio-save-btn:active {
-    background: var(--accent-dark);
+    transform: scale(0.98);
+    opacity: 0.9;
 }
 
 /* ==========================================
@@ -7686,34 +7951,29 @@ body {
 
 /* Injury Alert in CardioLogger */
 .injury-alert {
-    padding: 10px 12px;
+    padding: 12px;
     border-radius: 8px;
-    margin-bottom: 12px;
-    font-size: 11px;
+    margin-bottom: 16px;
+    font-size: 12px;
     line-height: 1.4;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
 }
 
-.injury-alert.mild {
-    background: rgba(234, 179, 8, 0.15);
-    border: 1px solid var(--warning);
-    color: var(--warning);
-}
-
+.injury-alert.mild,
 .injury-alert.moderate {
-    background: rgba(249, 115, 22, 0.15);
-    border: 1px solid #f97316;
-    color: #f97316;
+    /* Keep subtle for mild/moderate */
 }
 
 .injury-alert.severe {
-    background: rgba(239, 68, 68, 0.15);
-    border: 1px solid var(--error);
-    color: var(--error);
+    border-color: var(--error);
 }
 
 .injury-alert strong {
     display: block;
     margin-bottom: 4px;
+    color: var(--text);
 }
 
 /* Injury Dashboard */
@@ -7818,140 +8078,127 @@ body {
     color: var(--text);
 }
 
-/* Pain Drill-Down Styles */
+/* Pain Drill-Down Styles - Clean and minimal */
 .pain-step {
-    margin-bottom: 12px;
+    margin-bottom: 16px;
 }
 
 .pain-label {
-    font-size: 11px;
-    color: var(--text-muted);
+    font-size: 10px;
+    color: var(--text-dim);
     font-weight: 600;
-    margin-bottom: 8px;
+    margin-bottom: 10px;
     display: flex;
     justify-content: space-between;
     align-items: center;
+    letter-spacing: 0.05em;
 }
 
 .back-btn {
     font-size: 11px;
-    color: var(--accent);
+    color: var(--text-muted);
     cursor: pointer;
 }
 
 .pain-chips {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: 8px;
 }
 
-.pain-chip {
-    padding: 6px 10px;
-    font-size: 12px;
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    color: var(--text-muted);
-    cursor: pointer;
-    transition: all 0.15s;
-}
-
-.pain-chip.selected {
-    background: var(--accent);
-    color: var(--bg);
-    border-color: var(--accent);
-}
-
-.pain-chip:active {
-    transform: scale(0.95);
-}
-
-/* Likely Injury Display */
+/* Likely Injury Display - Subtle, not alarming */
 #likely-injury {
     background: var(--surface-2);
-    border: 1px solid var(--warning);
-    border-radius: 10px;
-    padding: 12px;
-    margin-top: 12px;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 16px;
 }
 
 .injury-match {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 8px;
+    margin-bottom: 12px;
 }
 
 .injury-name {
-    font-weight: 700;
+    font-weight: 600;
     font-size: 15px;
-    color: var(--warning);
+    color: var(--text);
 }
 
 .injury-confidence {
     font-size: 11px;
-    color: var(--text-muted);
+    color: var(--text-dim);
 }
 
 .injury-advice {
-    font-size: 12px;
-    color: var(--text-2);
-    margin-bottom: 10px;
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
 }
 
 .injury-symptoms ul {
-    margin: 4px 0 8px 16px;
+    margin: 8px 0 12px 16px;
     padding: 0;
 }
 
 .injury-symptoms li {
-    margin: 2px 0;
-    font-size: 11px;
+    margin: 4px 0;
+    font-size: 12px;
     color: var(--text-muted);
 }
 
 .injury-note {
-    font-size: 11px;
+    font-size: 12px;
     color: var(--error);
-    font-weight: 600;
+    font-weight: 500;
+    margin-bottom: 12px;
 }
 
 .confirm-injury-btn {
     width: 100%;
-    padding: 10px;
-    background: var(--warning);
-    color: var(--bg);
-    border: none;
+    padding: 12px;
+    background: var(--surface-3);
+    color: var(--text);
+    border: 1px solid var(--border);
     border-radius: 8px;
-    font-weight: 600;
+    font-weight: 500;
     font-size: 13px;
     cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.confirm-injury-btn:active {
+    background: var(--text);
+    color: var(--bg);
 }
 
 /* Selected Pains Display */
 .logged-pains {
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
-    margin-top: 10px;
+    gap: 8px;
+    margin-top: 12px;
 }
 
 .logged-pain-item {
     display: flex;
     align-items: center;
     gap: 6px;
-    background: rgba(234, 179, 8, 0.2);
-    border: 1px solid var(--warning);
-    padding: 4px 8px;
-    border-radius: 14px;
-    font-size: 11px;
-    color: var(--warning);
+    background: var(--surface-3);
+    border: 1px solid var(--border);
+    padding: 6px 10px;
+    border-radius: 6px;
+    font-size: 12px;
+    color: var(--text);
 }
 
 .remove-pain {
     background: none;
     border: none;
-    color: var(--warning);
+    color: var(--text-muted);
     font-size: 14px;
     cursor: pointer;
     padding: 0 2px;
@@ -7959,8 +8206,8 @@ body {
 }
 
 .pain-count {
-    color: var(--warning);
-    font-weight: 600;
+    color: var(--text);
+    font-weight: 500;
 }
 
 /* Daily Recovery Exercises */
