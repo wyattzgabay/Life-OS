@@ -7434,19 +7434,21 @@ body {
    ========================================== */
 
 .cardio-logger {
-    max-height: 90vh;
+    max-height: 85vh;
+    overflow-y: auto;
+    padding-bottom: calc(20px + var(--safe-bottom));
 }
 
 .cardio-header {
     text-align: center;
-    padding-bottom: 16px;
+    padding-bottom: 12px;
     border-bottom: 1px solid var(--border);
-    margin-bottom: 16px;
+    margin-bottom: 12px;
 }
 
 .cardio-title {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 18px;
+    font-size: 16px;
     font-weight: 700;
     letter-spacing: 0.05em;
     color: var(--text);
@@ -7459,7 +7461,7 @@ body {
 }
 
 .cardio-section {
-    margin-bottom: 20px;
+    margin-bottom: 14px;
 }
 
 .cardio-section .section-label {
@@ -7491,15 +7493,15 @@ body {
 
 .workout-type-btn {
     flex: 1;
-    min-width: 70px;
-    padding: 10px 12px;
+    min-width: 60px;
+    padding: 8px 6px;
     background: var(--surface-2);
     border: 1px solid var(--border);
     border-radius: 8px;
     color: var(--text-muted);
-    font-size: 11px;
+    font-size: 10px;
     font-weight: 600;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.02em;
     cursor: pointer;
     position: relative;
     transition: all 0.15s;
@@ -7611,12 +7613,12 @@ body {
 
 .effort-num {
     flex: 1;
-    padding: 12px 0;
+    padding: 10px 0;
     background: var(--surface-2);
     border: 1px solid var(--border);
     border-radius: 6px;
     color: var(--text-muted);
-    font-size: 14px;
+    font-size: 13px;
     font-weight: 600;
     cursor: pointer;
     transition: all 0.15s;
@@ -7645,7 +7647,7 @@ body {
 .pain-section {
     background: var(--surface-2);
     border-radius: 10px;
-    padding: 14px;
+    padding: 12px;
     border: 1px solid var(--border);
 }
 
@@ -7722,17 +7724,17 @@ body {
 
 /* Save Button */
 .cardio-actions {
-    margin-top: 20px;
+    margin-top: 14px;
 }
 
 .cardio-save-btn {
     width: 100%;
-    padding: 16px;
+    padding: 14px;
     background: var(--accent);
     color: var(--bg);
     border: none;
     border-radius: 10px;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 700;
     letter-spacing: 0.05em;
     cursor: pointer;
