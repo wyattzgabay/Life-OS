@@ -106,14 +106,11 @@
     -webkit-tap-highlight-color: transparent;
     -webkit-touch-callout: none;
     color-scheme: dark;
-    /* Eliminate 300ms tap delay on mobile */
-    touch-action: manipulation;
 }
 
-/* Force dark keyboard on iOS + fast touch response */
-input, textarea, select, button {
+/* Force dark keyboard on iOS */
+input, textarea, select {
     color-scheme: dark;
-    touch-action: manipulation;
 }
 
 html, body {

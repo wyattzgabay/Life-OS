@@ -4,18 +4,18 @@
  */
 
 const Workout = {
+    // Pre-compiled recovery check for performance
+    _recoveryPattern: /foam roll|stretch|mobility|pigeon|90\/90|hip flexor|dead hang|wall slide|thoracic|lacrosse|massage|recovery/i,
+    _recoveryCache: {},
+    
     /**
-     * Check if an exercise is a recovery/mobility exercise
-     * These get intelligent logging based on training state
+     * Check if an exercise is a recovery/mobility exercise (cached)
      */
     isRecoveryExercise(exerciseName) {
-        const recoveryKeywords = [
-            'foam roll', 'stretch', 'mobility', 'pigeon', '90/90',
-            'hip flexor', 'dead hang', 'wall slide', 'thoracic',
-            'lacrosse ball', 'massage', 'recovery'
-        ];
-        const name = exerciseName.toLowerCase();
-        return recoveryKeywords.some(keyword => name.includes(keyword));
+        if (this._recoveryCache[exerciseName] === undefined) {
+            this._recoveryCache[exerciseName] = this._recoveryPattern.test(exerciseName);
+        }
+        return this._recoveryCache[exerciseName];
     },
 
     /**
