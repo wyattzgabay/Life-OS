@@ -7345,6 +7345,14 @@ body {
     font-family: 'JetBrains Mono', monospace;
     color: var(--text);
     text-align: center;
+    -moz-appearance: textfield;
+}
+
+/* Hide number input spinners */
+.recovery-input::-webkit-outer-spin-button,
+.recovery-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
 }
 
 .recovery-input:focus {

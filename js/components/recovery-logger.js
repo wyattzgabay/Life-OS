@@ -242,15 +242,7 @@ const RecoveryLogger = {
         if (setData.duration > 0 || setData.reps > 0) {
             this.loggedSets.push(setData);
             this.updateSetDisplay();
-            
-            // Clear input and refocus for quick entry
-            if (durationInput) {
-                durationInput.value = '';
-                durationInput.focus();
-            } else if (repsInput) {
-                repsInput.value = '';
-                repsInput.focus();
-            }
+            // Keep value in input for quick repeated entry
         }
     },
 

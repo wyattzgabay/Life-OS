@@ -25,6 +25,16 @@ const Workout = {
         const workout = Utils.getTodaysWorkout();
         const todayData = State.getDayData();
         const exercisesDone = Object.values(todayData?.exercises || {}).filter(Boolean).length;
+        
+        // Cache today's recovery entries for efficient lookup
+        const todayKey = State.getTodayKey();
+        const recoveryLog = State._data?.recoveryLog || [];
+        this._todayRecoveryCache = {};
+        recoveryLog.forEach(entry => {
+            if (entry.date === todayKey) {
+                this._todayRecoveryCache[entry.exercise] = entry;
+            }
+        });
 
         // Build adjustment banner if needed
         let adjustmentBanner = '';
@@ -102,12 +112,9 @@ const Workout = {
             targetSets = exercise.targetSets;
         }
         
-        // Check recovery exercise status
+        // Check recovery exercise status (use cache for performance)
         const isRecovery = this.isRecoveryExercise(exercise.name);
-        const recoveryLog = State._data?.recoveryLog || [];
-        const todayRecoveryEntry = recoveryLog.find(e => 
-            e.date === todayKey && e.exercise === exercise.name
-        );
+        const todayRecoveryEntry = this._todayRecoveryCache?.[exercise.name];
         const recoverySetCount = todayRecoveryEntry?.setCount || todayRecoveryEntry?.areaCount || 0;
         
         // Parse target for recovery exercises
