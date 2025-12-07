@@ -3482,6 +3482,36 @@ button, .btn {
     color: var(--text);
 }
 
+/* Run actions row */
+.run-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+.run-actions .log-run-btn {
+    flex: 1;
+    margin-top: 0;
+}
+
+.delete-run-btn {
+    padding: 14px 16px;
+    background: transparent;
+    color: var(--error);
+    border: 1px solid var(--error);
+    border-radius: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+}
+
+.delete-run-btn:active {
+    background: var(--error);
+    color: var(--bg);
+}
+
 .rest-day-card {
     text-align: center;
     padding: 20px;

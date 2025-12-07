@@ -138,9 +138,14 @@ const RunningView = {
                         </div>
                     ` : ''}
                     
-                    <button class="log-run-btn ${runStatus !== 'pending' ? 'secondary' : ''}" onclick="CardioLogger.open('running')">
-                        ${runStatus === 'pending' ? 'LOG RUN' : 'UPDATE RUN'}
-                    </button>
+                    <div class="run-actions">
+                        <button class="log-run-btn ${runStatus !== 'pending' ? 'secondary' : ''}" onclick="CardioLogger.open('running')">
+                            ${runStatus === 'pending' ? 'LOG RUN' : 'UPDATE RUN'}
+                        </button>
+                        ${runStatus !== 'pending' ? `
+                            <button class="delete-run-btn" onclick="RunningView.deleteToday()">DELETE</button>
+                        ` : ''}
+                    </div>
                     
                     ${this.renderTomorrowPreview(tomorrow)}
                 </div>
@@ -1069,6 +1074,33 @@ const RunningView = {
         State.setRunningInjuries(injuries);
 
         document.getElementById('goals-modal').classList.remove('active');
+        App.render();
+    },
+
+    /**
+     * Delete today's logged run
+     */
+    deleteToday() {
+        if (!confirm('Delete today\'s run?')) return;
+        
+        const todayKey = State.getTodayKey();
+        
+        // Clear from days
+        if (State._data.days[todayKey]) {
+            State._data.days[todayKey].runDistance = 0;
+        }
+        
+        // Remove from cardioLog
+        State._data.cardioLog = (State._data.cardioLog || []).filter(entry => 
+            entry.date !== todayKey || entry.type !== 'running'
+        );
+        
+        // Remove from runLog
+        State._data.runLog = (State._data.runLog || []).filter(entry => 
+            entry.date !== todayKey
+        );
+        
+        State.save();
         App.render();
     },
 
