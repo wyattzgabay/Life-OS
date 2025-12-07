@@ -1,129 +1,103 @@
 # Life OS
 
-> An adaptive fitness operating system that combines strength training, running programs, and nutrition tracking into one intelligent platform.
+**Your Adaptive Training Operating System**
 
-[![Version](https://img.shields.io/badge/version-0.1.0--alpha-orange)]()
-[![Status](https://img.shields.io/badge/status-alpha-yellow)]()
-[![Platform](https://img.shields.io/badge/platform-PWA-blue)]()
+Life OS is an intelligent fitness platform that prescribes workouts, guides injury adaptation, and builds programming around your goals. It learns from your performance and adjusts in real-time.
 
 ---
 
-## 🎯 What is Life OS?
+## What It Does
 
-Life OS is a Progressive Web App (PWA) that provides:
+Life OS combines strength training, running programs, and nutrition tracking into one unified system:
 
-- **Smart Workout Programming** — Weekly strength training with volume tracking (MEV/MAV/MRV)
-- **Running Programs** — 5K to Marathon training with VDOT-based pacing
-- **AI Nutrition Logging** — Natural language food logging with macro tracking
-- **Gamification** — XP, levels, streaks, and skill trees to keep you motivated
-- **Cloud Sync** — Your data backed up and synced across devices
+**Intelligent Workout Programming**
+- Science-based weekly structure with volume tracking
+- MEV/MAV/MRV thresholds per muscle group (Renaissance Periodization methodology)
+- Double progression model with automatic weight/rep suggestions
+- Exercise alternatives for equipment flexibility
 
-## 📱 Live Demo
+**Running Programs**
+- 5K through Marathon training plans
+- VDOT-based pace calculations (Daniels' Running Formula)
+- Periodized phases: Base, Build, Peak, Taper
+- Injury protocols with pre/post-run routines
 
-**Production:** [https://wyattzgabay.github.io/Life-OS/](https://wyattzgabay.github.io/Life-OS/)
+**Nutrition Intelligence**
+- AI-powered food logging via natural language
+- Protein and leucine threshold tracking
+- Macro breakdown with meal history
 
-**Demo Mode:** [https://wyattzgabay.github.io/Life-OS/?demo](https://wyattzgabay.github.io/Life-OS/?demo)
+**Adaptive Engine**
+- Deload recommendations based on training history
+- Volume adjustments mid-week if approaching MRV
+- Exercise swaps stored per session
+- Running/lifting schedule coordination to prevent interference
 
-## 🚀 Quick Start
+---
 
-### For Users
+## Technical Overview
 
-1. Open the link above in **Safari** (iOS) or **Chrome** (Android/Desktop)
-2. Tap **Share → Add to Home Screen** for the full app experience
-3. Create an account to enable cloud sync
-4. Complete onboarding to set your goals
+| Component | Implementation |
+|-----------|----------------|
+| Frontend | Vanilla JavaScript (ES6+), CSS3 |
+| Storage | localStorage + IndexedDB (triple backup) |
+| Cloud | Firebase Authentication + Firestore |
+| AI | Groq API (Llama model) |
+| Deployment | GitHub Pages (PWA) |
 
-### For Developers
+**Codebase:** ~26,000 lines across 26 files
 
+---
+
+## Installation
+
+**For Users:**
+1. Open in Safari (iOS) or Chrome (Android/Desktop)
+2. Add to Home Screen for native app experience
+3. Create account to enable cloud sync
+
+**For Development:**
 ```bash
-# Clone the repository
 git clone https://github.com/wyattzgabay/Life-OS.git
 cd Life-OS
-
-# No build required - it's vanilla JS!
-# Open index.html in a browser or use a local server:
 python3 -m http.server 8000
-# Then visit http://localhost:8000
+# Visit http://localhost:8000
 ```
-
-## 🏗️ Architecture
-
-```
-life-os-app/
-├── index.html          # Single-page app entry
-├── manifest.json       # PWA manifest
-├── css/
-│   └── styles.css      # All styles (7000+ lines)
-├── js/
-│   ├── app.js          # App initialization & routing
-│   ├── state.js        # Data management & persistence
-│   ├── config.js       # Static configuration
-│   ├── utils.js        # Utility functions
-│   ├── firebase-config.js  # Firebase setup
-│   ├── ai-nutrition.js     # Groq AI integration
-│   ├── components/     # Reusable UI components
-│   └── ui/             # View-specific code
-└── docs/               # Documentation
-```
-
-## ✨ Features
-
-### Core Features (Working)
-| Feature | Description |
-|---------|-------------|
-| 📊 **Volume Tracking** | MEV/MAV/MRV per muscle group with smart adjustments |
-| 📈 **Progression System** | Double progression model (6-12 rep range) |
-| 🏃 **Running Programs** | 5K, 10K, Half, Marathon with VDOT pacing |
-| 🍎 **AI Food Logging** | Natural language → macro breakdown |
-| ⚡ **XP & Levels** | Gamified progress tracking |
-| ☁️ **Cloud Sync** | Firebase-backed data persistence |
-
-### Planned Features (V2)
-- Age-adjusted programming
-- Injury intelligence system
-- Intra-workout RPE adjustments
-- Personal MRV/MEV learning
-
-## 📊 Technical Stack
-
-| Layer | Technology |
-|-------|------------|
-| Frontend | Vanilla JavaScript (ES6+) |
-| Styling | CSS3 with CSS Variables |
-| Storage | localStorage + IndexedDB |
-| Cloud | Firebase (Auth + Firestore) |
-| AI | Groq API (Llama) |
-| Hosting | GitHub Pages |
-
-## 📖 Documentation
-
-| Document | Description |
-|----------|-------------|
-| [STARTUP_PLAN.md](./STARTUP_PLAN.md) | Roadmap from Alpha → Beta |
-| [CURRENT_SYSTEM.md](./CURRENT_SYSTEM.md) | Technical documentation of all features |
-| [PRODUCT_SPEC.md](./PRODUCT_SPEC.md) | V2 feature specifications |
-| [FEATURES.md](./FEATURES.md) | Feature overview |
-
-## 🧪 Development Status
-
-**Current Version:** 0.1.0-alpha
-
-| Phase | Status | Target |
-|-------|--------|--------|
-| Alpha | ✅ Current | Dec 2024 |
-| Beta V1 | 🔄 In Progress | Jan 2025 |
-| Public Beta | ⏳ Planned | Feb 2025 |
-| V1.0 Release | ⏳ Planned | Q2 2025 |
-
-## 🤝 Contributing
-
-This is currently a private project in development. Contributions are not yet open.
-
-## 📄 License
-
-All rights reserved. This project is not open source.
 
 ---
 
-**Built with 💪 by the Life OS team**
+## Version History
 
+| Version | Status | Notes |
+|---------|--------|-------|
+| 0.1.0-alpha | Stable | Current testers on main branch |
+| 0.2.0-beta | In Development | beta-v1 branch |
+
+---
+
+## Documentation
+
+- `STARTUP_PLAN.md` - Engineering roadmap and phase planning
+- `CURRENT_SYSTEM.md` - Technical documentation of all features and values
+- `PRODUCT_SPEC.md` - V2 feature specifications
+- `CHANGELOG.md` - Version history
+
+---
+
+## Core Values
+
+**Prescriptive, Not Passive**
+Life OS tells you what to do. It is not a blank tracker waiting for input.
+
+**Science-Based**
+Every recommendation cites exercise science literature. Volume landmarks from Renaissance Periodization. Running paces from Daniels' VDOT. Progression models from evidence-based practice.
+
+**Adaptive**
+The system responds to your data. Miss volume targets? It adjusts. Approaching MRV? It scales back. Injury flagged? It modifies movements.
+
+**No Fluff**
+No motivational quotes. No social features. No gamification theater. Just intelligent programming that helps you get stronger.
+
+---
+
+Built for serious training.

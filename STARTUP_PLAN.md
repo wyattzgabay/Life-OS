@@ -1,8 +1,8 @@
-# Life OS â€” Startup Engineering Plan
-## From Disorganized Alpha â†’ Organized Beta V1
+# Life OS ” Startup Engineering Plan
+## From Disorganized Alpha † Organized Beta V1
 
 **Created:** December 2025  
-**Status:** Alpha â†’ Beta Transition Planning
+**Status:** Alpha † Beta Transition Planning
 
 ---
 
@@ -84,7 +84,7 @@ A functional fitness tracking PWA with ~26,000 lines of code covering:
 
 ### 2.4 Feature Inventory
 
-**âœ… Implemented & Working:**
+** Implemented & Working:**
 - Daily workout display
 - Exercise logging (sets/reps/weight)
 - Volume tracking (MEV/MAV/MRV)
@@ -102,13 +102,13 @@ A functional fitness tracking PWA with ~26,000 lines of code covering:
 - Profile management
 - Demo mode
 
-**âš ï¸ Partially Working:**
+** Partially Working:**
 - Deload recommendations (logic exists, UI unclear)
 - Running injuries (data exists, limited integration)
 - Skill trees (UI exists, rewards not connected)
 - AI briefings (disabled, not adding value)
 
-**âŒ Not Implemented:**
+** Not Implemented:**
 - Age-adjusted programming
 - Chronic injury system
 - Intra-workout adjustments
@@ -128,16 +128,16 @@ These features MUST work flawlessly for Beta V1:
 
 | # | Feature | Current Status | Work Needed |
 |---|---------|----------------|-------------|
-| 1 | **Workout Display** | âœ… Working | Polish UI |
-| 2 | **Exercise Logging** | âœ… Working | Fix edge cases |
-| 3 | **Progression Suggestions** | âœ… Working | Improve messaging |
-| 4 | **Volume Tracking** | âœ… Working | Add visual indicators |
-| 5 | **Running Program** | âœ… Working | Simplify UI |
-| 6 | **Food Logging (AI)** | âœ… Working | Error handling |
-| 7 | **Daily Score** | âœ… Working | Verify calculations |
-| 8 | **Cloud Sync** | âœ… Working | Add offline queue |
-| 9 | **User Auth** | âœ… Working | Add password reset |
-| 10 | **Data Persistence** | âš ï¸ Fragile | Bulletproof backup |
+| 1 | **Workout Display** |  Working | Polish UI |
+| 2 | **Exercise Logging** |  Working | Fix edge cases |
+| 3 | **Progression Suggestions** |  Working | Improve messaging |
+| 4 | **Volume Tracking** |  Working | Add visual indicators |
+| 5 | **Running Program** |  Working | Simplify UI |
+| 6 | **Food Logging (AI)** |  Working | Error handling |
+| 7 | **Daily Score** |  Working | Verify calculations |
+| 8 | **Cloud Sync** |  Working | Add offline queue |
+| 9 | **User Auth** |  Working | Add password reset |
+| 10 | **Data Persistence** |  Fragile | Bulletproof backup |
 
 ### 3.2 Beta V1 Nice-to-Have
 
@@ -201,24 +201,24 @@ These features MUST work flawlessly for Beta V1:
 ### 5.1 Current Architecture
 
 ```
-â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-â”‚                   index.html                     â”‚
-â”‚            (Single page, all inline)             â”‚
-â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                        â”‚
-        â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-        â–¼               â–¼               â–¼
-   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”    â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-   â”‚ app.js  â”‚    â”‚ state.js â”‚    â”‚ config.jsâ”‚
-   â”‚ (init)  â”‚    â”‚ (1937 ln)â”‚    â”‚ (static) â”‚
-   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜    â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-        â”‚               â”‚
-        â–¼               â–¼
-   â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-   â”‚              UI Components                   â”‚
-   â”‚  daily.js, food.js, running.js, profile.js  â”‚
-   â”‚        (tightly coupled to State)           â”‚
-   â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+”””””””””””””””””””””””””””””””””””””””””””””””””””
+”‚                   index.html                     ”‚
+”‚            (Single page, all inline)             ”‚
+””””””””””””””””””””””””””””””””””””””””””””””””””””
+                        ”‚
+        ”””””””””””””””””¼””””””””””””””””
+        ¼               ¼               ¼
+   ”””””””””””    ””””””””””””    ””””””””””””
+   ”‚ app.js  ”‚    ”‚ state.js ”‚    ”‚ config.js”‚
+   ”‚ (init)  ”‚    ”‚ (1937 ln)”‚    ”‚ (static) ”‚
+   ””””””””””””    ”””””””””””””    ”””””””””””””
+        ”‚               ”‚
+        ¼               ¼
+   ”””””””””””””””””””””””””””””””””””””””””””””””
+   ”‚              UI Components                   ”‚
+   ”‚  daily.js, food.js, running.js, profile.js  ”‚
+   ”‚        (tightly coupled to State)           ”‚
+   ””””””””””””””””””””””””””””””””””””””””””””””””
 ```
 
 **Problems:**
@@ -230,34 +230,34 @@ These features MUST work flawlessly for Beta V1:
 ### 5.2 Recommended Architecture (Beta V1)
 
 ```
-â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-â”‚                   index.html                     â”‚
-â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                        â”‚
-                        â–¼
-                 â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-                 â”‚    App.js    â”‚
-                 â”‚  (Router +   â”‚
-                 â”‚   Lifecycle) â”‚
-                 â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                        â”‚
-        â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-        â–¼               â–¼               â–¼
- â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â” â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
- â”‚   Services  â”‚ â”‚    State    â”‚ â”‚   Config    â”‚
- â”‚ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€  â”‚ â”‚ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€  â”‚ â”‚ â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€  â”‚
- â”‚ â€¢ Firebase  â”‚ â”‚ â€¢ UserData  â”‚ â”‚ â€¢ Workouts  â”‚
- â”‚ â€¢ AI/Groq   â”‚ â”‚ â€¢ Storage   â”‚ â”‚ â€¢ Levels    â”‚
- â”‚ â€¢ Analytics â”‚ â”‚ â€¢ Sync      â”‚ â”‚ â€¢ Running   â”‚
- â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜ â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-        â”‚               â”‚               â”‚
-        â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”¼â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
-                        â–¼
-              â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-              â”‚   UI Components  â”‚
-              â”‚ (Render only,    â”‚
-              â”‚  call services)  â”‚
-              â””â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”˜
+”””””””””””””””””””””””””””””””””””””””””””””””””””
+”‚                   index.html                     ”‚
+””””””””””””””””””””””””””””””””””””””””””””””””””””
+                        ”‚
+                        ¼
+                 ””””””””””””””””
+                 ”‚    App.js    ”‚
+                 ”‚  (Router +   ”‚
+                 ”‚   Lifecycle) ”‚
+                 ”””””””””””””””””
+                        ”‚
+        ”””””””””””””””””¼””””””””””””””””
+        ¼               ¼               ¼
+ ””””””””””””””” ””””””””””””””” ”””””””””””””””
+ ”‚   Services  ”‚ ”‚    State    ”‚ ”‚   Config    ”‚
+ ”‚ ””””””””””  ”‚ ”‚ ””””””””””  ”‚ ”‚ ””””””””””  ”‚
+ ”‚ ¢ Firebase  ”‚ ”‚ ¢ UserData  ”‚ ”‚ ¢ Workouts  ”‚
+ ”‚ ¢ AI/Groq   ”‚ ”‚ ¢ Storage   ”‚ ”‚ ¢ Levels    ”‚
+ ”‚ ¢ Analytics ”‚ ”‚ ¢ Sync      ”‚ ”‚ ¢ Running   ”‚
+ ”””””””””””””””” ”””””””””””””””” ””””””””””””””””
+        ”‚               ”‚               ”‚
+        ””””””””””””””””””¼””””””””””””””””
+                        ¼
+              ””””””””””””””””””””
+              ”‚   UI Components  ”‚
+              ”‚ (Render only,    ”‚
+              ”‚  call services)  ”‚
+              ”””””””””””””””””””””
 ```
 
 **Benefits:**
@@ -273,141 +273,141 @@ These features MUST work flawlessly for Beta V1:
 ### 6.1 Current Structure
 ```
 life-os-app/
-â”œâ”€â”€ index.html
-â”œâ”€â”€ admin.html
-â”œâ”€â”€ test.html
-â”œâ”€â”€ manifest.json
-â”œâ”€â”€ css/
-â”‚   â””â”€â”€ styles.css (7042 lines - monolithic)
-â”œâ”€â”€ js/
-â”‚   â”œâ”€â”€ app.js
-â”‚   â”œâ”€â”€ state.js (1937 lines - god object)
-â”‚   â”œâ”€â”€ config.js
-â”‚   â”œâ”€â”€ utils.js (1157 lines - grab bag)
-â”‚   â”œâ”€â”€ firebase-config.js
-â”‚   â”œâ”€â”€ ai-nutrition.js
-â”‚   â”œâ”€â”€ ai-briefings.js
-â”‚   â”œâ”€â”€ demo-mode.js
-â”‚   â”œâ”€â”€ components/
-â”‚   â”‚   â”œâ”€â”€ header.js
-â”‚   â”‚   â”œâ”€â”€ lift-logger.js
-â”‚   â”‚   â”œâ”€â”€ logger.js
-â”‚   â”‚   â””â”€â”€ workout.js
-â”‚   â””â”€â”€ ui/
-â”‚       â”œâ”€â”€ daily.js
-â”‚       â”œâ”€â”€ food.js
-â”‚       â”œâ”€â”€ running.js
-â”‚       â”œâ”€â”€ profile.js
-â”‚       â”œâ”€â”€ stats.js
-â”‚       â”œâ”€â”€ onboarding.js
-â”‚       â”œâ”€â”€ alcohol.js
-â”‚       â”œâ”€â”€ reading.js
-â”‚       â””â”€â”€ skills.js
-â””â”€â”€ docs/
-    â”œâ”€â”€ PRODUCT_SPEC.md
-    â”œâ”€â”€ CURRENT_SYSTEM.md
-    â””â”€â”€ FEATURES.md
+””” index.html
+””” admin.html
+””” test.html
+””” manifest.json
+””” css/
+”‚   ”””” styles.css (7042 lines - monolithic)
+””” js/
+”‚   ””” app.js
+”‚   ””” state.js (1937 lines - god object)
+”‚   ””” config.js
+”‚   ””” utils.js (1157 lines - grab bag)
+”‚   ””” firebase-config.js
+”‚   ””” ai-nutrition.js
+”‚   ””” ai-briefings.js
+”‚   ””” demo-mode.js
+”‚   ””” components/
+”‚   ”‚   ””” header.js
+”‚   ”‚   ””” lift-logger.js
+”‚   ”‚   ””” logger.js
+”‚   ”‚   ”””” workout.js
+”‚   ”””” ui/
+”‚       ””” daily.js
+”‚       ””” food.js
+”‚       ””” running.js
+”‚       ””” profile.js
+”‚       ””” stats.js
+”‚       ””” onboarding.js
+”‚       ””” alcohol.js
+”‚       ””” reading.js
+”‚       ”””” skills.js
+”””” docs/
+    ””” PRODUCT_SPEC.md
+    ””” CURRENT_SYSTEM.md
+    ”””” FEATURES.md
 ```
 
 ### 6.2 Proposed Structure (Beta V1)
 ```
 life-os-app/
-â”œâ”€â”€ index.html
-â”œâ”€â”€ admin.html
-â”œâ”€â”€ manifest.json
-â”œâ”€â”€ package.json (NEW - for versioning)
-â”œâ”€â”€ CHANGELOG.md (NEW)
-â”œâ”€â”€ README.md (NEW)
-â”‚
-â”œâ”€â”€ assets/
-â”‚   â”œâ”€â”€ icons/
-â”‚   â”‚   â”œâ”€â”€ icon-180.png
-â”‚   â”‚   â”œâ”€â”€ icon-192.png
-â”‚   â”‚   â””â”€â”€ icon-512.png
-â”‚   â””â”€â”€ images/
-â”‚
-â”œâ”€â”€ css/
-â”‚   â”œâ”€â”€ base/
-â”‚   â”‚   â”œâ”€â”€ reset.css
-â”‚   â”‚   â”œâ”€â”€ variables.css (colors, spacing, fonts)
-â”‚   â”‚   â””â”€â”€ typography.css
-â”‚   â”œâ”€â”€ components/
-â”‚   â”‚   â”œâ”€â”€ buttons.css
-â”‚   â”‚   â”œâ”€â”€ cards.css
-â”‚   â”‚   â”œâ”€â”€ forms.css
-â”‚   â”‚   â”œâ”€â”€ modals.css
-â”‚   â”‚   â””â”€â”€ navigation.css
-â”‚   â”œâ”€â”€ views/
-â”‚   â”‚   â”œâ”€â”€ daily.css
-â”‚   â”‚   â”œâ”€â”€ food.css
-â”‚   â”‚   â”œâ”€â”€ running.css
-â”‚   â”‚   â”œâ”€â”€ profile.css
-â”‚   â”‚   â””â”€â”€ stats.css
-â”‚   â””â”€â”€ main.css (imports all)
-â”‚
-â”œâ”€â”€ js/
-â”‚   â”œâ”€â”€ app.js (entry point, router)
-â”‚   â”‚
-â”‚   â”œâ”€â”€ config/
-â”‚   â”‚   â”œâ”€â”€ index.js (exports all)
-â”‚   â”‚   â”œâ”€â”€ workouts.js
-â”‚   â”‚   â”œâ”€â”€ running.js
-â”‚   â”‚   â”œâ”€â”€ levels.js
-â”‚   â”‚   â”œâ”€â”€ nutrition.js
-â”‚   â”‚   â””â”€â”€ constants.js
-â”‚   â”‚
-â”‚   â”œâ”€â”€ services/
-â”‚   â”‚   â”œâ”€â”€ firebase.js (auth + firestore)
-â”‚   â”‚   â”œâ”€â”€ storage.js (localStorage + IndexedDB)
-â”‚   â”‚   â”œâ”€â”€ ai.js (Groq API)
-â”‚   â”‚   â””â”€â”€ analytics.js (future)
-â”‚   â”‚
-â”‚   â”œâ”€â”€ state/
-â”‚   â”‚   â”œâ”€â”€ index.js (main state manager)
-â”‚   â”‚   â”œâ”€â”€ user.js (profile, goals)
-â”‚   â”‚   â”œâ”€â”€ workouts.js (lift history, PRs)
-â”‚   â”‚   â”œâ”€â”€ running.js (run logs, program)
-â”‚   â”‚   â”œâ”€â”€ nutrition.js (meals, macros)
-â”‚   â”‚   â””â”€â”€ sync.js (cloud sync logic)
-â”‚   â”‚
-â”‚   â”œâ”€â”€ engines/
-â”‚   â”‚   â”œâ”€â”€ workout-engine.js (volume calc, progression)
-â”‚   â”‚   â”œâ”€â”€ running-engine.js (paces, phases, scheduling)
-â”‚   â”‚   â””â”€â”€ scoring-engine.js (XP, daily score)
-â”‚   â”‚
-â”‚   â”œâ”€â”€ components/
-â”‚   â”‚   â”œâ”€â”€ Header.js
-â”‚   â”‚   â”œâ”€â”€ Navigation.js
-â”‚   â”‚   â”œâ”€â”€ LiftLogger.js
-â”‚   â”‚   â”œâ”€â”€ WorkoutCard.js
-â”‚   â”‚   â”œâ”€â”€ RunCard.js
-â”‚   â”‚   â”œâ”€â”€ MealCard.js
-â”‚   â”‚   â””â”€â”€ Modal.js
-â”‚   â”‚
-â”‚   â”œâ”€â”€ views/
-â”‚   â”‚   â”œâ”€â”€ DailyView.js
-â”‚   â”‚   â”œâ”€â”€ FoodView.js
-â”‚   â”‚   â”œâ”€â”€ RunningView.js
-â”‚   â”‚   â”œâ”€â”€ ProfileView.js
-â”‚   â”‚   â”œâ”€â”€ StatsView.js
-â”‚   â”‚   â””â”€â”€ OnboardingView.js
-â”‚   â”‚
-â”‚   â””â”€â”€ utils/
-â”‚       â”œâ”€â”€ date.js (date helpers)
-â”‚       â”œâ”€â”€ format.js (number/string formatting)
-â”‚       â”œâ”€â”€ validation.js (input validation)
-â”‚       â””â”€â”€ dom.js (DOM helpers)
-â”‚
-â”œâ”€â”€ docs/
-â”‚   â”œâ”€â”€ PRODUCT_SPEC.md
-â”‚   â”œâ”€â”€ CURRENT_SYSTEM.md
-â”‚   â”œâ”€â”€ ARCHITECTURE.md (NEW)
-â”‚   â”œâ”€â”€ API.md (NEW - internal API docs)
-â”‚   â””â”€â”€ CONTRIBUTING.md (NEW)
-â”‚
-â””â”€â”€ tests/ (NEW - for V2)
-    â”œâ”€â”€ unit/
-    â””â”€â”€ integration/
+””” index.html
+””” admin.html
+””” manifest.json
+””” package.json (NEW - for versioning)
+””” CHANGELOG.md (NEW)
+””” README.md (NEW)
+”‚
+””” assets/
+”‚   ””” icons/
+”‚   ”‚   ””” icon-180.png
+”‚   ”‚   ””” icon-192.png
+”‚   ”‚   ”””” icon-512.png
+”‚   ”””” images/
+”‚
+””” css/
+”‚   ””” base/
+”‚   ”‚   ””” reset.css
+”‚   ”‚   ””” variables.css (colors, spacing, fonts)
+”‚   ”‚   ”””” typography.css
+”‚   ””” components/
+”‚   ”‚   ””” buttons.css
+”‚   ”‚   ””” cards.css
+”‚   ”‚   ””” forms.css
+”‚   ”‚   ””” modals.css
+”‚   ”‚   ”””” navigation.css
+”‚   ””” views/
+”‚   ”‚   ””” daily.css
+”‚   ”‚   ””” food.css
+”‚   ”‚   ””” running.css
+”‚   ”‚   ””” profile.css
+”‚   ”‚   ”””” stats.css
+”‚   ”””” main.css (imports all)
+”‚
+””” js/
+”‚   ””” app.js (entry point, router)
+”‚   ”‚
+”‚   ””” config/
+”‚   ”‚   ””” index.js (exports all)
+”‚   ”‚   ””” workouts.js
+”‚   ”‚   ””” running.js
+”‚   ”‚   ””” levels.js
+”‚   ”‚   ””” nutrition.js
+”‚   ”‚   ”””” constants.js
+”‚   ”‚
+”‚   ””” services/
+”‚   ”‚   ””” firebase.js (auth + firestore)
+”‚   ”‚   ””” storage.js (localStorage + IndexedDB)
+”‚   ”‚   ””” ai.js (Groq API)
+”‚   ”‚   ”””” analytics.js (future)
+”‚   ”‚
+”‚   ””” state/
+”‚   ”‚   ””” index.js (main state manager)
+”‚   ”‚   ””” user.js (profile, goals)
+”‚   ”‚   ””” workouts.js (lift history, PRs)
+”‚   ”‚   ””” running.js (run logs, program)
+”‚   ”‚   ””” nutrition.js (meals, macros)
+”‚   ”‚   ”””” sync.js (cloud sync logic)
+”‚   ”‚
+”‚   ””” engines/
+”‚   ”‚   ””” workout-engine.js (volume calc, progression)
+”‚   ”‚   ””” running-engine.js (paces, phases, scheduling)
+”‚   ”‚   ”””” scoring-engine.js (XP, daily score)
+”‚   ”‚
+”‚   ””” components/
+”‚   ”‚   ””” Header.js
+”‚   ”‚   ””” Navigation.js
+”‚   ”‚   ””” LiftLogger.js
+”‚   ”‚   ””” WorkoutCard.js
+”‚   ”‚   ””” RunCard.js
+”‚   ”‚   ””” MealCard.js
+”‚   ”‚   ”””” Modal.js
+”‚   ”‚
+”‚   ””” views/
+”‚   ”‚   ””” DailyView.js
+”‚   ”‚   ””” FoodView.js
+”‚   ”‚   ””” RunningView.js
+”‚   ”‚   ””” ProfileView.js
+”‚   ”‚   ””” StatsView.js
+”‚   ”‚   ”””” OnboardingView.js
+”‚   ”‚
+”‚   ”””” utils/
+”‚       ””” date.js (date helpers)
+”‚       ””” format.js (number/string formatting)
+”‚       ””” validation.js (input validation)
+”‚       ”””” dom.js (DOM helpers)
+”‚
+””” docs/
+”‚   ””” PRODUCT_SPEC.md
+”‚   ””” CURRENT_SYSTEM.md
+”‚   ””” ARCHITECTURE.md (NEW)
+”‚   ””” API.md (NEW - internal API docs)
+”‚   ”””” CONTRIBUTING.md (NEW)
+”‚
+”””” tests/ (NEW - for V2)
+    ””” unit/
+    ”””” integration/
 ```
 
 ---

@@ -1918,11 +1918,9 @@ const State = {
                 sentAt: new Date().toISOString(),
                 userId: Firebase.user?.uid || 'anonymous'
             });
-            console.log('✅ Feedback sent to Firebase! Doc ID:', docRef.id);
+            // Feedback sent successfully
         } catch (e) {
-            console.error('❌ Failed to send feedback to Firebase:', e);
-            console.error('Error code:', e.code);
-            console.error('Error message:', e.message);
+            // Failed to send feedback to Firebase - silent fail, local backup exists
         }
     },
     

@@ -25,30 +25,30 @@
 
 | Feature | Status | Location |
 |---------|--------|----------|
-| Weekly workout schedule | ‚úÖ Live | `config.js ‚Üí WORKOUTS` |
-| Volume tracking (MEV/MAV/MRV) | ‚úÖ Live | `utils.js ‚Üí getVolumeAdjustments()` |
-| Double progression model | ‚úÖ Live | `state.js ‚Üí getProgressionSuggestion()` |
-| Running program (5K-Marathon) | ‚úÖ Live | `config.js ‚Üí RUNNING` |
-| VDOT pace calculator | ‚úÖ Live | `config.js ‚Üí VDOT_PACES` |
-| AI food logging | ‚úÖ Live | `ai-nutrition.js` |
-| XP & leveling | ‚úÖ Live | `config.js ‚Üí LEVELS, XP_REWARDS` |
-| Exercise swaps | ‚úÖ Live | `config.js ‚Üí EXERCISE_ALTERNATIVES` |
-| Deload recommendations | ‚úÖ Live | `utils.js ‚Üí shouldDeload()` |
-| Running injuries | ‚úÖ Live | `config.js ‚Üí RUNNING.INJURIES` |
-| Daily scoring | ‚úÖ Live | `daily.js ‚Üí calculateDayScore()` |
+| Weekly workout schedule |  Live | `config.js Ü WORKOUTS` |
+| Volume tracking (MEV/MAV/MRV) |  Live | `utils.js Ü getVolumeAdjustments()` |
+| Double progression model |  Live | `state.js Ü getProgressionSuggestion()` |
+| Running program (5K-Marathon) |  Live | `config.js Ü RUNNING` |
+| VDOT pace calculator |  Live | `config.js Ü VDOT_PACES` |
+| AI food logging |  Live | `ai-nutrition.js` |
+| XP & leveling |  Live | `config.js Ü LEVELS, XP_REWARDS` |
+| Exercise swaps |  Live | `config.js Ü EXERCISE_ALTERNATIVES` |
+| Deload recommendations |  Live | `utils.js Ü shouldDeload()` |
+| Running injuries |  Live | `config.js Ü RUNNING.INJURIES` |
+| Daily scoring |  Live | `daily.js Ü calculateDayScore()` |
 
 ### 1.2 What's NOT Implemented Yet
 
 | Feature | Status | Planned Section |
 |---------|--------|-----------------|
-| Age-adjusted programming | ‚ùå Planned | v2.0 |
-| Chronic injury system | ‚ùå Planned | v2.0 |
-| TrainingState object | ‚ùå Planned | v2.0 |
-| Intra-workout RPE adjustments | ‚ùå Planned | v2.0 |
-| Cross-domain feedback (food‚Üílifting) | ‚ùå Planned | v2.0 |
-| Personal MRV/MEV learning | ‚ùå Planned | v2.0 |
-| Fatigue modeling | ‚ùå Planned | v2.0 |
-| Goal-specific programming | ‚ùå Planned | v2.0 |
+| Age-adjusted programming |  Planned | v2.0 |
+| Chronic injury system |  Planned | v2.0 |
+| TrainingState object |  Planned | v2.0 |
+| Intra-workout RPE adjustments |  Planned | v2.0 |
+| Cross-domain feedback (foodÜlifting) |  Planned | v2.0 |
+| Personal MRV/MEV learning |  Planned | v2.0 |
+| Fatigue modeling |  Planned | v2.0 |
+| Goal-specific programming |  Planned | v2.0 |
 
 ---
 
@@ -58,13 +58,13 @@
 
 ```
 CONFIG.WORKOUTS = {
-  0: Sunday    ‚Üí LONG RUN DAY (Mobility only for lifting)
-  1: Monday    ‚Üí UPPER STRENGTH + Optional Easy Run
-  2: Tuesday   ‚Üí LOWER POWER (NO running)
-  3: Wednesday ‚Üí UPPER HYPERTROPHY + Easy Run
-  4: Thursday  ‚Üí TEMPO RUN DAY (Core only for lifting)
-  5: Friday    ‚Üí LOWER HYPERTROPHY (NO running)
-  6: Saturday  ‚Üí RECOVERY + MOBILITY (NO running)
+  0: Sunday    Ü LONG RUN DAY (Mobility only for lifting)
+  1: Monday    Ü UPPER STRENGTH + Optional Easy Run
+  2: Tuesday   Ü LOWER POWER (NO running)
+  3: Wednesday Ü UPPER HYPERTROPHY + Easy Run
+  4: Thursday  Ü TEMPO RUN DAY (Core only for lifting)
+  5: Friday    Ü LOWER HYPERTROPHY (NO running)
+  6: Saturday  Ü RECOVERY + MOBILITY (NO running)
 }
 ```
 
@@ -82,7 +82,7 @@ Each day has:
   exercises: [
     {
       name: string,
-      detail: '4√ó6',             // Sets √ó Reps
+      detail: '4√6',             // Sets √ Reps
       xp: number,
       muscle: string[],          // For volume tracking
       posture: boolean           // For posture tracking
@@ -138,7 +138,7 @@ From `CONFIG.VOLUME_LANDMARKS` (sets per week):
 
 ### 3.2 Volume Adjustment Logic
 
-From `utils.js ‚Üí getVolumeAdjustments()`:
+From `utils.js Ü getVolumeAdjustments()`:
 
 ```javascript
 // Decision tree for volume adjustments
@@ -182,7 +182,7 @@ CONFIG.MUSCLE_GROUPS = {
 
 ### 3.4 Deload Logic
 
-From `utils.js ‚Üí shouldDeload()`:
+From `utils.js Ü shouldDeload()`:
 
 ```javascript
 // Deload triggers
@@ -202,7 +202,7 @@ From `utils.js ‚Üí shouldDeload()`:
 
 ### 4.1 Double Progression Model
 
-From `state.js ‚Üí getProgressionSuggestion()`:
+From `state.js Ü getProgressionSuggestion()`:
 
 Uses 6-12 rep range:
 
@@ -241,13 +241,13 @@ if (avgReps < 6) {
 
 ### 4.2 Estimated 1RM Calculation
 
-From `state.js ‚Üí calculateEstimated1RM()`:
+From `state.js Ü calculateEstimated1RM()`:
 
 ```javascript
 // Epley formula
 estimated1RM = weight * (1 + (reps / 30))
 
-// Example: 185 lbs √ó 6 reps
+// Example: 185 lbs √ 6 reps
 // e1RM = 185 * (1 + 6/30) = 185 * 1.2 = 222 lbs
 ```
 
@@ -412,16 +412,16 @@ From `CONFIG.STREAK_MULTIPLIERS`:
 From `CONFIG.SKILL_TREES`:
 
 **STRENGTH (I)**
-- Foundation ‚Üí Compound (150) ‚Üí Progressive (400) ‚Üí Advanced (800) ‚Üí Elite (1500)
+- Foundation Ü Compound (150) Ü Progressive (400) Ü Advanced (800) Ü Elite (1500)
 
 **DISCIPLINE (II)**
-- Beginner ‚Üí Consistent (200) ‚Üí Dedicated (500) ‚Üí Relentless (1000) ‚Üí Unstoppable (2000)
+- Beginner Ü Consistent (200) Ü Dedicated (500) Ü Relentless (1000) Ü Unstoppable (2000)
 
 **NUTRITION (III)**
-- Tracker ‚Üí Aware (100) ‚Üí Optimized (300) ‚Üí Precision (600) ‚Üí Master (1200)
+- Tracker Ü Aware (100) Ü Optimized (300) Ü Precision (600) Ü Master (1200)
 
 **RECOVERY (IV)**
-- Rest ‚Üí Sleep (100) ‚Üí Restore (250) ‚Üí Optimize (500) ‚Üí Peak (1000)
+- Rest Ü Sleep (100) Ü Restore (250) Ü Optimize (500) Ü Peak (1000)
 
 ---
 
@@ -524,18 +524,18 @@ TrainingState = {
 
 Real-time adjustments based on:
 - RPE/RIR delta from target
-- Pain flags ‚Üí immediate swap
-- Fatigue accumulation ‚Üí modify accessories
+- Pain flags Ü immediate swap
+- Fatigue accumulation Ü modify accessories
 
 ### 9.5 Cross-Domain Feedback
 
-**Nutrition ‚Üí Training:**
-- Deep deficit ‚Üí reduce volume 15%
-- Low protein ‚Üí bias toward intensity over volume
+**Nutrition Ü Training:**
+- Deep deficit Ü reduce volume 15%
+- Low protein Ü bias toward intensity over volume
 
-**Running ‚Üí Lifting:**
-- Long run ‚Üí protect legs next day
-- High leg fatigue ‚Üí swap to machines
+**Running Ü Lifting:**
+- Long run Ü protect legs next day
+- High leg fatigue Ü swap to machines
 
 ### 9.6 Personal MRV/MEV Learning
 
@@ -543,32 +543,32 @@ Weekly refit based on:
 - Performance trend (up/flat/down)
 - Recovery scores
 - Volume vs current MRV
-- Adjust ¬±5-10% per muscle group
+- Adjust ¬5-10% per muscle group
 
 ---
 
 ## Appendix: Key Functions Reference
 
 ### Volume System
-- `Utils.getVolumeLandmarks(muscle)` ‚Üí returns { MEV, MAV, MRV }
-- `Utils.getVolumeAdjustments()` ‚Üí returns adjustments for today
-- `State.getWeeklyVolume(muscleGroup)` ‚Üí returns { sets, exercises }
-- `State.getAllWeeklyVolumes()` ‚Üí returns all muscle volumes
+- `Utils.getVolumeLandmarks(muscle)` Ü returns { MEV, MAV, MRV }
+- `Utils.getVolumeAdjustments()` Ü returns adjustments for today
+- `State.getWeeklyVolume(muscleGroup)` Ü returns { sets, exercises }
+- `State.getAllWeeklyVolumes()` Ü returns all muscle volumes
 
 ### Progression System
-- `State.getProgressionSuggestion(exerciseName)` ‚Üí returns { weight, reps, message }
-- `State.calculateEstimated1RM(weight, reps)` ‚Üí returns e1RM
-- `State.getLastLift(exerciseName)` ‚Üí returns last session data
+- `State.getProgressionSuggestion(exerciseName)` Ü returns { weight, reps, message }
+- `State.calculateEstimated1RM(weight, reps)` Ü returns e1RM
+- `State.getLastLift(exerciseName)` Ü returns last session data
 
 ### Workout Generation
-- `Utils.getTodaysWorkout()` ‚Üí returns processed workout with adjustments
-- `Utils.shouldDeload()` ‚Üí returns { shouldDeload, weeksSince, nextDeload }
-- `Utils.getCurrentBlock()` ‚Üí returns 'accumulation' | 'intensification'
+- `Utils.getTodaysWorkout()` Ü returns processed workout with adjustments
+- `Utils.shouldDeload()` Ü returns { shouldDeload, weeksSince, nextDeload }
+- `Utils.getCurrentBlock()` Ü returns 'accumulation' | 'intensification'
 
 ### Running System
-- `RunningView.getTodaysRun(running)` ‚Üí returns today's run prescription
-- `RunningView.calculatePaces(vdot)` ‚Üí returns pace table
-- `RunningView.getPhase(running)` ‚Üí returns current training phase
+- `RunningView.getTodaysRun(running)` Ü returns today's run prescription
+- `RunningView.calculatePaces(vdot)` Ü returns pace table
+- `RunningView.getPhase(running)` Ü returns current training phase
 
 ---
 

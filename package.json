@@ -1,6 +1,6 @@
 {
   "name": "life-os",
-  "version": "0.1.0-alpha",
+  "version": "0.2.0-beta",
   "description": "An adaptive fitness operating system combining strength training, running programs, and nutrition tracking",
   "main": "index.html",
   "scripts": {

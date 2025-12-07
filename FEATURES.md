@@ -99,27 +99,27 @@ This is a personal project first. Monetization is gravy, not the goal. Low/no ma
 ## FREE TIER LIMITS (Monthly)
 
 ### Firebase (Spark Plan - FREE)
-- **Firestore reads:** 50,000/day = ~1.5M/month ✅
-- **Firestore writes:** 20,000/day = ~600K/month ✅
-- **Storage:** 1GB ✅
-- **Auth:** Unlimited anonymous users ✅
+- **Firestore reads:** 50,000/day = ~1.5M/month 
+- **Firestore writes:** 20,000/day = ~600K/month 
+- **Storage:** 1GB 
+- **Auth:** Unlimited anonymous users 
 - **Estimated usage:** ~100 writes/day = 3,000/month (well under limit)
 
 ### Groq API (FREE)
-- **Rate limit:** 30 requests/minute, 14,400 requests/day ✅
+- **Rate limit:** 30 requests/minute, 14,400 requests/day 
 - **Token limit:** Varies by model, but generous for our use
 - **Estimated usage:** 
   - Food logging: ~5-10 requests/day
   - Morning/evening briefings: 2 requests/day (cached)
   - **Total:** ~12 requests/day = ~360/month (well under limit)
 
-**Conclusion:** ✅ 1 month of testing easily within free tiers
+**Conclusion:**  1 month of testing easily within free tiers
 
 ---
 
 ## Core Features (ALL COMPLETE)
 
-### Data & State ✅
+### Data & State 
 - [x] Local storage persistence
 - [x] Data backup to clipboard
 - [x] Data restore from clipboard
@@ -131,7 +131,7 @@ This is a personal project first. Monetization is gravy, not the goal. Low/no ma
 - [x] Multi-device support
 - [x] Sync indicator UI
 
-### Onboarding ✅
+### Onboarding 
 - [x] Weight, height, age input
 - [x] Target weight input
 - [x] Auto-calculate TDEE, calories, protein, carbs, fats
@@ -139,7 +139,7 @@ This is a personal project first. Monetization is gravy, not the goal. Low/no ma
 - [x] Running goal selection (optional)
 - [x] Injury selection for running program
 
-### Daily View ✅
+### Daily View 
 - [x] Header with XP, level, streak
 - [x] AI morning/evening briefings
 - [x] Nutrition summary (tap to Food tab)
@@ -152,7 +152,7 @@ This is a personal project first. Monetization is gravy, not the goal. Low/no ma
 - [x] Reading section
 - [x] Alcohol recovery warning
 
-### Food Tab ✅
+### Food Tab 
 - [x] AI food logger with Groq
 - [x] Meal time selector (AM/Noon/PM/Late)
 - [x] Leucine threshold tracking
@@ -163,8 +163,8 @@ This is a personal project first. Monetization is gravy, not the goal. Low/no ma
 - [x] Progress feedback when logging
 - [x] Alcohol auto-detection
 
-### Progressive Overload Tracking ✅
-- [x] Log weight × reps × sets
+### Progressive Overload Tracking 
+- [x] Log weight � reps � sets
 - [x] Calculate estimated 1RM
 - [x] "Last time" stats when logging
 - [x] Progression suggestions
@@ -175,7 +175,7 @@ This is a personal project first. Monetization is gravy, not the goal. Low/no ma
 - [x] MEV/MAV/MRV indicators
 - [x] Deload detection
 
-### Running Engine ✅
+### Running Engine 
 - [x] VDOT calculation from race time
 - [x] Training paces (Easy/Tempo/Interval/Repetition/Marathon)
 - [x] Periodized phases (Base/Build/Peak/Taper)
@@ -189,19 +189,19 @@ This is a personal project first. Monetization is gravy, not the goal. Low/no ma
 - [x] 80/20 polarized tracking
 - [x] Race predictor (5K/10K/Half/Marathon)
 
-### Reading Module ✅
+### Reading Module 
 - [x] Current book tracking
 - [x] Page progress
 - [x] Completed books list
 - [x] XP for reading + book completion
 
-### Alcohol Tracker ✅
+### Alcohol Tracker 
 - [x] Log drinks
 - [x] Science-based warnings
 - [x] XP penalty
 - [x] 48-hour recovery tracking
 
-### Stats View ✅
+### Stats View 
 - [x] Protein distribution analysis (after 7+ days)
 - [x] "What Predicts Your Success" correlations
 - [x] Fun stats (total protein, workouts, PRs, etc.)
@@ -214,12 +214,12 @@ This is a personal project first. Monetization is gravy, not the goal. Low/no ma
 - [x] All-time stats
 - [x] Running dashboard
 
-### Skills View ✅
+### Skills View 
 - [x] 4 skill trees (Strength, Discipline, Nutrition, Recovery)
 - [x] XP tracking per skill
 - [x] Level progression per skill
 
-### Profile View ✅
+### Profile View 
 - [x] Level ring with progress
 - [x] Stats grid
 - [x] Goals display + edit (with macro breakdown)
@@ -228,7 +228,7 @@ This is a personal project first. Monetization is gravy, not the goal. Low/no ma
 - [x] Cloud sync status
 - [x] Backup/restore/export
 
-### XP System ✅
+### XP System 
 - [x] Base XP for exercises (5-25 XP)
 - [x] Streak multipliers (up to 2x at 30 days)
 - [x] Skill-specific XP allocation
@@ -241,7 +241,7 @@ This is a personal project first. Monetization is gravy, not the goal. Low/no ma
 - [x] Alcohol penalty (-25 XP per drink)
 - [x] Missed day penalty (-15 XP)
 
-### PWA / iPhone Ready ✅
+### PWA / iPhone Ready 
 - [x] manifest.json
 - [x] Standalone display mode
 - [x] Dark theme
@@ -288,7 +288,7 @@ This is a personal project first. Monetization is gravy, not the goal. Low/no ma
 - [ ] Comprehensive swap options for every exercise
 - [ ] Organized by: equipment available, injury-safe, difficulty level
 - [ ] One-tap swap from pre-approved list
-- [ ] Injury-aware suggestions (e.g., hip injury → no squats in swap list)
+- [ ] Injury-aware suggestions (e.g., hip injury � no squats in swap list)
 
 #### More Chronic Injuries
 - [ ] Knee pain (patella, ACL recovery, meniscus)
@@ -311,7 +311,7 @@ This is a personal project first. Monetization is gravy, not the goal. Low/no ma
 - [ ] Achievement badges
 
 ### Medium Term
-- [x] Email/password authentication ✅ DONE
+- [x] Email/password authentication  DONE
 - [ ] Share progress with friends
 - [ ] Native iOS app wrapper
 - [ ] Apple Health integration
@@ -345,11 +345,11 @@ Special mode for users with significant physical limitations (e.g., 62yo with hi
 ---
 
 ### NOT Building (By Design)
-- ❌ Progress photos - not core to the experience
-- ❌ Body measurements - too much tracking, monthly weigh-ins show progress
-- ❌ Custom exercises - we prescribe, users execute
-- ❌ Workout templates - we ARE the template
-- ❌ AI-driven exercise swaps - use curated database instead
+-  Progress photos - not core to the experience
+-  Body measurements - too much tracking, monthly weigh-ins show progress
+-  Custom exercises - we prescribe, users execute
+-  Workout templates - we ARE the template
+-  AI-driven exercise swaps - use curated database instead
 
 ---
 
@@ -357,24 +357,24 @@ Special mode for users with significant physical limitations (e.g., 62yo with hi
 
 | File | Purpose | Status |
 |------|---------|--------|
-| index.html | App shell | ✅ |
-| manifest.json | PWA config | ✅ |
-| icon.svg | App icon | ✅ |
-| css/styles.css | All styles | ✅ |
-| js/firebase-config.js | Firebase setup | ✅ |
-| js/config.js | Static config | ✅ |
-| js/state.js | Data management | ✅ |
-| js/utils.js | Calculations | ✅ |
-| js/app.js | Main init | ✅ |
-| js/ai-nutrition.js | AI food logger | ✅ |
-| js/ai-briefings.js | Morning/evening AI | ✅ |
-| js/ui/daily.js | Daily view | ✅ |
-| js/ui/food.js | Food tab | ✅ |
-| js/ui/stats.js | Stats view | ✅ |
-| js/ui/skills.js | Skills view | ✅ |
-| js/ui/profile.js | Profile view | ✅ |
-| js/ui/onboarding.js | Onboarding | ✅ |
-| js/ui/running.js | Running module | ✅ |
-| js/ui/reading.js | Reading tracker | ✅ |
-| js/ui/alcohol.js | Alcohol tracker | ✅ |
-| js/components/* | UI components | ✅ |
+| index.html | App shell |  |
+| manifest.json | PWA config |  |
+| icon.svg | App icon |  |
+| css/styles.css | All styles |  |
+| js/firebase-config.js | Firebase setup |  |
+| js/config.js | Static config |  |
+| js/state.js | Data management |  |
+| js/utils.js | Calculations |  |
+| js/app.js | Main init |  |
+| js/ai-nutrition.js | AI food logger |  |
+| js/ai-briefings.js | Morning/evening AI |  |
+| js/ui/daily.js | Daily view |  |
+| js/ui/food.js | Food tab |  |
+| js/ui/stats.js | Stats view |  |
+| js/ui/skills.js | Skills view |  |
+| js/ui/profile.js | Profile view |  |
+| js/ui/onboarding.js | Onboarding |  |
+| js/ui/running.js | Running module |  |
+| js/ui/reading.js | Reading tracker |  |
+| js/ui/alcohol.js | Alcohol tracker |  |
+| js/components/* | UI components |  |
