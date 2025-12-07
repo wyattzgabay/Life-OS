@@ -7818,6 +7818,151 @@ body {
     color: var(--text);
 }
 
+/* Pain Drill-Down Styles */
+.pain-step {
+    margin-bottom: 12px;
+}
+
+.pain-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 600;
+    margin-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.back-btn {
+    font-size: 11px;
+    color: var(--accent);
+    cursor: pointer;
+}
+
+.pain-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.pain-chip {
+    padding: 6px 10px;
+    font-size: 12px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.pain-chip.selected {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
+}
+
+.pain-chip:active {
+    transform: scale(0.95);
+}
+
+/* Likely Injury Display */
+#likely-injury {
+    background: var(--surface-2);
+    border: 1px solid var(--warning);
+    border-radius: 10px;
+    padding: 12px;
+    margin-top: 12px;
+}
+
+.injury-match {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.injury-name {
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--warning);
+}
+
+.injury-confidence {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.injury-advice {
+    font-size: 12px;
+    color: var(--text-2);
+    margin-bottom: 10px;
+}
+
+.injury-symptoms ul {
+    margin: 4px 0 8px 16px;
+    padding: 0;
+}
+
+.injury-symptoms li {
+    margin: 2px 0;
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.injury-note {
+    font-size: 11px;
+    color: var(--error);
+    font-weight: 600;
+}
+
+.confirm-injury-btn {
+    width: 100%;
+    padding: 10px;
+    background: var(--warning);
+    color: var(--bg);
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+/* Selected Pains Display */
+.logged-pains {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 10px;
+}
+
+.logged-pain-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(234, 179, 8, 0.2);
+    border: 1px solid var(--warning);
+    padding: 4px 8px;
+    border-radius: 14px;
+    font-size: 11px;
+    color: var(--warning);
+}
+
+.remove-pain {
+    background: none;
+    border: none;
+    color: var(--warning);
+    font-size: 14px;
+    cursor: pointer;
+    padding: 0 2px;
+    line-height: 1;
+}
+
+.pain-count {
+    color: var(--warning);
+    font-weight: 600;
+}
+
 /* Daily Recovery Exercises */
 .recovery-exercises-list {
     display: flex;

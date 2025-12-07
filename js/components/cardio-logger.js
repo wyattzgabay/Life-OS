@@ -252,18 +252,47 @@ const CardioLogger = {
                     <input type="hidden" id="cardio-effort" value="5">
                 </div>
                 
-                <!-- Pain Toggle (collapsed) -->
+                <!-- Smart Pain Drill-Down -->
                 <div class="pain-row" onclick="CardioLogger.togglePainPanel()">
-                    <span id="pain-summary">Any discomfort?</span>
-                    <span class="toggle-arrow">▼</span>
+                    <span id="pain-summary">Any discomfort? <span class="pain-count"></span></span>
+                    <span class="toggle-arrow" id="pain-arrow">▼</span>
                 </div>
                 <div class="pain-panel" id="pain-panel" style="display: none;">
-                    <div class="pain-chips">
-                        ${config.painAreas.slice(0, 8).map(area => `
-                            <button class="pain-chip" data-pain="${area.id}"
-                                    onclick="CardioLogger.togglePain('${area.id}')">${area.name}</button>
-                        `).join('')}
+                    <!-- Step 1: General Area -->
+                    <div class="pain-step" id="pain-step-1">
+                        <div class="pain-label">WHERE?</div>
+                        <div class="pain-chips">
+                            ${this.getPainRegions().map(region => `
+                                <button class="pain-chip region-btn" data-region="${region.id}"
+                                        onclick="CardioLogger.selectPainRegion('${region.id}')">${region.name}</button>
+                            `).join('')}
+                        </div>
                     </div>
+                    
+                    <!-- Step 2: Specific Sub-Region (shown after region selected) -->
+                    <div class="pain-step" id="pain-step-2" style="display: none;">
+                        <div class="pain-label">MORE SPECIFICALLY... <span class="back-btn" onclick="CardioLogger.backToPainStep1()">← Back</span></div>
+                        <div class="pain-chips" id="subregion-chips"></div>
+                    </div>
+                    
+                    <!-- Step 3: Timing (when does it hurt) -->
+                    <div class="pain-step" id="pain-step-3" style="display: none;">
+                        <div class="pain-label">WHEN DOES IT HURT?</div>
+                        <div class="pain-chips timing-chips" id="timing-chips"></div>
+                    </div>
+                    
+                    <!-- Likely Injury Display -->
+                    <div id="likely-injury" style="display: none;">
+                        <div class="injury-match">
+                            <div class="injury-name" id="injury-name"></div>
+                            <div class="injury-confidence" id="injury-confidence"></div>
+                        </div>
+                        <div class="injury-advice" id="injury-advice"></div>
+                        <button class="confirm-injury-btn" onclick="CardioLogger.confirmInjury()">Track This Issue</button>
+                    </div>
+                    
+                    <!-- Selected Pain Summary -->
+                    <div id="selected-pains"></div>
                     <div id="pain-warning"></div>
                 </div>
                 
@@ -322,34 +351,254 @@ const CardioLogger = {
         document.getElementById('cardio-effort').value = level;
     },
 
+    // Pain drill-down state
+    selectedRegion: null,
+    selectedSubregion: null,
+    selectedTiming: null,
+    detectedInjury: null,
+    loggedPains: [], // Array of {region, subregion, timing, injury}
+    
+    /**
+     * Get pain regions for drill-down (from InjuryDatabase)
+     */
+    getPainRegions() {
+        if (typeof InjuryDatabase !== 'undefined') {
+            return Object.keys(InjuryDatabase.PAIN_REGIONS).map(key => ({
+                id: key,
+                name: InjuryDatabase.PAIN_REGIONS[key].name
+            }));
+        }
+        // Fallback if database not loaded
+        return [
+            { id: 'foot', name: 'Foot' },
+            { id: 'ankle', name: 'Ankle' },
+            { id: 'shin', name: 'Shin' },
+            { id: 'calf', name: 'Calf' },
+            { id: 'knee', name: 'Knee' },
+            { id: 'thigh', name: 'Thigh' },
+            { id: 'hip', name: 'Hip' },
+            { id: 'lower_back', name: 'Lower Back' }
+        ];
+    },
+
     /**
      * Toggle pain panel visibility
      */
     togglePainPanel() {
         const panel = document.getElementById('pain-panel');
-        const arrow = document.querySelector('.toggle-arrow');
+        const arrow = document.getElementById('pain-arrow');
         
         if (panel.style.display === 'none') {
             panel.style.display = 'block';
-            arrow.textContent = '▲';
+            if (arrow) arrow.textContent = '▲';
         } else {
             panel.style.display = 'none';
-            arrow.textContent = '▼';
+            if (arrow) arrow.textContent = '▼';
         }
+    },
+    
+    /**
+     * Step 1: Select pain region
+     */
+    selectPainRegion(regionId) {
+        this.selectedRegion = regionId;
+        this.selectedSubregion = null;
+        this.selectedTiming = null;
+        this.detectedInjury = null;
+        
+        // Highlight selected region
+        document.querySelectorAll('.region-btn').forEach(btn => {
+            btn.classList.toggle('selected', btn.dataset.region === regionId);
+        });
+        
+        // Get subregions from database
+        const region = InjuryDatabase?.PAIN_REGIONS?.[regionId];
+        if (region && region.subregions) {
+            const subregionChips = document.getElementById('subregion-chips');
+            subregionChips.innerHTML = Object.keys(region.subregions).map(key => `
+                <button class="pain-chip subregion-btn" data-subregion="${key}"
+                        onclick="CardioLogger.selectSubregion('${key}')">
+                    ${region.subregions[key].name}
+                </button>
+            `).join('');
+            
+            document.getElementById('pain-step-2').style.display = 'block';
+            document.getElementById('pain-step-3').style.display = 'none';
+            document.getElementById('likely-injury').style.display = 'none';
+        }
+    },
+    
+    /**
+     * Back to step 1
+     */
+    backToPainStep1() {
+        this.selectedRegion = null;
+        this.selectedSubregion = null;
+        document.querySelectorAll('.region-btn').forEach(btn => btn.classList.remove('selected'));
+        document.getElementById('pain-step-2').style.display = 'none';
+        document.getElementById('pain-step-3').style.display = 'none';
+        document.getElementById('likely-injury').style.display = 'none';
+    },
+    
+    /**
+     * Step 2: Select subregion
+     */
+    selectSubregion(subregionId) {
+        this.selectedSubregion = subregionId;
+        
+        // Highlight
+        document.querySelectorAll('.subregion-btn').forEach(btn => {
+            btn.classList.toggle('selected', btn.dataset.subregion === subregionId);
+        });
+        
+        // Get timing options from database
+        const region = InjuryDatabase?.PAIN_REGIONS?.[this.selectedRegion];
+        const subregion = region?.subregions?.[subregionId];
+        
+        if (subregion && subregion.timing) {
+            const timingChips = document.getElementById('timing-chips');
+            const timingLabels = {
+                morning_first_steps: 'First steps (morning)',
+                morning_stiffness: 'Morning stiffness',
+                during_run: 'During run',
+                after_run: 'After run',
+                at_rest: 'At rest (always)',
+                going_downhill: 'Downhill/stairs',
+                going_upstairs: 'Going up stairs',
+                after_sitting: 'After sitting',
+                after_1_2_miles: 'After 1-2 miles',
+                sudden_sharp: 'Sudden sharp pain',
+                lying_on_side: 'Lying on side',
+                sitting: 'While sitting',
+                rotation: 'With rotation/twisting'
+            };
+            
+            timingChips.innerHTML = Object.keys(subregion.timing).map(timing => `
+                <button class="pain-chip timing-btn" data-timing="${timing}"
+                        onclick="CardioLogger.selectTiming('${timing}')">
+                    ${timingLabels[timing] || timing.replace(/_/g, ' ')}
+                </button>
+            `).join('');
+            
+            document.getElementById('pain-step-3').style.display = 'block';
+        }
+    },
+    
+    /**
+     * Step 3: Select timing → Show likely injury
+     */
+    selectTiming(timingId) {
+        this.selectedTiming = timingId;
+        
+        // Highlight
+        document.querySelectorAll('.timing-btn').forEach(btn => {
+            btn.classList.toggle('selected', btn.dataset.timing === timingId);
+        });
+        
+        // Get likely injuries
+        const injuries = InjuryDatabase?.getLikelyInjuries(
+            this.selectedRegion, 
+            this.selectedSubregion, 
+            this.selectedTiming
+        );
+        
+        if (injuries && injuries.length > 0) {
+            const top = injuries[0];
+            this.detectedInjury = top;
+            
+            document.getElementById('injury-name').textContent = top.injury.name;
+            document.getElementById('injury-confidence').textContent = 
+                `Prevalence: ${top.injury.prevalence || 'Common'}`;
+            document.getElementById('injury-advice').innerHTML = `
+                <div class="injury-symptoms">
+                    <strong>Key symptoms:</strong>
+                    <ul>${top.injury.keySymptoms?.slice(0, 3).map(s => `<li>${s}</li>`).join('') || ''}</ul>
+                </div>
+                <div class="injury-note">${top.injury.mustRest ? '⚠️ This injury requires REST - see a professional' : ''}</div>
+            `;
+            document.getElementById('likely-injury').style.display = 'block';
+        }
+    },
+    
+    /**
+     * Confirm and track the detected injury
+     */
+    confirmInjury() {
+        if (!this.detectedInjury) return;
+        
+        // Add to logged pains for this session
+        this.loggedPains.push({
+            region: this.selectedRegion,
+            subregion: this.selectedSubregion,
+            timing: this.selectedTiming,
+            injury: this.detectedInjury.id
+        });
+        
+        // Also add to painPoints for backward compatibility
+        this.painPoints.add(this.selectedRegion + '_' + this.selectedSubregion);
+        
+        // Update UI
+        this.updateSelectedPainsDisplay();
+        
+        // Reset drill-down for next entry
+        this.backToPainStep1();
+        
+        // Show confirmation
+        document.getElementById('pain-summary').innerHTML = 
+            `<span class="pain-count">${this.loggedPains.length} issue(s) logged</span>`;
+    },
+    
+    /**
+     * Update display of selected pains
+     */
+    updateSelectedPainsDisplay() {
+        const container = document.getElementById('selected-pains');
+        if (!container) return;
+        
+        if (this.loggedPains.length === 0) {
+            container.innerHTML = '';
+            return;
+        }
+        
+        container.innerHTML = `
+            <div class="logged-pains">
+                ${this.loggedPains.map((pain, idx) => {
+                    const injury = InjuryDatabase?.INJURIES?.[pain.injury];
+                    return `
+                        <div class="logged-pain-item">
+                            <span>${injury?.name || pain.region}</span>
+                            <button class="remove-pain" onclick="CardioLogger.removePain(${idx})">×</button>
+                        </div>
+                    `;
+                }).join('')}
+            </div>
+        `;
+    },
+    
+    /**
+     * Remove a logged pain
+     */
+    removePain(idx) {
+        this.loggedPains.splice(idx, 1);
+        this.updateSelectedPainsDisplay();
+        document.getElementById('pain-summary').innerHTML = 
+            this.loggedPains.length > 0 
+                ? `<span class="pain-count">${this.loggedPains.length} issue(s) logged</span>`
+                : 'Any discomfort?';
     },
 
     /**
-     * Toggle pain area selection
+     * Toggle pain area selection (legacy - keeping for backward compat)
      */
     togglePain(areaId) {
         const btn = document.querySelector(`[data-pain="${areaId}"]`);
         
         if (this.painPoints.has(areaId)) {
             this.painPoints.delete(areaId);
-            btn.classList.remove('selected');
+            btn?.classList.remove('selected');
         } else {
             this.painPoints.add(areaId);
-            btn.classList.add('selected');
+            btn?.classList.add('selected');
         }
         
         // Update summary
@@ -367,7 +616,7 @@ const CardioLogger = {
         const count = this.painPoints.size;
         
         if (count === 0) {
-            summary.textContent = 'Tap to log discomfort';
+            summary.innerHTML = 'Any discomfort?';
         } else {
             const areas = Array.from(this.painPoints).map(id => {
                 const config = this.ACTIVITY_TYPES[this.currentType];
@@ -431,7 +680,7 @@ const CardioLogger = {
         const effort = parseInt(document.getElementById('cardio-effort').value) || 5;
         
         // Get selected workout type
-        const activeBtn = document.querySelector('.workout-type-btn.active');
+        const activeBtn = document.querySelector('.wt-btn.active');
         const workoutType = activeBtn?.dataset.type || this.prescription.type || 'easy';
         
         if (!distance || distance <= 0) {
@@ -447,6 +696,7 @@ const CardioLogger = {
             time: time || null,
             effort,
             pain: Array.from(this.painPoints),
+            painDetails: this.loggedPains, // New: detailed pain with injury detection
             prescribed: this.prescription.isRest ? null : {
                 type: this.prescription.type,
                 distance: this.prescription.distance
@@ -457,6 +707,13 @@ const CardioLogger = {
         
         // Save to state
         this.logCardio(entry);
+        
+        // Log pain data to InjuryIntelligence for pattern tracking
+        if (this.loggedPains.length > 0 && typeof InjuryIntelligence !== 'undefined') {
+            this.loggedPains.forEach(pain => {
+                InjuryIntelligence.logPain(this.currentType, workoutType, [pain.region + '_' + pain.subregion]);
+            });
+        }
         
         // Award XP
         const baseXP = Math.round(distance * 10);

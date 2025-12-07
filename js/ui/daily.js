@@ -27,11 +27,15 @@ const DailyView = {
             
             <!-- SECTION 2: TODAY'S PLAN (Dynamic order based on science) -->
             ${this.renderWorkoutOrder()}
+            
+            <!-- Recovery exercises BEFORE run if pre-run required -->
+            ${this.shouldShowRecoveryBeforeRun() ? this.renderRecoverySection('pre') : ''}
+            
             ${workoutOrder === 'run_first' ? RunningView.renderDailyRunning() : Workout.renderWorkoutSection()}
             ${workoutOrder === 'run_first' ? Workout.renderWorkoutSection() : RunningView.renderDailyRunning()}
             
-            <!-- SECTION 2B: RECOVERY PROTOCOL (if injury detected) -->
-            ${typeof InjuryIntelligence !== 'undefined' ? InjuryIntelligence.renderDailyRecoverySection() : ''}
+            <!-- Recovery exercises AFTER run or on rest days -->
+            ${!this.shouldShowRecoveryBeforeRun() ? this.renderRecoverySection('post') : ''}
             
             <!-- SECTION 3: PROGRESS TRACKING -->
             ${this.renderWeightInput()}
@@ -58,6 +62,134 @@ const DailyView = {
         const todaysSchedule = CONFIG.RUNNING.BASE_WEEK[dayOfWeek];
         
         return todaysSchedule?.order || 'lift_first';
+    },
+    
+    /**
+     * Check if recovery exercises should show BEFORE run (for pre-run exercises)
+     */
+    shouldShowRecoveryBeforeRun() {
+        // Get today's run type
+        const running = State.getRunningData();
+        if (!running?.goal) return false;
+        
+        const dayOfWeek = new Date().getDay();
+        const todaysSchedule = CONFIG.RUNNING?.BASE_WEEK?.[dayOfWeek];
+        const runType = todaysSchedule?.type;
+        
+        // For hard runs (long, tempo, intervals), show pre-run exercises first
+        const hardRuns = ['long', 'tempo', 'intervals'];
+        if (hardRuns.includes(runType)) {
+            // Check if user has an active injury that needs pre-run work
+            const adjustments = typeof InjuryIntelligence !== 'undefined' 
+                ? InjuryIntelligence.getTrainingAdjustments() 
+                : null;
+            return adjustments && adjustments.exercises && adjustments.exercises.length > 0;
+        }
+        
+        return false;
+    },
+    
+    /**
+     * Render recovery section with context-aware exercises
+     */
+    renderRecoverySection(timing = 'post') {
+        if (typeof InjuryDatabase === 'undefined' || typeof InjuryIntelligence === 'undefined') {
+            return '';
+        }
+        
+        // Get active injury from InjuryIntelligence
+        const adjustments = InjuryIntelligence.getTrainingAdjustments();
+        if (!adjustments || !adjustments.injuries || adjustments.injuries.length === 0) {
+            return '';
+        }
+        
+        const activeInjury = adjustments.injuries[0];
+        const injuryId = activeInjury.id;
+        
+        // Determine today's cardio type for context
+        const running = State.getRunningData();
+        let cardioType = null;
+        if (running?.goal) {
+            const dayOfWeek = new Date().getDay();
+            const todaysSchedule = CONFIG.RUNNING?.BASE_WEEK?.[dayOfWeek];
+            cardioType = todaysSchedule?.type || null;
+        }
+        
+        // Get exercises from InjuryDatabase
+        const exercises = InjuryDatabase.getTodaysRecoveryExercises(injuryId, cardioType);
+        if (!exercises || exercises.length === 0) {
+            return '';
+        }
+        
+        // Filter by timing
+        const todayKey = State.getTodayKey();
+        const completedToday = State._data?.recoveryExercisesCompleted?.[todayKey] || [];
+        const timingLabel = timing === 'pre' ? 'PRE-RUN' : (cardioType === 'rest' || !cardioType) ? 'REST DAY' : 'POST-RUN';
+        
+        return `
+            <section class="section recovery-section">
+                <div class="section-header">
+                    <span class="section-title">${timingLabel} RECOVERY</span>
+                    <span class="section-badge warning">${activeInjury.name}</span>
+                </div>
+                <div class="recovery-exercises-list">
+                    ${exercises.map(ex => {
+                        const isComplete = completedToday.includes(ex.name);
+                        return `
+                            <div class="recovery-exercise-item ${isComplete ? 'completed' : ''}"
+                                 onclick="DailyView.completeRecoveryExercise('${ex.name.replace(/'/g, "\\'")}')">
+                                <div class="recovery-check">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                                        <polyline points="20 6 9 17 4 12"/>
+                                    </svg>
+                                </div>
+                                <div class="recovery-info">
+                                    <div class="recovery-name">${ex.name}</div>
+                                    <div class="recovery-desc">${ex.description}</div>
+                                    <div class="recovery-freq">${ex.reps}</div>
+                                </div>
+                                <div class="recovery-xp">+${ex.xp || 5}</div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+                <div class="recovery-progress">
+                    ${completedToday.length}/${exercises.length} complete
+                </div>
+            </section>
+        `;
+    },
+    
+    /**
+     * Mark a recovery exercise as complete
+     */
+    completeRecoveryExercise(exerciseName) {
+        const todayKey = State.getTodayKey();
+        
+        if (!State._data.recoveryExercisesCompleted) {
+            State._data.recoveryExercisesCompleted = {};
+        }
+        
+        if (!State._data.recoveryExercisesCompleted[todayKey]) {
+            State._data.recoveryExercisesCompleted[todayKey] = [];
+        }
+        
+        const completed = State._data.recoveryExercisesCompleted[todayKey];
+        
+        if (!completed.includes(exerciseName)) {
+            completed.push(exerciseName);
+            
+            // Award XP
+            const exercise = InjuryDatabase?.EXERCISES ? 
+                Object.values(InjuryDatabase.EXERCISES).find(e => e.name === exerciseName) : null;
+            const xp = exercise?.xp || 5;
+            App.awardXP(xp, 'discipline');
+            
+            State.save();
+        }
+        
+        // Re-render
+        App.render();
     },
     
     /**
