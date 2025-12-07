@@ -183,9 +183,19 @@ const CardioLogger = {
         const rx = this.prescription;
         const isRest = rx.isRest;
         
+        // Check for active injury warning
+        const warning = typeof InjuryIntelligence !== 'undefined' ? InjuryIntelligence.getActiveWarning() : null;
+        
         return `
             <div class="modal-sheet cardio-logger" onclick="event.stopPropagation()">
                 <div class="modal-handle"></div>
+                
+                ${warning ? `
+                    <div class="injury-alert ${warning.severity}">
+                        <strong>${warning.title}</strong>
+                        <span>${warning.message}</span>
+                    </div>
+                ` : ''}
                 
                 <!-- Header -->
                 <div class="cardio-header">
@@ -452,9 +462,9 @@ const CardioLogger = {
         this.close();
         App.render();
         
-        // Check if pain was logged and show any warnings
-        if (this.painPoints.size > 0) {
-            this.analyzeAndWarn();
+        // Trigger injury analysis if pain was logged
+        if (this.painPoints.size > 0 && typeof InjuryIntelligence !== 'undefined') {
+            InjuryIntelligence.onPainLogged(Array.from(this.painPoints), entry);
         }
     },
 
