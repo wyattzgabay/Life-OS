@@ -164,7 +164,7 @@ This is a personal project first. Monetization is gravy, not the goal. Low/no ma
 - [x] Alcohol auto-detection
 
 ### Progressive Overload Tracking 
-- [x] Log weight Ã reps Ã sets
+- [x] Log weight ï¿½ reps ï¿½ sets
 - [x] Calculate estimated 1RM
 - [x] "Last time" stats when logging
 - [x] Progression suggestions
@@ -288,7 +288,7 @@ This is a personal project first. Monetization is gravy, not the goal. Low/no ma
 - [ ] Comprehensive swap options for every exercise
 - [ ] Organized by: equipment available, injury-safe, difficulty level
 - [ ] One-tap swap from pre-approved list
-- [ ] Injury-aware suggestions (e.g., hip injury † no squats in swap list)
+- [ ] Injury-aware suggestions (e.g., hip injury ï¿½ no squats in swap list)
 
 #### More Chronic Injuries
 - [ ] Knee pain (patella, ACL recovery, meniscus)
@@ -367,7 +367,6 @@ Special mode for users with significant physical limitations (e.g., 62yo with hi
 | js/utils.js | Calculations |  |
 | js/app.js | Main init |  |
 | js/ai-nutrition.js | AI food logger |  |
-| js/ai-briefings.js | Morning/evening AI |  |
 | js/ui/daily.js | Daily view |  |
 | js/ui/food.js | Food tab |  |
 | js/ui/stats.js | Stats view |  |

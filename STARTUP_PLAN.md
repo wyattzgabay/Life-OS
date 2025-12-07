@@ -1,8 +1,8 @@
-# Life OS ” Startup Engineering Plan
-## From Disorganized Alpha † Organized Beta V1
+# Life OS ï¿½ Startup Engineering Plan
+## From Disorganized Alpha ï¿½ Organized Beta V1
 
 **Created:** December 2025  
-**Status:** Alpha † Beta Transition Planning
+**Status:** Alpha ï¿½ Beta Transition Planning
 
 ---
 
@@ -201,24 +201,24 @@ These features MUST work flawlessly for Beta V1:
 ### 5.1 Current Architecture
 
 ```
-”””””””””””””””””””””””””””””””””””””””””””””””””””
-”‚                   index.html                     ”‚
-”‚            (Single page, all inline)             ”‚
-””””””””””””””””””””””””””””””””””””””””””””””””””””
-                        ”‚
-        ”””””””””””””””””¼””””””””””””””””
-        ¼               ¼               ¼
-   ”””””””””””    ””””””””””””    ””””””””””””
-   ”‚ app.js  ”‚    ”‚ state.js ”‚    ”‚ config.js”‚
-   ”‚ (init)  ”‚    ”‚ (1937 ln)”‚    ”‚ (static) ”‚
-   ””””””””””””    ”””””””””””””    ”””””””””””””
-        ”‚               ”‚
-        ¼               ¼
-   ”””””””””””””””””””””””””””””””””””””””””””””””
-   ”‚              UI Components                   ”‚
-   ”‚  daily.js, food.js, running.js, profile.js  ”‚
-   ”‚        (tightly coupled to State)           ”‚
-   ””””””””””””””””””””””””””””””””””””””””””””””””
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ï¿½ï¿½                   index.html                     ï¿½ï¿½
+ï¿½ï¿½            (Single page, all inline)             ï¿½ï¿½
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+                        ï¿½ï¿½
+        ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        ï¿½               ï¿½               ï¿½
+   ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½    ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½    ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+   ï¿½ï¿½ app.js  ï¿½ï¿½    ï¿½ï¿½ state.js ï¿½ï¿½    ï¿½ï¿½ config.jsï¿½ï¿½
+   ï¿½ï¿½ (init)  ï¿½ï¿½    ï¿½ï¿½ (1937 ln)ï¿½ï¿½    ï¿½ï¿½ (static) ï¿½ï¿½
+   ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½    ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½    ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        ï¿½ï¿½               ï¿½ï¿½
+        ï¿½               ï¿½
+   ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+   ï¿½ï¿½              UI Components                   ï¿½ï¿½
+   ï¿½ï¿½  daily.js, food.js, running.js, profile.js  ï¿½ï¿½
+   ï¿½ï¿½        (tightly coupled to State)           ï¿½ï¿½
+   ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 ```
 
 **Problems:**
@@ -230,34 +230,34 @@ These features MUST work flawlessly for Beta V1:
 ### 5.2 Recommended Architecture (Beta V1)
 
 ```
-”””””””””””””””””””””””””””””””””””””””””””””””””””
-”‚                   index.html                     ”‚
-””””””””””””””””””””””””””””””””””””””””””””””””””””
-                        ”‚
-                        ¼
-                 ””””””””””””””””
-                 ”‚    App.js    ”‚
-                 ”‚  (Router +   ”‚
-                 ”‚   Lifecycle) ”‚
-                 ”””””””””””””””””
-                        ”‚
-        ”””””””””””””””””¼””””””””””””””””
-        ¼               ¼               ¼
- ””””””””””””””” ””””””””””””””” ”””””””””””””””
- ”‚   Services  ”‚ ”‚    State    ”‚ ”‚   Config    ”‚
- ”‚ ””””””””””  ”‚ ”‚ ””””””””””  ”‚ ”‚ ””””””””””  ”‚
- ”‚ ¢ Firebase  ”‚ ”‚ ¢ UserData  ”‚ ”‚ ¢ Workouts  ”‚
- ”‚ ¢ AI/Groq   ”‚ ”‚ ¢ Storage   ”‚ ”‚ ¢ Levels    ”‚
- ”‚ ¢ Analytics ”‚ ”‚ ¢ Sync      ”‚ ”‚ ¢ Running   ”‚
- ”””””””””””””””” ”””””””””””””””” ””””””””””””””””
-        ”‚               ”‚               ”‚
-        ””””””””””””””””””¼””””””””””””””””
-                        ¼
-              ””””””””””””””””””””
-              ”‚   UI Components  ”‚
-              ”‚ (Render only,    ”‚
-              ”‚  call services)  ”‚
-              ”””””””””””””””””””””
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ï¿½ï¿½                   index.html                     ï¿½ï¿½
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+                        ï¿½ï¿½
+                        ï¿½
+                 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+                 ï¿½ï¿½    App.js    ï¿½ï¿½
+                 ï¿½ï¿½  (Router +   ï¿½ï¿½
+                 ï¿½ï¿½   Lifecycle) ï¿½ï¿½
+                 ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+                        ï¿½ï¿½
+        ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        ï¿½               ï¿½               ï¿½
+ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ ï¿½ï¿½   Services  ï¿½ï¿½ ï¿½ï¿½    State    ï¿½ï¿½ ï¿½ï¿½   Config    ï¿½ï¿½
+ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  ï¿½ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½  ï¿½ï¿½
+ ï¿½ï¿½ ï¿½ Firebase  ï¿½ï¿½ ï¿½ï¿½ ï¿½ UserData  ï¿½ï¿½ ï¿½ï¿½ ï¿½ Workouts  ï¿½ï¿½
+ ï¿½ï¿½ ï¿½ AI/Groq   ï¿½ï¿½ ï¿½ï¿½ ï¿½ Storage   ï¿½ï¿½ ï¿½ï¿½ ï¿½ Levels    ï¿½ï¿½
+ ï¿½ï¿½ ï¿½ Analytics ï¿½ï¿½ ï¿½ï¿½ ï¿½ Sync      ï¿½ï¿½ ï¿½ï¿½ ï¿½ Running   ï¿½ï¿½
+ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        ï¿½ï¿½               ï¿½ï¿½               ï¿½ï¿½
+        ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+                        ï¿½
+              ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+              ï¿½ï¿½   UI Components  ï¿½ï¿½
+              ï¿½ï¿½ (Render only,    ï¿½ï¿½
+              ï¿½ï¿½  call services)  ï¿½ï¿½
+              ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 ```
 
 **Benefits:**
@@ -273,141 +273,140 @@ These features MUST work flawlessly for Beta V1:
 ### 6.1 Current Structure
 ```
 life-os-app/
-””” index.html
-””” admin.html
-””” test.html
-””” manifest.json
-””” css/
-”‚   ”””” styles.css (7042 lines - monolithic)
-””” js/
-”‚   ””” app.js
-”‚   ””” state.js (1937 lines - god object)
-”‚   ””” config.js
-”‚   ””” utils.js (1157 lines - grab bag)
-”‚   ””” firebase-config.js
-”‚   ””” ai-nutrition.js
-”‚   ””” ai-briefings.js
-”‚   ””” demo-mode.js
-”‚   ””” components/
-”‚   ”‚   ””” header.js
-”‚   ”‚   ””” lift-logger.js
-”‚   ”‚   ””” logger.js
-”‚   ”‚   ”””” workout.js
-”‚   ”””” ui/
-”‚       ””” daily.js
-”‚       ””” food.js
-”‚       ””” running.js
-”‚       ””” profile.js
-”‚       ””” stats.js
-”‚       ””” onboarding.js
-”‚       ””” alcohol.js
-”‚       ””” reading.js
-”‚       ”””” skills.js
-”””” docs/
-    ””” PRODUCT_SPEC.md
-    ””” CURRENT_SYSTEM.md
-    ”””” FEATURES.md
+ï¿½ï¿½ï¿½ index.html
+ï¿½ï¿½ï¿½ admin.html
+ï¿½ï¿½ï¿½ test.html
+ï¿½ï¿½ï¿½ manifest.json
+ï¿½ï¿½ï¿½ css/
+ï¿½ï¿½   ï¿½ï¿½ï¿½ï¿½ styles.css (7042 lines - monolithic)
+ï¿½ï¿½ï¿½ js/
+ï¿½ï¿½   ï¿½ï¿½ï¿½ app.js
+ï¿½ï¿½   ï¿½ï¿½ï¿½ state.js (1937 lines - god object)
+ï¿½ï¿½   ï¿½ï¿½ï¿½ config.js
+ï¿½ï¿½   ï¿½ï¿½ï¿½ utils.js (1157 lines - grab bag)
+ï¿½ï¿½   ï¿½ï¿½ï¿½ firebase-config.js
+ï¿½ï¿½   ï¿½ï¿½ï¿½ ai-nutrition.js
+ï¿½ï¿½   ï¿½ï¿½ï¿½ demo-mode.js
+ï¿½ï¿½   ï¿½ï¿½ï¿½ components/
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ header.js
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ lift-logger.js
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ logger.js
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ï¿½ workout.js
+ï¿½ï¿½   ï¿½ï¿½ï¿½ï¿½ ui/
+ï¿½ï¿½       ï¿½ï¿½ï¿½ daily.js
+ï¿½ï¿½       ï¿½ï¿½ï¿½ food.js
+ï¿½ï¿½       ï¿½ï¿½ï¿½ running.js
+ï¿½ï¿½       ï¿½ï¿½ï¿½ profile.js
+ï¿½ï¿½       ï¿½ï¿½ï¿½ stats.js
+ï¿½ï¿½       ï¿½ï¿½ï¿½ onboarding.js
+ï¿½ï¿½       ï¿½ï¿½ï¿½ alcohol.js
+ï¿½ï¿½       ï¿½ï¿½ï¿½ reading.js
+ï¿½ï¿½       ï¿½ï¿½ï¿½ï¿½ skills.js
+ï¿½ï¿½ï¿½ï¿½ docs/
+    ï¿½ï¿½ï¿½ PRODUCT_SPEC.md
+    ï¿½ï¿½ï¿½ CURRENT_SYSTEM.md
+    ï¿½ï¿½ï¿½ï¿½ FEATURES.md
 ```
 
 ### 6.2 Proposed Structure (Beta V1)
 ```
 life-os-app/
-””” index.html
-””” admin.html
-””” manifest.json
-””” package.json (NEW - for versioning)
-””” CHANGELOG.md (NEW)
-””” README.md (NEW)
-”‚
-””” assets/
-”‚   ””” icons/
-”‚   ”‚   ””” icon-180.png
-”‚   ”‚   ””” icon-192.png
-”‚   ”‚   ”””” icon-512.png
-”‚   ”””” images/
-”‚
-””” css/
-”‚   ””” base/
-”‚   ”‚   ””” reset.css
-”‚   ”‚   ””” variables.css (colors, spacing, fonts)
-”‚   ”‚   ”””” typography.css
-”‚   ””” components/
-”‚   ”‚   ””” buttons.css
-”‚   ”‚   ””” cards.css
-”‚   ”‚   ””” forms.css
-”‚   ”‚   ””” modals.css
-”‚   ”‚   ”””” navigation.css
-”‚   ””” views/
-”‚   ”‚   ””” daily.css
-”‚   ”‚   ””” food.css
-”‚   ”‚   ””” running.css
-”‚   ”‚   ””” profile.css
-”‚   ”‚   ”””” stats.css
-”‚   ”””” main.css (imports all)
-”‚
-””” js/
-”‚   ””” app.js (entry point, router)
-”‚   ”‚
-”‚   ””” config/
-”‚   ”‚   ””” index.js (exports all)
-”‚   ”‚   ””” workouts.js
-”‚   ”‚   ””” running.js
-”‚   ”‚   ””” levels.js
-”‚   ”‚   ””” nutrition.js
-”‚   ”‚   ”””” constants.js
-”‚   ”‚
-”‚   ””” services/
-”‚   ”‚   ””” firebase.js (auth + firestore)
-”‚   ”‚   ””” storage.js (localStorage + IndexedDB)
-”‚   ”‚   ””” ai.js (Groq API)
-”‚   ”‚   ”””” analytics.js (future)
-”‚   ”‚
-”‚   ””” state/
-”‚   ”‚   ””” index.js (main state manager)
-”‚   ”‚   ””” user.js (profile, goals)
-”‚   ”‚   ””” workouts.js (lift history, PRs)
-”‚   ”‚   ””” running.js (run logs, program)
-”‚   ”‚   ””” nutrition.js (meals, macros)
-”‚   ”‚   ”””” sync.js (cloud sync logic)
-”‚   ”‚
-”‚   ””” engines/
-”‚   ”‚   ””” workout-engine.js (volume calc, progression)
-”‚   ”‚   ””” running-engine.js (paces, phases, scheduling)
-”‚   ”‚   ”””” scoring-engine.js (XP, daily score)
-”‚   ”‚
-”‚   ””” components/
-”‚   ”‚   ””” Header.js
-”‚   ”‚   ””” Navigation.js
-”‚   ”‚   ””” LiftLogger.js
-”‚   ”‚   ””” WorkoutCard.js
-”‚   ”‚   ””” RunCard.js
-”‚   ”‚   ””” MealCard.js
-”‚   ”‚   ”””” Modal.js
-”‚   ”‚
-”‚   ””” views/
-”‚   ”‚   ””” DailyView.js
-”‚   ”‚   ””” FoodView.js
-”‚   ”‚   ””” RunningView.js
-”‚   ”‚   ””” ProfileView.js
-”‚   ”‚   ””” StatsView.js
-”‚   ”‚   ”””” OnboardingView.js
-”‚   ”‚
-”‚   ”””” utils/
-”‚       ””” date.js (date helpers)
-”‚       ””” format.js (number/string formatting)
-”‚       ””” validation.js (input validation)
-”‚       ”””” dom.js (DOM helpers)
-”‚
-””” docs/
-”‚   ””” PRODUCT_SPEC.md
-”‚   ””” CURRENT_SYSTEM.md
-”‚   ””” ARCHITECTURE.md (NEW)
-”‚   ””” API.md (NEW - internal API docs)
-”‚   ”””” CONTRIBUTING.md (NEW)
-”‚
-”””” tests/ (NEW - for V2)
-    ””” unit/
-    ”””” integration/
+ï¿½ï¿½ï¿½ index.html
+ï¿½ï¿½ï¿½ admin.html
+ï¿½ï¿½ï¿½ manifest.json
+ï¿½ï¿½ï¿½ package.json (NEW - for versioning)
+ï¿½ï¿½ï¿½ CHANGELOG.md (NEW)
+ï¿½ï¿½ï¿½ README.md (NEW)
+ï¿½ï¿½
+ï¿½ï¿½ï¿½ assets/
+ï¿½ï¿½   ï¿½ï¿½ï¿½ icons/
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ icon-180.png
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ icon-192.png
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ï¿½ icon-512.png
+ï¿½ï¿½   ï¿½ï¿½ï¿½ï¿½ images/
+ï¿½ï¿½
+ï¿½ï¿½ï¿½ css/
+ï¿½ï¿½   ï¿½ï¿½ï¿½ base/
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ reset.css
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ variables.css (colors, spacing, fonts)
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ï¿½ typography.css
+ï¿½ï¿½   ï¿½ï¿½ï¿½ components/
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ buttons.css
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ cards.css
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ forms.css
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ modals.css
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ï¿½ navigation.css
+ï¿½ï¿½   ï¿½ï¿½ï¿½ views/
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ daily.css
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ food.css
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ running.css
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ profile.css
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ï¿½ stats.css
+ï¿½ï¿½   ï¿½ï¿½ï¿½ï¿½ main.css (imports all)
+ï¿½ï¿½
+ï¿½ï¿½ï¿½ js/
+ï¿½ï¿½   ï¿½ï¿½ï¿½ app.js (entry point, router)
+ï¿½ï¿½   ï¿½ï¿½
+ï¿½ï¿½   ï¿½ï¿½ï¿½ config/
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ index.js (exports all)
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ workouts.js
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ running.js
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ levels.js
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ nutrition.js
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ï¿½ constants.js
+ï¿½ï¿½   ï¿½ï¿½
+ï¿½ï¿½   ï¿½ï¿½ï¿½ services/
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ firebase.js (auth + firestore)
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ storage.js (localStorage + IndexedDB)
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ ai.js (Groq API)
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ï¿½ analytics.js (future)
+ï¿½ï¿½   ï¿½ï¿½
+ï¿½ï¿½   ï¿½ï¿½ï¿½ state/
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ index.js (main state manager)
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ user.js (profile, goals)
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ workouts.js (lift history, PRs)
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ running.js (run logs, program)
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ nutrition.js (meals, macros)
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ï¿½ sync.js (cloud sync logic)
+ï¿½ï¿½   ï¿½ï¿½
+ï¿½ï¿½   ï¿½ï¿½ï¿½ engines/
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ workout-engine.js (volume calc, progression)
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ running-engine.js (paces, phases, scheduling)
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ï¿½ scoring-engine.js (XP, daily score)
+ï¿½ï¿½   ï¿½ï¿½
+ï¿½ï¿½   ï¿½ï¿½ï¿½ components/
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ Header.js
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ Navigation.js
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ LiftLogger.js
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ WorkoutCard.js
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ RunCard.js
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ MealCard.js
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ï¿½ Modal.js
+ï¿½ï¿½   ï¿½ï¿½
+ï¿½ï¿½   ï¿½ï¿½ï¿½ views/
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ DailyView.js
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ FoodView.js
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ RunningView.js
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ ProfileView.js
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ StatsView.js
+ï¿½ï¿½   ï¿½ï¿½   ï¿½ï¿½ï¿½ï¿½ OnboardingView.js
+ï¿½ï¿½   ï¿½ï¿½
+ï¿½ï¿½   ï¿½ï¿½ï¿½ï¿½ utils/
+ï¿½ï¿½       ï¿½ï¿½ï¿½ date.js (date helpers)
+ï¿½ï¿½       ï¿½ï¿½ï¿½ format.js (number/string formatting)
+ï¿½ï¿½       ï¿½ï¿½ï¿½ validation.js (input validation)
+ï¿½ï¿½       ï¿½ï¿½ï¿½ï¿½ dom.js (DOM helpers)
+ï¿½ï¿½
+ï¿½ï¿½ï¿½ docs/
+ï¿½ï¿½   ï¿½ï¿½ï¿½ PRODUCT_SPEC.md
+ï¿½ï¿½   ï¿½ï¿½ï¿½ CURRENT_SYSTEM.md
+ï¿½ï¿½   ï¿½ï¿½ï¿½ ARCHITECTURE.md (NEW)
+ï¿½ï¿½   ï¿½ï¿½ï¿½ API.md (NEW - internal API docs)
+ï¿½ï¿½   ï¿½ï¿½ï¿½ï¿½ CONTRIBUTING.md (NEW)
+ï¿½ï¿½
+ï¿½ï¿½ï¿½ï¿½ tests/ (NEW - for V2)
+    ï¿½ï¿½ï¿½ unit/
+    ï¿½ï¿½ï¿½ï¿½ integration/
 ```
 
 ---
