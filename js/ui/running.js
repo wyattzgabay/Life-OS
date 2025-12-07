@@ -28,8 +28,8 @@ const RunningView = {
                     <div class="rest-day-card">
                         ${this.renderTrackIndicator(trackStatus)}
                         <div class="rest-message">Recovery is training. Take it easy.</div>
-                        <button class="log-run-btn secondary" onclick="RunningView.openRunLogger()">
-                            LOG CROSS-TRAINING
+                        <button class="log-run-btn secondary" onclick="CardioLogger.open('running')">
+                            LOG ACTIVITY
                         </button>
                         ${this.renderTomorrowPreview(tomorrow)}
                     </div>
@@ -115,7 +115,7 @@ const RunningView = {
                         </div>
                     ` : ''}
                     
-                    <button class="log-run-btn ${runStatus !== 'pending' ? 'secondary' : ''}" onclick="RunningView.openRunLogger('${todaysRun.type}')">
+                    <button class="log-run-btn ${runStatus !== 'pending' ? 'secondary' : ''}" onclick="CardioLogger.open('running')">
                         ${runStatus === 'pending' ? 'LOG RUN' : 'UPDATE RUN'}
                     </button>
                     
