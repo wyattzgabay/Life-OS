@@ -128,8 +128,27 @@ const DailyView = {
         }
         
         // Get exercises from InjuryDatabase
-        const exercises = InjuryDatabase.getTodaysRecoveryExercises(injuryId, cardioType);
+        let exercises = [];
+        try {
+            exercises = InjuryDatabase.getTodaysRecoveryExercises(injuryId, cardioType);
+        } catch (e) {
+            console.log('Error getting recovery exercises:', e);
+        }
+        
+        // Fallback: use exercises from InjuryIntelligence adjustments if InjuryDatabase fails
         if (!exercises || exercises.length === 0) {
+            if (adjustments.exercises && adjustments.exercises.length > 0) {
+                exercises = adjustments.exercises.slice(0, 5).map(ex => ({
+                    name: ex.name,
+                    description: ex.description || '',
+                    reps: ex.frequency || '',
+                    xp: ex.xp || 5
+                }));
+            }
+        }
+        
+        if (!exercises || exercises.length === 0) {
+            console.log('No recovery exercises found for', injuryId);
             return '';
         }
         

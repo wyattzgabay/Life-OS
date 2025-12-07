@@ -564,12 +564,12 @@ const InjuryIntelligence = {
      * Assess a specific injury based on pain history
      */
     assessInjury(injuryKey, injury, painHistory) {
-        // Get pain entries that match this injury's signals
+        // PRIORITY: Must match at least one earlySignal to be considered
+        // progressionSignals alone don't qualify - they only add context
         const relevantPain = painHistory.filter(entry => {
-            return entry.pain?.some(p => 
-                injury.earlySignals.includes(p) || 
-                injury.progressionSignals.includes(p)
-            );
+            // Must have at least one early signal match
+            const hasEarlyMatch = entry.pain?.some(p => injury.earlySignals.includes(p));
+            return hasEarlyMatch;
         });
         
         if (relevantPain.length === 0) return null;

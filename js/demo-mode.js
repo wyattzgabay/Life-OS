@@ -38,7 +38,7 @@ const DemoMode = {
         const cardioLog = [];
         
         // Simulate IT Band pain over several runs (should trigger ITBS detection)
-        // IT Band signals in InjuryIntelligence: earlySignals: ['it_band', 'knee'], progressionSignals: ['hip', 'glute']
+        // IT Band earlySignals in InjuryIntelligence: ['it_band'] - ONLY it_band, not knee!
         for (let i = 0; i < 6; i++) {
             const date = new Date(today);
             date.setDate(date.getDate() - (i * 2)); // Every other day
@@ -49,7 +49,7 @@ const DemoMode = {
                 distance: 3 + (i % 3),
                 time: '28:00',
                 effort: 6,
-                pain: ['it_band', 'hip'], // IT band and hip progression - triggers ITBS not Runner's Knee
+                pain: ['it_band'], // ONLY it_band - triggers ITBS, not Runner's Knee
                 painDetails: [{
                     region: 'thigh',
                     subregion: 'outer',
