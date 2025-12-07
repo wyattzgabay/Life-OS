@@ -152,24 +152,21 @@ input, textarea, select {
 
 html, body {
     height: 100%;
-    /* Disable elastic scroll on body - keep tab bar static */
-    overscroll-behavior: none;
+    overflow: hidden; /* Body doesn't scroll - views do */
 }
 
-/* Enable elastic scroll only on main content area */
-.view {
-    overscroll-behavior: auto;
-    -webkit-overflow-scrolling: touch;
+/* Main content wrapper for scrolling */
+#main-app {
+    height: 100%;
+    overflow: hidden;
 }
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
     background: var(--bg);
     color: var(--text);
-    min-height: 100vh;
-    min-height: -webkit-fill-available;
-    padding-bottom: calc(80px + var(--safe-bottom));
-    overflow-x: hidden;
+    height: 100%;
+    overflow: hidden;
     -webkit-font-smoothing: antialiased;
 }
 
@@ -314,7 +311,11 @@ button, .btn {
     display: none;
     padding: 0 16px 20px;
     animation: fadeIn 0.2s ease;
-    overflow-x: hidden; /* Prevent horizontal scroll */
+    overflow-x: hidden;
+    overflow-y: auto;
+    height: calc(100vh - 70px - var(--safe-bottom)); /* Full height minus tab bar */
+    -webkit-overflow-scrolling: touch; /* iOS momentum scrolling */
+    overscroll-behavior-y: auto; /* Enable bouncy scroll */
 }
 
 .view.active {
