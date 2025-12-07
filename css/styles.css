@@ -7433,312 +7433,181 @@ body {
    CARDIO LOGGER
    ========================================== */
 
+/* Cardio Logger - Compact */
 .cardio-logger {
     width: 100%;
-    max-height: 85vh;
-    overflow-y: auto;
+    padding: 16px;
 }
 
 .cardio-header {
-    text-align: center;
-    padding-bottom: 12px;
-    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     margin-bottom: 12px;
 }
 
 .cardio-title {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 16px;
+    font-size: 14px;
     font-weight: 700;
-    letter-spacing: 0.05em;
     color: var(--text);
 }
 
-.cardio-prescription {
-    font-size: 13px;
-    color: var(--text-muted);
-    margin-top: 6px;
-}
-
-.cardio-section {
-    margin-bottom: 14px;
-}
-
-.cardio-section .section-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.1em;
-    color: var(--text-dim);
-    margin-bottom: 10px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.optional-tag {
-    font-size: 9px;
-    color: var(--text-muted);
-    background: var(--surface-2);
-    padding: 2px 6px;
-    border-radius: 4px;
-    letter-spacing: 0;
-}
-
-/* Workout Type Grid */
-.workout-type-grid {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-.workout-type-btn {
-    flex: 1;
-    min-width: 60px;
-    padding: 8px 6px;
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--text-muted);
-    font-size: 10px;
-    font-weight: 600;
-    letter-spacing: 0.02em;
-    cursor: pointer;
-    position: relative;
-    transition: all 0.15s;
-}
-
-.workout-type-btn.active {
-    background: var(--accent);
-    color: var(--bg);
-    border-color: var(--accent);
-}
-
-.workout-type-btn.prescribed {
-    border-color: var(--accent);
-}
-
-.workout-type-btn.prescribed:not(.active) {
+.cardio-rx {
+    font-size: 12px;
     color: var(--accent);
 }
 
-.rx-indicator {
-    position: absolute;
-    top: -6px;
-    right: -6px;
-    background: var(--accent);
-    color: var(--bg);
-    font-size: 8px;
-    padding: 2px 4px;
-    border-radius: 4px;
-    font-weight: 700;
-}
-
-/* Cardio Inputs */
-.cardio-inputs {
+/* Workout Type Row */
+.workout-type-row {
     display: flex;
-    gap: 12px;
+    gap: 6px;
+    margin-bottom: 12px;
 }
 
-.cardio-inputs .input-group {
+.wt-btn {
     flex: 1;
-}
-
-.cardio-inputs label {
-    display: block;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.1em;
-    color: var(--text-dim);
-    margin-bottom: 6px;
-}
-
-.input-with-unit {
-    display: flex;
-    align-items: center;
+    padding: 8px 4px;
     background: var(--surface-2);
     border: 1px solid var(--border);
-    border-radius: 8px;
-    overflow: hidden;
+    border-radius: 6px;
+    color: var(--text-muted);
+    font-size: 10px;
+    font-weight: 600;
+    cursor: pointer;
 }
 
-.input-with-unit input {
+.wt-btn.active {
+    background: var(--accent);
+    color: var(--bg);
+    border-color: var(--accent);
+}
+
+/* Inputs Row */
+.cardio-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.cardio-input-group {
     flex: 1;
-    background: transparent;
-    border: none;
-    padding: 12px;
-    font-size: 18px;
+}
+
+.cardio-input-group label {
+    display: block;
+    font-size: 9px;
+    color: var(--text-dim);
+    margin-bottom: 4px;
+    letter-spacing: 0.05em;
+}
+
+.cardio-input-group input {
+    width: 100%;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 10px 8px;
+    font-size: 16px;
     font-family: 'JetBrains Mono', monospace;
     color: var(--text);
     text-align: center;
     -moz-appearance: textfield;
 }
 
-.input-with-unit input::-webkit-outer-spin-button,
-.input-with-unit input::-webkit-inner-spin-button {
+.cardio-input-group input::-webkit-outer-spin-button,
+.cardio-input-group input::-webkit-inner-spin-button {
     -webkit-appearance: none;
-    margin: 0;
 }
 
-.input-with-unit input:focus {
+.cardio-input-group input:focus {
     outline: none;
-}
-
-.input-with-unit:focus-within {
     border-color: var(--accent);
 }
 
-.input-with-unit .unit {
-    padding: 0 12px;
-    font-size: 12px;
-    color: var(--text-muted);
-    background: var(--surface);
-}
-
-.pace-display {
-    margin-top: 10px;
-    font-size: 13px;
+.pace-line {
+    font-size: 11px;
     color: var(--text-muted);
     text-align: center;
+    margin-bottom: 12px;
+    min-height: 14px;
 }
 
-.pace-display strong {
-    color: var(--accent);
-}
-
-/* Effort Scale */
-.effort-scale {
-    display: flex;
-    gap: 4px;
-}
-
-.effort-num {
-    flex: 1;
-    padding: 10px 0;
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    color: var(--text-muted);
-    font-size: 13px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.15s;
-}
-
-.effort-num.default {
-    border-color: var(--text-dim);
-    color: var(--text);
-}
-
-.effort-num.active {
-    background: var(--accent);
-    color: var(--bg);
-    border-color: var(--accent);
-}
-
-.effort-labels {
-    display: flex;
-    justify-content: space-between;
-    margin-top: 6px;
-    font-size: 10px;
-    color: var(--text-dim);
-}
-
-/* Pain Section */
-.pain-section {
-    background: var(--surface-2);
-    border-radius: 10px;
-    padding: 12px;
-    border: 1px solid var(--border);
-}
-
-.pain-toggle {
+/* Pain Row */
+.pain-row {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 10px 12px;
+    background: var(--surface-2);
+    border-radius: 8px;
+    margin-bottom: 8px;
     cursor: pointer;
-    padding: 8px 0;
 }
 
-#pain-summary {
+.pain-row #pain-summary {
+    font-size: 12px;
     color: var(--text-muted);
-    font-size: 13px;
 }
 
-.toggle-arrow {
-    color: var(--text-dim);
+.pain-row .toggle-arrow {
     font-size: 10px;
+    color: var(--text-dim);
 }
 
 .pain-panel {
-    padding-top: 12px;
-    border-top: 1px solid var(--border);
-    margin-top: 12px;
+    margin-bottom: 12px;
 }
 
-.pain-areas {
+.pain-chips {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
+    gap: 6px;
 }
 
-.pain-area-btn {
-    padding: 8px 12px;
+.pain-chip {
+    padding: 6px 10px;
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 20px;
+    border-radius: 14px;
     color: var(--text-muted);
-    font-size: 12px;
+    font-size: 11px;
     cursor: pointer;
-    transition: all 0.15s;
 }
 
-.pain-area-btn.selected {
+.pain-chip.selected {
     background: var(--error);
     color: white;
     border-color: var(--error);
 }
 
-.pain-warning {
-    margin-top: 12px;
+#pain-warning {
+    margin-top: 8px;
 }
 
 .injury-warning {
     background: rgba(239, 68, 68, 0.1);
     border: 1px solid var(--error);
-    border-radius: 8px;
-    padding: 12px;
+    border-radius: 6px;
+    padding: 10px;
+    font-size: 11px;
 }
 
 .injury-warning strong {
     color: var(--error);
-    display: block;
-    margin-bottom: 6px;
-}
-
-.injury-warning p {
-    color: var(--text);
-    font-size: 12px;
-    margin: 0;
-    line-height: 1.4;
 }
 
 /* Save Button */
-.cardio-actions {
-    margin-top: 14px;
-}
-
 .cardio-save-btn {
     width: 100%;
     padding: 14px;
     background: var(--accent);
     color: var(--bg);
     border: none;
-    border-radius: 10px;
-    font-size: 15px;
+    border-radius: 8px;
+    font-size: 14px;
     font-weight: 700;
-    letter-spacing: 0.05em;
     cursor: pointer;
-    transition: background 0.15s;
 }
 
 .cardio-save-btn:active {

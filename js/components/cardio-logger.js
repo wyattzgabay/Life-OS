@@ -176,7 +176,7 @@ const CardioLogger = {
     },
 
     /**
-     * Render the cardio logger modal
+     * Render the cardio logger modal - compact for mobile
      */
     render() {
         const config = this.ACTIVITY_TYPES[this.currentType];
@@ -186,117 +186,65 @@ const CardioLogger = {
         return `
             <div class="modal-sheet cardio-logger" onclick="event.stopPropagation()">
                 <div class="modal-handle"></div>
-                    
-                    <!-- Header -->
-                    <div class="cardio-header">
-                        <div class="cardio-title">${isRest ? 'REST DAY' : "TODAY'S " + config.name.toUpperCase()}</div>
-                        ${!isRest ? `
-                            <div class="cardio-prescription">
-                                Prescribed: ${rx.distance} ${config.unit} ${rx.type}
-                            </div>
-                        ` : `
-                            <div class="cardio-prescription">
-                                Log activity if you trained anyway
-                            </div>
-                        `}
-                    </div>
-                    
-                    <!-- Workout Type Selection -->
-                    <div class="cardio-section">
-                        <div class="section-label">WORKOUT TYPE</div>
-                        <div class="workout-type-grid">
-                            ${config.workoutTypes.map(type => `
-                                <button class="workout-type-btn ${type === rx.type ? 'prescribed active' : ''}" 
-                                        data-type="${type}"
-                                        onclick="CardioLogger.selectWorkoutType('${type}')">
-                                    ${type.toUpperCase()}
-                                    ${type === rx.type ? '<span class="rx-indicator">Rx</span>' : ''}
-                                </button>
-                            `).join('')}
-                        </div>
-                    </div>
-                    
-                    <!-- Distance & Time Inputs -->
-                    <div class="cardio-section">
-                        <div class="cardio-inputs">
-                            <div class="input-group">
-                                <label>DISTANCE</label>
-                                <div class="input-with-unit">
-                                    <input type="number" id="cardio-distance" 
-                                           value="${isRest ? '' : rx.distance}"
-                                           placeholder="${isRest ? '0' : rx.distance}"
-                                           step="0.1" inputmode="decimal"
-                                           style="color-scheme: dark;">
-                                    <span class="unit">${config.unit}</span>
-                                </div>
-                            </div>
-                            <div class="input-group">
-                                <label>TIME</label>
-                                <div class="input-with-unit">
-                                    <input type="text" id="cardio-time" 
-                                           placeholder="mm:ss"
-                                           style="color-scheme: dark;">
-                                    <span class="unit">min</span>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="pace-display" id="pace-display">
-                            ${rx.pace ? `Target pace: ${rx.pace}` : 'Enter distance and time to see pace'}
-                        </div>
-                    </div>
-                    
-                    <!-- Effort Selection (simplified from feel + effort) -->
-                    <div class="cardio-section">
-                        <div class="section-label">HOW DID IT FEEL?</div>
-                        <div class="effort-scale">
-                            ${[1,2,3,4,5,6,7,8,9,10].map(n => `
-                                <button class="effort-num ${n === 5 ? 'default' : ''}" 
-                                        data-effort="${n}"
-                                        onclick="CardioLogger.selectEffort(${n})">
-                                    ${n}
-                                </button>
-                            `).join('')}
-                        </div>
-                        <div class="effort-labels">
-                            <span>Easy</span>
-                            <span>Moderate</span>
-                            <span>Hard</span>
-                            <span>Max</span>
-                        </div>
-                        <input type="hidden" id="cardio-effort" value="5">
-                    </div>
-                    
-                    <!-- Pain Tracking -->
-                    <div class="cardio-section pain-section">
-                        <div class="section-label">
-                            ANYTHING HURT?
-                            <span class="optional-tag">optional</span>
-                        </div>
-                        <div class="pain-toggle" onclick="CardioLogger.togglePainPanel()">
-                            <span id="pain-summary">Tap to log discomfort</span>
-                            <span class="toggle-arrow">▼</span>
-                        </div>
-                        <div class="pain-panel" id="pain-panel" style="display: none;">
-                            <div class="pain-areas">
-                                ${config.painAreas.map(area => `
-                                    <button class="pain-area-btn" 
-                                            data-pain="${area.id}"
-                                            onclick="CardioLogger.togglePain('${area.id}')">
-                                        ${area.name}
-                                    </button>
-                                `).join('')}
-                            </div>
-                            <div class="pain-warning" id="pain-warning"></div>
-                        </div>
-                    </div>
-                    
-                    <!-- Save Button -->
-                    <div class="cardio-actions">
-                        <button class="cardio-save-btn" onclick="CardioLogger.save()">
-                            LOG ${config.name.toUpperCase()}
+                
+                <!-- Header -->
+                <div class="cardio-header">
+                    <span class="cardio-title">${isRest ? 'LOG RUN' : rx.type.toUpperCase() + ' RUN'}</span>
+                    <span class="cardio-rx">${isRest ? 'Rest day' : rx.distance + ' ' + config.unit}</span>
+                </div>
+                
+                <!-- Workout Type - inline -->
+                <div class="workout-type-row">
+                    ${config.workoutTypes.map(type => `
+                        <button class="wt-btn ${type === rx.type ? 'active' : ''}" 
+                                data-type="${type}"
+                                onclick="CardioLogger.selectWorkoutType('${type}')">
+                            ${type.charAt(0).toUpperCase() + type.slice(1, 4)}
                         </button>
+                    `).join('')}
+                </div>
+                
+                <!-- Inputs Row -->
+                <div class="cardio-row">
+                    <div class="cardio-input-group">
+                        <label>DIST</label>
+                        <input type="number" id="cardio-distance" 
+                               value="${isRest ? '' : rx.distance}"
+                               placeholder="0" step="0.1" inputmode="decimal"
+                               style="color-scheme: dark;">
+                    </div>
+                    <div class="cardio-input-group">
+                        <label>TIME</label>
+                        <input type="text" id="cardio-time" placeholder="mm:ss"
+                               style="color-scheme: dark;">
+                    </div>
+                    <div class="cardio-input-group">
+                        <label>EFFORT</label>
+                        <input type="number" id="cardio-effort" value="5" 
+                               min="1" max="10" inputmode="numeric"
+                               style="color-scheme: dark;">
                     </div>
                 </div>
+                <div class="pace-line" id="pace-display">${rx.pace ? 'Target: ' + rx.pace : ''}</div>
+                
+                <!-- Pain Toggle (collapsed) -->
+                <div class="pain-row" onclick="CardioLogger.togglePainPanel()">
+                    <span id="pain-summary">Any discomfort?</span>
+                    <span class="toggle-arrow">▼</span>
+                </div>
+                <div class="pain-panel" id="pain-panel" style="display: none;">
+                    <div class="pain-chips">
+                        ${config.painAreas.slice(0, 8).map(area => `
+                            <button class="pain-chip" data-pain="${area.id}"
+                                    onclick="CardioLogger.togglePain('${area.id}')">${area.name}</button>
+                        `).join('')}
+                    </div>
+                    <div id="pain-warning"></div>
+                </div>
+                
+                <!-- Save -->
+                <button class="cardio-save-btn" onclick="CardioLogger.save()">LOG RUN</button>
+            </div>
         `;
     },
 
