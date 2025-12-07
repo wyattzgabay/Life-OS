@@ -1,9 +1,35 @@
 /**
  * DEMO-MODE.JS
  * Pre-populates the app with impressive sample data for marketing
+ * 
+ * TEST MODES:
+ * ?test_injury - Default IT Band test
+ * ?test_injury=plantar_fasciitis - Specific injury test
+ * ?test_injury=multi - Multiple injuries (IT Band + Plantar)
+ * ?stress_test - Cycle through all injuries
  */
 
 const DemoMode = {
+    
+    // Map of injury keys to their earlySignals for testing
+    INJURY_SIGNALS: {
+        plantar_fasciitis: ['foot_arch', 'heel'],
+        achilles_tendinitis: ['achilles', 'calf'],
+        shin_splints: ['shin'],
+        stress_fracture: ['shin', 'foot'],
+        runners_knee: ['knee'],
+        it_band_syndrome: ['it_band'],
+        hamstring_strain: ['hamstring'],
+        hip_flexor_strain: ['hip'],
+        piriformis_syndrome: ['glute', 'hip'],
+        lower_back_pain: ['lower_back'],
+        calf_strain: ['calf'],
+        ankle_sprain: ['ankle'],
+        metatarsalgia: ['foot_arch'],
+        morton_neuroma: ['foot_arch', 'toes'],
+        bursitis_hip: ['hip'],
+        groin_strain: ['groin', 'hip'],
+    },
     
     /**
      * Check if demo mode is active
@@ -20,45 +46,39 @@ const DemoMode = {
     },
     
     /**
+     * Get specific injury to test from URL
+     */
+    getTestInjury() {
+        const params = new URLSearchParams(window.location.search);
+        return params.get('test_injury') || 'it_band_syndrome';
+    },
+    
+    /**
      * Initialize injury test mode with sample pain data
+     * Supports: ?test_injury=plantar_fasciitis, ?test_injury=multi, etc.
      */
     initInjuryTest() {
         if (!this.isInjuryTestActive()) return false;
         
-        console.log('🩹 Injury Test Mode Active');
+        const injuryToTest = this.getTestInjury();
+        console.log('🩹 Injury Test Mode Active - Testing:', injuryToTest);
         
         // IMPORTANT: Initialize State._data if it doesn't exist
         if (!State._data) {
-            State.init(); // This creates the full _data structure
+            State.init();
         }
         
-        // Add sample CARDIO LOG with pain data to trigger injury detection
-        // The InjuryIntelligence.getPainHistory() looks at State._data.cardioLog entries with pain arrays
         const today = new Date();
-        const cardioLog = [];
+        let cardioLog = [];
         
-        // Simulate IT Band pain over several runs (should trigger ITBS detection)
-        // IT Band earlySignals in InjuryIntelligence: ['it_band'] - ONLY it_band, not knee!
-        for (let i = 0; i < 6; i++) {
-            const date = new Date(today);
-            date.setDate(date.getDate() - (i * 2)); // Every other day
-            
-            cardioLog.push({
-                type: 'running',
-                workoutType: i % 3 === 0 ? 'long' : 'easy',
-                distance: 3 + (i % 3),
-                time: '28:00',
-                effort: 6,
-                pain: ['it_band'], // ONLY it_band - triggers ITBS, not Runner's Knee
-                painDetails: [{
-                    region: 'thigh',
-                    subregion: 'outer',
-                    timing: 'after_1_2_miles',
-                    injury: 'it_band_syndrome'
-                }],
-                date: this.formatDate(date),
-                timestamp: date.toISOString()
-            });
+        if (injuryToTest === 'multi') {
+            // Test MULTIPLE injuries at once
+            cardioLog = this.generateMultiInjuryData(today);
+            console.log('🩹 Testing MULTIPLE injuries: IT Band + Plantar Fasciitis');
+        } else {
+            // Test single injury
+            const signals = this.INJURY_SIGNALS[injuryToTest] || ['it_band'];
+            cardioLog = this.generateInjuryData(today, signals, injuryToTest);
         }
         
         // Set cardio log
@@ -70,7 +90,7 @@ const DemoMode = {
             goal: '10k',
             currentWeek: 3,
             weekNumber: 3,
-            injuries: [],
+            injuries: [], // User-reported injuries from onboarding
             baseline: { time: '28:00', distance: 5 },
             target: { raceDate: '2025-03-01', goalTime: '55:00' }
         };
@@ -103,6 +123,126 @@ const DemoMode = {
         console.log('Cardio log loaded with pain data:', cardioLog.length, 'entries');
         
         return true;
+    },
+    
+    /**
+     * Generate pain data for a single injury
+     */
+    generateInjuryData(today, painSignals, injuryKey) {
+        const cardioLog = [];
+        
+        for (let i = 0; i < 6; i++) {
+            const date = new Date(today);
+            date.setDate(date.getDate() - (i * 2));
+            
+            cardioLog.push({
+                type: 'running',
+                workoutType: i % 3 === 0 ? 'long' : 'easy',
+                distance: 3 + (i % 3),
+                time: '28:00',
+                effort: 6,
+                pain: painSignals,
+                painDetails: [{
+                    injury: injuryKey
+                }],
+                date: this.formatDate(date),
+                timestamp: date.toISOString()
+            });
+        }
+        
+        return cardioLog;
+    },
+    
+    /**
+     * Generate pain data for MULTIPLE injuries
+     */
+    generateMultiInjuryData(today) {
+        const cardioLog = [];
+        
+        // IT Band pain - outer knee/thigh
+        for (let i = 0; i < 4; i++) {
+            const date = new Date(today);
+            date.setDate(date.getDate() - (i * 2));
+            
+            cardioLog.push({
+                type: 'running',
+                workoutType: 'easy',
+                distance: 3,
+                time: '28:00',
+                effort: 6,
+                pain: ['it_band'],
+                date: this.formatDate(date),
+                timestamp: date.toISOString()
+            });
+        }
+        
+        // Plantar fasciitis pain - heel/arch
+        for (let i = 0; i < 4; i++) {
+            const date = new Date(today);
+            date.setDate(date.getDate() - (i * 3));
+            
+            cardioLog.push({
+                type: 'running',
+                workoutType: 'long',
+                distance: 5,
+                time: '45:00',
+                effort: 7,
+                pain: ['foot_arch', 'heel'],
+                date: this.formatDate(date),
+                timestamp: date.toISOString()
+            });
+        }
+        
+        return cardioLog;
+    },
+    
+    /**
+     * Stress test: cycle through all injuries
+     * Usage: ?stress_test
+     */
+    runStressTest() {
+        const injuries = Object.keys(this.INJURY_SIGNALS);
+        let current = 0;
+        
+        console.log('🔥 STRESS TEST: Testing', injuries.length, 'injuries');
+        console.log('Injuries to test:', injuries);
+        
+        const testNext = () => {
+            if (current >= injuries.length) {
+                console.log('✅ STRESS TEST COMPLETE - All injuries passed');
+                alert('Stress Test Complete! All ' + injuries.length + ' injuries tested.');
+                return;
+            }
+            
+            const injury = injuries[current];
+            console.log(`\n📋 Testing ${current + 1}/${injuries.length}: ${injury}`);
+            
+            // Generate data for this injury
+            State.init();
+            const today = new Date();
+            const signals = this.INJURY_SIGNALS[injury];
+            State._data.cardioLog = this.generateInjuryData(today, signals, injury);
+            State._data.onboardingComplete = true;
+            State._data.profile = { name: 'Test' };
+            State._data.running = { goal: '10k' };
+            
+            // Check if injury is detected
+            const detected = InjuryIntelligence.analyzeInjuries();
+            const found = detected.find(d => d.key === injury);
+            
+            if (found) {
+                console.log(`  ✅ ${injury} detected correctly (${found.severity})`);
+            } else {
+                console.error(`  ❌ ${injury} NOT detected!`);
+                console.log('  Signals used:', signals);
+                console.log('  Detected instead:', detected.map(d => d.key));
+            }
+            
+            current++;
+            setTimeout(testNext, 100);
+        };
+        
+        testNext();
     },
     
     formatDate(date) {

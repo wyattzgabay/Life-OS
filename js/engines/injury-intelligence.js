@@ -546,12 +546,36 @@ const InjuryIntelligence = {
         const painHistory = this.getPainHistory();
         const assessments = [];
         
+        // 1. Check pain-detected injuries from cardio logs
         for (const [injuryKey, injury] of Object.entries(this.INJURIES)) {
             const assessment = this.assessInjury(injuryKey, injury, painHistory);
             if (assessment) {
                 assessments.push(assessment);
             }
         }
+        
+        // 2. Include USER-REPORTED injuries from onboarding/profile
+        // These are stored in State._data.running.injuries
+        const userReported = State._data?.running?.injuries || [];
+        userReported.forEach(injuryId => {
+            // Don't duplicate if already detected from pain
+            if (assessments.find(a => a.key === injuryId)) return;
+            
+            const injury = this.INJURIES[injuryId];
+            if (!injury) return;
+            
+            // User-reported injuries start as "mild" and can escalate with pain data
+            assessments.push({
+                key: injuryId,
+                name: injury.name,
+                description: injury.description,
+                severity: 'mild',
+                occurrences: 0,
+                daysSinceFirst: 0,
+                userReported: true,
+                recovery: injury.recovery.mild
+            });
+        });
         
         // Sort by severity
         return assessments.sort((a, b) => {

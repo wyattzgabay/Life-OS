@@ -24,7 +24,19 @@ const App = {
             return;
         }
         
+        // Stress test mode - cycles through all injuries
+        if (window.location.search.includes('stress_test')) {
+            State.init();
+            if (typeof DemoMode !== 'undefined') {
+                DemoMode.runStressTest();
+            }
+            return;
+        }
+        
         // Injury test mode - loads pain data to test injury detection
+        // Usage: ?test_injury (default IT Band)
+        //        ?test_injury=plantar_fasciitis
+        //        ?test_injury=multi (multiple injuries)
         if (window.location.search.includes('test_injury')) {
             // Initialize State structure first (don't load from storage)
             State.init();
@@ -45,8 +57,9 @@ const App = {
             
             // Debug: log what injuries were detected
             if (typeof InjuryIntelligence !== 'undefined') {
+                const injuries = InjuryIntelligence.analyzeInjuries();
                 console.log('🩹 Injury Test - Pain history:', InjuryIntelligence.getPainHistory());
-                console.log('🩹 Injury Test - Analyzed injuries:', InjuryIntelligence.analyzeInjuries());
+                console.log('🩹 Injury Test - Detected injuries:', injuries.map(i => `${i.name} (${i.severity})`));
                 console.log('🩹 Injury Test - Training adjustments:', InjuryIntelligence.getTrainingAdjustments());
             }
             return;

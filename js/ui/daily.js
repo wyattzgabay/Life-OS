@@ -28,14 +28,18 @@ const DailyView = {
             <!-- SECTION 2: TODAY'S PLAN (Dynamic order based on science) -->
             ${this.renderWorkoutOrder()}
             
-            <!-- Recovery exercises BEFORE run if pre-run required -->
-            ${this.shouldShowRecoveryBeforeRun() ? this.renderRecoverySection('pre') : ''}
+            <!-- Recovery section positioning depends on run type -->
+            ${this.getRecoveryPosition() === 'before_run' ? this.renderRecoverySection('pre') : ''}
             
             ${workoutOrder === 'run_first' ? RunningView.renderDailyRunning() : Workout.renderWorkoutSection()}
+            
+            <!-- Recovery for REST DAYS appears between run section and lifts -->
+            ${this.getRecoveryPosition() === 'rest_day' ? this.renderRecoverySection('rest') : ''}
+            
             ${workoutOrder === 'run_first' ? Workout.renderWorkoutSection() : RunningView.renderDailyRunning()}
             
-            <!-- Recovery exercises AFTER run or on rest days -->
-            ${!this.shouldShowRecoveryBeforeRun() ? this.renderRecoverySection('post') : ''}
+            <!-- Recovery AFTER cardio for post-run protocols -->
+            ${this.getRecoveryPosition() === 'after_run' ? this.renderRecoverySection('post') : ''}
             
             <!-- SECTION 3: PROGRESS TRACKING -->
             ${this.renderWeightInput()}
@@ -65,28 +69,45 @@ const DailyView = {
     },
     
     /**
-     * Check if recovery exercises should show BEFORE run (for pre-run exercises)
+     * Determine where recovery section should appear
+     * Returns: 'before_run' | 'after_run' | 'rest_day' | 'none'
      */
-    shouldShowRecoveryBeforeRun() {
-        // Get today's run type
-        const running = State.getRunningData();
-        if (!running?.goal) return false;
+    getRecoveryPosition() {
+        // First check if there are any injuries to show recovery for
+        const adjustments = typeof InjuryIntelligence !== 'undefined' 
+            ? InjuryIntelligence.getTrainingAdjustments() 
+            : null;
         
-        const dayOfWeek = new Date().getDay();
-        const todaysSchedule = CONFIG.RUNNING?.BASE_WEEK?.[dayOfWeek];
-        const runType = todaysSchedule?.type;
-        
-        // For hard runs (long, tempo, intervals), show pre-run exercises first
-        const hardRuns = ['long', 'tempo', 'intervals'];
-        if (hardRuns.includes(runType)) {
-            // Check if user has an active injury that needs pre-run work
-            const adjustments = typeof InjuryIntelligence !== 'undefined' 
-                ? InjuryIntelligence.getTrainingAdjustments() 
-                : null;
-            return adjustments && adjustments.exercises && adjustments.exercises.length > 0;
+        if (!adjustments || !adjustments.exercises || adjustments.exercises.length === 0) {
+            return 'none';
         }
         
-        return false;
+        // Get today's run type
+        const running = State.getRunningData();
+        const dayOfWeek = new Date().getDay();
+        const todaysSchedule = CONFIG.RUNNING?.BASE_WEEK?.[dayOfWeek];
+        const runType = todaysSchedule?.type || 'rest';
+        
+        // REST DAY: Show recovery prominently (after run section which just shows "rest")
+        if (runType === 'rest' || !running?.goal) {
+            return 'rest_day';
+        }
+        
+        // HARD RUN DAY: Pre-run warmup/activation exercises first
+        const hardRuns = ['long', 'tempo', 'intervals'];
+        if (hardRuns.includes(runType)) {
+            return 'before_run';
+        }
+        
+        // EASY/RECOVERY RUN: Post-run recovery work
+        return 'after_run';
+    },
+    
+    /**
+     * Legacy - kept for backwards compatibility
+     */
+    shouldShowRecoveryBeforeRun() {
+        return this.getRecoveryPosition() === 'before_run';
     },
     
     /**
@@ -354,6 +375,20 @@ const DailyView = {
             // If rest day and no run, don't add to maxScore
         }
         
+        // 6. Recovery exercises (if injured, 15 points - IMPORTANT for rehab)
+        const adjustments = typeof InjuryIntelligence !== 'undefined' 
+            ? InjuryIntelligence.getTrainingAdjustments() 
+            : null;
+        if (adjustments && adjustments.exercises && adjustments.exercises.length > 0) {
+            const totalRecoveryExercises = Math.min(adjustments.exercises.length, 5); // Cap at 5
+            const completedToday = State._data?.recoveryExercisesCompleted?.[todayKey] || [];
+            const recoveryDone = completedToday.length;
+            
+            const recoveryPercent = Math.min(1, recoveryDone / totalRecoveryExercises);
+            score += Math.round(recoveryPercent * 15);
+            maxScore += 15;
+        }
+        
         // Normalize to 100
         return maxScore > 0 ? Math.round((score / maxScore) * 100) : 0;
     },
@@ -423,6 +458,14 @@ const DailyView = {
             runDisplay = `0/${prescribedDistance.toFixed(1)}mi`;
         }
         
+        // Recovery exercises status
+        const adjustments = typeof InjuryIntelligence !== 'undefined' 
+            ? InjuryIntelligence.getTrainingAdjustments() 
+            : null;
+        const hasRecovery = adjustments && adjustments.exercises && adjustments.exercises.length > 0;
+        const totalRecovery = hasRecovery ? Math.min(adjustments.exercises.length, 5) : 0;
+        const completedRecovery = State._data?.recoveryExercisesCompleted?.[todayKey]?.length || 0;
+        
         return `
             <div class="score-item ${exercisesDone > 0 ? 'done' : ''}">
                 <span class="score-dot"></span>
@@ -434,6 +477,13 @@ const DailyView = {
                 <span class="score-dot"></span>
                 <span>Run</span>
                 <span class="score-detail">${runDisplay}</span>
+            </div>
+            ` : ''}
+            ${hasRecovery ? `
+            <div class="score-item ${completedRecovery >= totalRecovery ? 'done' : ''}">
+                <span class="score-dot"></span>
+                <span>Recovery</span>
+                <span class="score-detail">${completedRecovery}/${totalRecovery}</span>
             </div>
             ` : ''}
             <div class="score-item ${protein >= proteinGoal * 0.5 ? 'done' : ''}">
