@@ -55,6 +55,11 @@ const LiftLogger = {
         document.body.style.overflow = 'hidden';
         document.body.style.position = 'fixed';
         document.body.style.width = '100%';
+        
+        // Enable pull-down-to-dismiss
+        if (typeof ModalGestures !== 'undefined') {
+            ModalGestures.init(modal, () => this.close());
+        }
         document.body.style.top = `-${window.scrollY}px`;
         this._scrollY = window.scrollY;
         

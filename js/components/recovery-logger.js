@@ -213,6 +213,11 @@ const RecoveryLogger = {
         modal.innerHTML = this.render();
         modal.classList.add('active');
         document.body.style.overflow = 'hidden';
+        
+        // Enable pull-down-to-dismiss
+        if (typeof ModalGestures !== 'undefined') {
+            ModalGestures.init(modal, () => this.close());
+        }
     },
 
     /**

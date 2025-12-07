@@ -142,6 +142,11 @@ const CardioLogger = {
         
         // Set up input listeners
         this.setupListeners();
+        
+        // Enable pull-down-to-dismiss
+        if (typeof ModalGestures !== 'undefined') {
+            ModalGestures.init(modal, () => this.close());
+        }
     },
 
     /**

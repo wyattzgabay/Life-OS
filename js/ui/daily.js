@@ -30,6 +30,9 @@ const DailyView = {
             ${workoutOrder === 'run_first' ? RunningView.renderDailyRunning() : Workout.renderWorkoutSection()}
             ${workoutOrder === 'run_first' ? Workout.renderWorkoutSection() : RunningView.renderDailyRunning()}
             
+            <!-- SECTION 2B: RECOVERY PROTOCOL (if injury detected) -->
+            ${typeof InjuryIntelligence !== 'undefined' ? InjuryIntelligence.renderDailyRecoverySection() : ''}
+            
             <!-- SECTION 3: PROGRESS TRACKING -->
             ${this.renderWeightInput()}
             ${this.renderNutritionSummary()}

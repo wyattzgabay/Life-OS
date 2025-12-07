@@ -1415,6 +1415,7 @@ body {
     border-radius: 16px 16px 0 0;
     width: 100%;
     padding: 20px;
+    padding-top: 28px; /* Extra space for drag handle */
     padding-bottom: calc(20px + var(--safe-bottom));
     animation: slideUp 0.2s ease-out;
     max-height: 85vh;
@@ -1422,6 +1423,21 @@ body {
     /* Hardware acceleration */
     transform: translateZ(0);
     will-change: transform;
+    position: relative;
+}
+
+/* Drag handle for pull-to-dismiss (Apple-style) */
+.modal-sheet::before {
+    content: '';
+    position: absolute;
+    top: 10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 36px;
+    height: 5px;
+    background: var(--text-muted);
+    border-radius: 3px;
+    opacity: 0.5;
 }
 
 @keyframes slideUp {
