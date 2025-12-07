@@ -1913,3 +1913,24 @@ const State = {
     },
 };
 
+// ==========================================
+// MODULE INTEGRATION
+// ==========================================
+
+/**
+ * Merge modular state components
+ * This allows us to split state.js into smaller files
+ * while maintaining backwards compatibility
+ */
+(function mergeStateModules() {
+    // Merge Workouts module if available
+    if (typeof StateWorkouts !== 'undefined') {
+        Object.assign(State, StateWorkouts);
+    }
+    
+    // Merge Running module if available
+    if (typeof StateRunning !== 'undefined') {
+        Object.assign(State, StateRunning);
+    }
+})();
+
