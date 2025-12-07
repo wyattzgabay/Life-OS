@@ -18,7 +18,9 @@ const App = {
                 DemoMode.init();
             }
             this.hideAuthScreen();
-            this.showMainApp();
+            this.showMain();
+            this.setupNavigation();
+            this.setupDayChangeListener();
             return;
         }
         
@@ -29,11 +31,10 @@ const App = {
                 DemoMode.initInjuryTest();
             }
             this.hideAuthScreen();
-            this.showMainApp();
+            this.showMain();
             this.setupNavigation();
             this.setupDayChangeListener();
-            this.render();
-            return; // Skip all other init logic
+            return;
         }
         
         // Check for WIPE parameter (intentional data clear - use carefully!)
@@ -228,6 +229,13 @@ const App = {
         }
     },
 
+    /**
+     * Hide auth/onboarding screen
+     */
+    hideAuthScreen() {
+        document.getElementById('onboarding-screen')?.classList.add('hidden');
+    },
+    
     /**
      * Show auth screen (sign in or create account)
      */
