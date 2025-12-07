@@ -5,6 +5,20 @@
 
 const Workout = {
     /**
+     * Check if an exercise is a recovery/mobility exercise
+     * These get intelligent logging based on training state
+     */
+    isRecoveryExercise(exerciseName) {
+        const recoveryKeywords = [
+            'foam roll', 'stretch', 'mobility', 'pigeon', '90/90',
+            'hip flexor', 'dead hang', 'wall slide', 'thoracic',
+            'lacrosse ball', 'massage', 'recovery'
+        ];
+        const name = exerciseName.toLowerCase();
+        return recoveryKeywords.some(keyword => name.includes(keyword));
+    },
+
+    /**
      * Render today's workout section
      */
     renderWorkoutSection() {
@@ -132,10 +146,17 @@ const Workout = {
             swappedIndicator = `<span class="swapped-badge">SWAPPED</span>`;
         }
         
-        // Determine click action - use displayName (which may be swapped)
-        const clickAction = isLift 
-            ? `LiftLogger.open('${displayName.replace(/'/g, "\\'")}')`
-            : `App.toggleExercise(${index})`;
+        // Determine click action based on exercise type
+        let clickAction;
+        if (isLift) {
+            clickAction = `LiftLogger.open('${displayName.replace(/'/g, "\\'")}')`;
+        } else if (this.isRecoveryExercise(exercise.name)) {
+            // Recovery/mobility exercises get intelligent logging
+            clickAction = `RecoveryLogger.open('${exercise.name.replace(/'/g, "\\'")}', ${index})`;
+        } else {
+            // Simple toggle for other exercises
+            clickAction = `App.toggleExercise(${index})`;
+        }
         
         // Item classes
         const itemClasses = [

@@ -7051,3 +7051,202 @@ body {
     border-top: 1px solid var(--border);
 }
 
+/* ==========================================
+   RECOVERY LOGGER
+   ========================================== */
+
+.recovery-header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.recovery-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    margin-bottom: 8px;
+}
+
+.recovery-exercise {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+.recovery-instruction {
+    background: var(--surface-2);
+    border-radius: 10px;
+    padding: 14px 16px;
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.recovery-section {
+    margin-bottom: 20px;
+}
+
+.recovery-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+}
+
+.recovery-section-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    color: var(--text-dim);
+}
+
+.recovery-select-all {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.05em;
+    color: var(--accent);
+    background: none;
+    border: 1px solid var(--accent);
+    border-radius: 6px;
+    padding: 6px 10px;
+    cursor: pointer;
+}
+
+.recovery-areas {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.recovery-area-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+}
+
+.recovery-area-item:active {
+    transform: scale(0.98);
+}
+
+.recovery-area-item.selected {
+    border-color: var(--accent);
+    background: rgba(212, 175, 55, 0.1);
+}
+
+.recovery-area-item.recommended {
+    border-left: 3px solid var(--accent);
+}
+
+.recovery-area-item .area-check {
+    width: 22px;
+    height: 22px;
+    border: 2px solid var(--border);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: all 0.15s ease;
+}
+
+.recovery-area-item .area-check svg {
+    width: 14px;
+    height: 14px;
+    opacity: 0;
+    stroke: var(--accent);
+    transition: opacity 0.15s ease;
+}
+
+.recovery-area-item.selected .area-check {
+    border-color: var(--accent);
+    background: var(--accent);
+}
+
+.recovery-area-item.selected .area-check svg {
+    opacity: 1;
+    stroke: var(--bg);
+}
+
+.recovery-area-item .area-info {
+    flex: 1;
+    min-width: 0;
+}
+
+.recovery-area-item .area-name {
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--text);
+}
+
+.recovery-area-item .area-reason {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 2px;
+}
+
+.recovery-area-item .area-fatigue {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 4px 8px;
+    border-radius: 6px;
+    flex-shrink: 0;
+}
+
+.recovery-area-item .area-fatigue.high {
+    background: rgba(239, 68, 68, 0.2);
+    color: var(--error);
+}
+
+.recovery-area-item .area-fatigue.medium {
+    background: rgba(234, 179, 8, 0.2);
+    color: var(--warning);
+}
+
+.recovery-area-item .area-fatigue.low {
+    background: var(--surface-2);
+    color: var(--text-dim);
+}
+
+.recovery-science {
+    font-size: 11px;
+    color: var(--text-dim);
+    text-align: center;
+    padding: 12px;
+    background: var(--surface-2);
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-style: italic;
+}
+
+.recovery-actions {
+    padding-top: 10px;
+}
+
+.recovery-complete-btn {
+    width: 100%;
+    padding: 16px;
+    background: var(--accent);
+    color: var(--bg);
+    border: none;
+    border-radius: 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.recovery-complete-btn:active {
+    background: var(--accent-dark);
+}
+
