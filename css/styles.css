@@ -106,11 +106,14 @@
     -webkit-tap-highlight-color: transparent;
     -webkit-touch-callout: none;
     color-scheme: dark;
+    /* Eliminate 300ms tap delay on mobile */
+    touch-action: manipulation;
 }
 
-/* Force dark keyboard on iOS */
-input, textarea, select {
+/* Force dark keyboard on iOS + fast touch response */
+input, textarea, select, button {
     color-scheme: dark;
+    touch-action: manipulation;
 }
 
 html, body {
@@ -1416,9 +1419,12 @@ body {
     width: 100%;
     padding: 20px;
     padding-bottom: calc(20px + var(--safe-bottom));
-    animation: slideUp 0.3s ease;
+    animation: slideUp 0.2s ease-out;
     max-height: 85vh;
     overflow-y: auto;
+    /* Hardware acceleration */
+    transform: translateZ(0);
+    will-change: transform;
 }
 
 @keyframes slideUp {

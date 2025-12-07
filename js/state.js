@@ -396,22 +396,31 @@ const State = {
         }
     },
 
+    _saveTimer: null,
+    _cloudSyncTimer: null,
+    
     /**
-     * Save data to ALL storage layers
+     * Save data to ALL storage layers (debounced for performance)
      */
     save() {
         // Add timestamp for sync comparison
         this._data.lastModified = Date.now();
         
-        // 1. Save to localStorage (fastest)
+        // 1. Save to localStorage immediately (fast, sync)
         this.saveLocal();
         
-        // 2. Save to IndexedDB (backup)
-        this.saveToIndexedDB(this._data);
+        // 2. Debounce IndexedDB saves (every 500ms max)
+        if (this._saveTimer) clearTimeout(this._saveTimer);
+        this._saveTimer = setTimeout(() => {
+            this.saveToIndexedDB(this._data);
+        }, 500);
         
-        // 3. Sync to cloud (async, don't block)
+        // 3. Debounce cloud sync (every 5 seconds max)
         if (this._firebaseInitialized) {
-            this.syncToCloud();
+            if (this._cloudSyncTimer) clearTimeout(this._cloudSyncTimer);
+            this._cloudSyncTimer = setTimeout(() => {
+                this.syncToCloud();
+            }, 5000);
         }
         
         return true;
