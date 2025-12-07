@@ -19,6 +19,17 @@ const App = {
             }
             this.hideAuthScreen();
             this.showMainApp();
+            return;
+        }
+        
+        // Injury test mode - loads pain data to test injury detection
+        if (window.location.search.includes('test_injury')) {
+            State.load();
+            if (typeof DemoMode !== 'undefined') {
+                DemoMode.initInjuryTest();
+            }
+            this.hideAuthScreen();
+            this.showMainApp();
             this.setupNavigation();
             this.setupDayChangeListener();
             this.render();

@@ -13,6 +13,97 @@ const DemoMode = {
     },
     
     /**
+     * Check if injury test mode is active
+     */
+    isInjuryTestActive() {
+        return window.location.search.includes('test_injury');
+    },
+    
+    /**
+     * Initialize injury test mode with sample pain data
+     */
+    initInjuryTest() {
+        if (!this.isInjuryTestActive()) return false;
+        
+        console.log('🩹 Injury Test Mode Active');
+        
+        // Add sample CARDIO LOG with pain data to trigger injury detection
+        // The InjuryIntelligence.getPainHistory() looks at State._data.cardioLog entries with pain arrays
+        const today = new Date();
+        const cardioLog = [];
+        
+        // Simulate IT Band pain over several runs (should trigger ITBS detection)
+        // IT Band signals in InjuryIntelligence: earlySignals: ['it_band', 'knee'], progressionSignals: ['hip', 'glute']
+        for (let i = 0; i < 6; i++) {
+            const date = new Date(today);
+            date.setDate(date.getDate() - (i * 2)); // Every other day
+            
+            cardioLog.push({
+                type: 'running',
+                workoutType: i % 3 === 0 ? 'long' : 'easy',
+                distance: 3 + (i % 3),
+                time: '28:00',
+                effort: 6,
+                pain: ['it_band', 'knee'], // Pain matching IT Band earlySignals
+                painDetails: [{
+                    region: 'knee',
+                    subregion: 'outer',
+                    timing: 'after_1_2_miles',
+                    injury: 'it_band_syndrome'
+                }],
+                date: this.formatDate(date),
+                timestamp: date.toISOString()
+            });
+        }
+        
+        // Add to State
+        if (!State._data) State._data = {};
+        State._data.cardioLog = cardioLog;
+        
+        // Set up a running goal so the running view shows
+        if (!State._data.running) {
+            State._data.running = {
+                goal: '10k',
+                currentWeek: 3,
+                injuries: [],
+                baseline: { time: '28:00', distance: 5 }
+            };
+        }
+        
+        // Set profile so app is "onboarded"
+        if (!State._data.profile) {
+            State._data.profile = {
+                name: 'Test User',
+                age: 30,
+                weight: 175,
+                height: 70,
+                sex: 'male',
+                activityLevel: 'moderate',
+                goal: 'maintain',
+                onboarded: true
+            };
+        }
+        
+        // Add today's data with nutrition
+        State._data.days = State._data.days || {};
+        State._data.days[this.formatDate(today)] = {
+            completed: [],
+            weight: 175,
+            calories: 1800,
+            protein: 140
+        };
+        
+        State.save();
+        console.log('Cardio log loaded with pain data:', cardioLog.length, 'entries');
+        
+        return true;
+    },
+    
+    formatDate(date) {
+        return date.toISOString().split('T')[0];
+    },
+    
+    /**
      * Initialize demo mode with sample data
      */
     init() {
