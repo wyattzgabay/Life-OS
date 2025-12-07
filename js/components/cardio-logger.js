@@ -291,9 +291,8 @@ const CardioLogger = {
      * Select workout type
      */
     selectWorkoutType(type) {
-        document.querySelectorAll('.workout-type-btn').forEach(btn => {
-            const isThis = btn.dataset.type === type;
-            btn.classList.toggle('active', isThis);
+        document.querySelectorAll('.wt-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.type === type);
         });
     },
 
@@ -301,7 +300,7 @@ const CardioLogger = {
      * Select effort level
      */
     selectEffort(level) {
-        document.querySelectorAll('.effort-num').forEach(btn => {
+        document.querySelectorAll('.eff-btn').forEach(btn => {
             btn.classList.toggle('active', parseInt(btn.dataset.effort) === level);
             btn.classList.remove('default');
         });
