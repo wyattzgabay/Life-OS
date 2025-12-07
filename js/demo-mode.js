@@ -27,6 +27,11 @@ const DemoMode = {
         
         console.log('🩹 Injury Test Mode Active');
         
+        // IMPORTANT: Initialize State._data if it doesn't exist
+        if (!State._data) {
+            State.init(); // This creates the full _data structure
+        }
+        
         // Add sample CARDIO LOG with pain data to trigger injury detection
         // The InjuryIntelligence.getPainHistory() looks at State._data.cardioLog entries with pain arrays
         const today = new Date();
@@ -56,33 +61,34 @@ const DemoMode = {
             });
         }
         
-        // Add to State
-        if (!State._data) State._data = {};
+        // Set cardio log
         State._data.cardioLog = cardioLog;
         
         // Set up a running goal so the running view shows
-        if (!State._data.running) {
-            State._data.running = {
-                goal: '10k',
-                currentWeek: 3,
-                injuries: [],
-                baseline: { time: '28:00', distance: 5 }
-            };
-        }
+        State._data.running = {
+            ...State._data.running,
+            goal: '10k',
+            currentWeek: 3,
+            weekNumber: 3,
+            injuries: [],
+            baseline: { time: '28:00', distance: 5 },
+            target: { raceDate: '2025-03-01', goalTime: '55:00' }
+        };
         
         // Set profile so app is "onboarded"
-        if (!State._data.profile) {
-            State._data.profile = {
-                name: 'Test User',
-                age: 30,
-                weight: 175,
-                height: 70,
-                sex: 'male',
-                activityLevel: 'moderate',
-                goal: 'maintain',
-                onboarded: true
-            };
-        }
+        State._data.profile = {
+            ...State._data.profile,
+            name: 'Test User',
+            age: 30,
+            weight: 175,
+            height: 70,
+            sex: 'male',
+            activityLevel: 'moderate',
+            goal: 'maintain'
+        };
+        
+        // Mark onboarding complete
+        State._data.onboardingComplete = true;
         
         // Add today's data with nutrition
         State._data.days = State._data.days || {};
