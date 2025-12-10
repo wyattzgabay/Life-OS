@@ -177,6 +177,47 @@ const App = {
             State._data.fixesApplied.dec5RunFix = true;
             State.save();
         }
+        
+        // Check for data loss and offer recovery
+        this.checkDataIntegrity();
+    },
+    
+    /**
+     * Check if data appears to have been lost and offer recovery
+     */
+    checkDataIntegrity() {
+        const backups = State.getBackups();
+        if (backups.length === 0) return;
+        
+        const current = State._data;
+        const latestBackup = backups[0];
+        
+        // Check if current data has significantly less than backup
+        const currentXP = current?.stats?.totalXP || 0;
+        const backupXP = latestBackup?.data?.stats?.totalXP || 0;
+        
+        const currentLifts = Object.keys(current?.liftHistory || {}).length;
+        const backupLifts = Object.keys(latestBackup?.data?.liftHistory || {}).length;
+        
+        const currentRuns = (current?.runLog || []).length;
+        const backupRuns = (latestBackup?.data?.runLog || []).length;
+        
+        // If backup has significantly more data, show recovery option
+        if (backupXP > currentXP + 100 || backupLifts > currentLifts + 2 || backupRuns > currentRuns + 2) {
+            console.warn('Data loss detected! Backup has more data.');
+            console.log('Current XP:', currentXP, 'Backup XP:', backupXP);
+            console.log('Current lifts:', currentLifts, 'Backup lifts:', backupLifts);
+            console.log('Current runs:', currentRuns, 'Backup runs:', backupRuns);
+            
+            // Show notification with restore option
+            setTimeout(() => {
+                if (confirm(`Data may have been lost. Restore from backup?\n\nCurrent: ${currentXP} XP, ${currentLifts} lift sessions\nBackup: ${backupXP} XP, ${backupLifts} lift sessions`)) {
+                    State.restoreFromBackup(0);
+                    App.render();
+                    this.showNotification('Data restored from backup!');
+                }
+            }, 1000);
+        }
     },
     
     /**
