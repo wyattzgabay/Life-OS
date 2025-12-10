@@ -264,6 +264,36 @@ const State = {
         
         return count;
     },
+    
+    /**
+     * Calculate weighted data score (for determining which data to keep)
+     * Higher score = more valuable data that should NEVER be overwritten
+     */
+    getDataScore(data) {
+        if (!data) return 0;
+        
+        let score = 0;
+        
+        // XP is extremely valuable (1 point per XP)
+        score += data?.stats?.totalXP || 0;
+        
+        // Lift sessions are very valuable (100 points each)
+        const liftHistory = data?.liftHistory || {};
+        for (const exercise in liftHistory) {
+            score += (liftHistory[exercise] || []).length * 100;
+        }
+        
+        // Run entries are valuable (50 points each)
+        score += (data?.runLog || []).length * 50;
+        
+        // Days with data (10 points each)
+        score += Object.keys(data?.dayData || {}).length * 10;
+        
+        // Profile exists (50 points)
+        if (data?.profile?.name) score += 50;
+        
+        return score;
+    },
 
     /**
      * Initialize Firebase and load cloud data
@@ -286,23 +316,37 @@ const State = {
                 const cloudData = await Firebase.loadData();
                 
                 if (cloudData) {
-                    // Compare both timestamp AND data quantity
+                    // Compare using data score (weighted by importance)
+                    const localScore = this.getDataScore(this._data);
+                    const cloudScore = this.getDataScore(cloudData);
                     const localTimestamp = this._data?.lastModified || 0;
                     const cloudTimestamp = cloudData.lastModified || 0;
-                    const localCount = this.countDataEntries(this._data);
-                    const cloudCount = this.countDataEntries(cloudData);
                     
-                    const cloudHasMoreData = cloudCount > localCount;
-                    const cloudIsNewer = cloudTimestamp > localTimestamp;
-                    const localHasSignificantlyMoreData = localCount > cloudCount + 5;
+                    console.log(`Sync decision: local=${localScore}, cloud=${cloudScore}`);
                     
-                    // ALWAYS restore from cloud if local is empty/minimal
-                    if (localCount < 3 && cloudCount > 3) {
+                    // NEVER overwrite if local has more valuable data
+                    if (localScore > cloudScore + 50) {
+                        console.log('Local has more data - pushing to cloud');
+                        this.syncToCloud();
+                        return true;
+                    }
+                    
+                    // Only pull from cloud if local is empty/minimal OR cloud has significantly more
+                    if (localScore < 50 && cloudScore > 50) {
+                        console.log('Local is empty, restoring from cloud');
                         this._data = cloudData;
                         this.saveLocal();
                         this.saveToIndexedDB(cloudData);
                         return true;
-                    } else if (cloudHasMoreData || (cloudIsNewer && !localHasSignificantlyMoreData)) {
+                    } else if (cloudScore > localScore + 100) {
+                        console.log('Cloud has significantly more data - creating backup and restoring');
+                        this.createBackup('pre-cloud-sync');
+                        this._data = cloudData;
+                        this.saveLocal();
+                        this.saveToIndexedDB(cloudData);
+                        return true;
+                    } else if (cloudTimestamp > localTimestamp && cloudScore >= localScore) {
+                        console.log('Cloud is newer with equal/more data - creating backup and restoring');
                         this.createBackup('pre-cloud-sync');
                         this._data = cloudData;
                         this.saveLocal();
@@ -319,12 +363,21 @@ const State = {
                 Firebase.listenForUpdates((data) => {
                     const cloudTimestamp = data.lastModified || 0;
                     const localTimestamp = this._data?.lastModified || 0;
-                    const localCount = this.countDataEntries(this._data);
-                    const cloudCount = this.countDataEntries(data);
+                    const localScore = this.getDataScore(this._data);
+                    const cloudScore = this.getDataScore(data);
                     
-                    const localHasMoreData = localCount > cloudCount + 3;
+                    console.log(`Realtime sync: local=${localScore}, cloud=${cloudScore}`);
                     
-                    if (cloudTimestamp > localTimestamp && !localHasMoreData) {
+                    // NEVER overwrite if local has more valuable data
+                    if (localScore > cloudScore + 50) {
+                        console.log('Local has more valuable data - not overwriting');
+                        this.syncToCloud(); // Push local to cloud instead
+                        return;
+                    }
+                    
+                    // Only accept cloud data if it has significantly more OR is newer with equal data
+                    if (cloudScore > localScore + 100) {
+                        console.log('Cloud has significantly more data - accepting');
                         this.createBackup('pre-realtime-sync');
                         this._data = data;
                         this.saveLocal();
@@ -332,8 +385,15 @@ const State = {
                         if (typeof App !== 'undefined' && App.render) {
                             App.render();
                         }
-                    } else if (localHasMoreData) {
-                        this.syncToCloud();
+                    } else if (cloudTimestamp > localTimestamp && cloudScore >= localScore) {
+                        console.log('Cloud is newer with equal/more data - accepting');
+                        this.createBackup('pre-realtime-sync');
+                        this._data = data;
+                        this.saveLocal();
+                        this.saveToIndexedDB(data);
+                        if (typeof App !== 'undefined' && App.render) {
+                            App.render();
+                        }
                     }
                 });
 

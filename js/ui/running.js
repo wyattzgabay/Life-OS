@@ -183,6 +183,16 @@ const RunningView = {
         const week = running.weekNumber || 1;
         const progression = 1 + (Math.floor((week - 1) / 2) * 0.1);
         
+        // Goal-based distance multipliers (5K is shorter, marathon is longer)
+        const goalMultipliers = {
+            '5k': 0.65,
+            '10k': 1.0,
+            'half': 1.3,
+            'marathon': 1.6,
+            'casual': 0.8
+        };
+        const goalMultiplier = goalMultipliers[running.goal] || 1.0;
+        
         // Base distances by type
         const baseDistances = {
             easy: 2.5,
@@ -192,7 +202,7 @@ const RunningView = {
             recovery: 1.5,
         };
         
-        let distance = (baseDistances[run.type] || 2.5) * progression;
+        let distance = (baseDistances[run.type] || 2.5) * progression * goalMultiplier;
         
         // Apply injury multiplier
         const injuries = running.injuries || [];
