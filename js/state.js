@@ -988,10 +988,16 @@ const State = {
      * Set running goal
      */
     setRunningGoal(goalId) {
+        // Create backup before changing goal (safety measure)
+        this.createBackup('before_goal_change');
+        
+        // Only update goal-specific fields, preserve all other running data
         this._data.running.goal = goalId;
         this._data.running.startDate = new Date().toISOString();
         this._data.running.weekNumber = 1;
-        this.save();
+        
+        // Save locally only first, don't trigger cloud sync
+        this.saveLocal();
     },
 
     /**

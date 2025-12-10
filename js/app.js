@@ -185,36 +185,65 @@ const App = {
     /**
      * Check if data appears to have been lost and offer recovery
      */
-    checkDataIntegrity() {
+    async checkDataIntegrity() {
+        // Check all possible data sources
         const backups = State.getBackups();
-        if (backups.length === 0) return;
-        
         const current = State._data;
-        const latestBackup = backups[0];
         
-        // Check if current data has significantly less than backup
-        const currentXP = current?.stats?.totalXP || 0;
-        const backupXP = latestBackup?.data?.stats?.totalXP || 0;
+        // Also try IndexedDB
+        let idbData = null;
+        try {
+            idbData = await State.loadFromIndexedDB();
+        } catch (e) {
+            console.warn('Could not check IndexedDB:', e);
+        }
         
-        const currentLifts = Object.keys(current?.liftHistory || {}).length;
-        const backupLifts = Object.keys(latestBackup?.data?.liftHistory || {}).length;
+        // Find the best data source
+        const sources = [
+            { name: 'current', data: current },
+            { name: 'indexedDB', data: idbData },
+            ...backups.map((b, i) => ({ name: `backup_${i}`, data: b.data, timestamp: b.timestamp }))
+        ].filter(s => s.data);
         
-        const currentRuns = (current?.runLog || []).length;
-        const backupRuns = (latestBackup?.data?.runLog || []).length;
+        // Score each source by data completeness
+        const scored = sources.map(s => ({
+            ...s,
+            xp: s.data?.stats?.totalXP || 0,
+            lifts: Object.keys(s.data?.liftHistory || {}).length,
+            runs: (s.data?.runLog || []).length,
+            days: Object.keys(s.data?.dayData || {}).length
+        }));
         
-        // If backup has significantly more data, show recovery option
-        if (backupXP > currentXP + 100 || backupLifts > currentLifts + 2 || backupRuns > currentRuns + 2) {
-            console.warn('Data loss detected! Backup has more data.');
-            console.log('Current XP:', currentXP, 'Backup XP:', backupXP);
-            console.log('Current lifts:', currentLifts, 'Backup lifts:', backupLifts);
-            console.log('Current runs:', currentRuns, 'Backup runs:', backupRuns);
-            
-            // Show notification with restore option
+        // Find source with most data
+        const best = scored.reduce((a, b) => {
+            const aScore = a.xp + (a.lifts * 100) + (a.runs * 50) + (a.days * 10);
+            const bScore = b.xp + (b.lifts * 100) + (b.runs * 50) + (b.days * 10);
+            return bScore > aScore ? b : a;
+        }, scored[0]);
+        
+        const currentScore = (current?.stats?.totalXP || 0) + 
+            (Object.keys(current?.liftHistory || {}).length * 100) +
+            ((current?.runLog || []).length * 50);
+        
+        const bestScore = best.xp + (best.lifts * 100) + (best.runs * 50);
+        
+        console.log('Data integrity check:');
+        scored.forEach(s => console.log(`  ${s.name}: ${s.xp} XP, ${s.lifts} lifts, ${s.runs} runs, ${s.days} days`));
+        
+        // If a better source exists, offer to restore
+        if (best.name !== 'current' && bestScore > currentScore + 50) {
             setTimeout(() => {
-                if (confirm(`Data may have been lost. Restore from backup?\n\nCurrent: ${currentXP} XP, ${currentLifts} lift sessions\nBackup: ${backupXP} XP, ${backupLifts} lift sessions`)) {
-                    State.restoreFromBackup(0);
+                const msg = `Better data found in ${best.name}!\n\n` +
+                    `Current: ${current?.stats?.totalXP || 0} XP, ${Object.keys(current?.liftHistory || {}).length} lift sessions\n` +
+                    `${best.name}: ${best.xp} XP, ${best.lifts} lift sessions\n\n` +
+                    `Restore?`;
+                    
+                if (confirm(msg)) {
+                    State._data = best.data;
+                    State.saveLocal();
+                    State.syncToCloud();
                     App.render();
-                    this.showNotification('Data restored from backup!');
+                    this.showNotification('Data restored!');
                 }
             }, 1000);
         }
