@@ -833,6 +833,718 @@ const InjuryDatabase = {
                 rest_day: ['mcgill_big_3', 'bird_dogs', 'side_planks', 'dead_bugs', 'glute_bridges', 'hip_flexor_stretch'],
                 always: ['core_work_regular', 'avoid_sit_ups']
             }
+        },
+
+        // ===== ADDITIONAL INJURIES (completing PAIN_REGIONS mappings) =====
+
+        heel_spur: {
+            name: 'Heel Spur',
+            prevalence: '10% of population',
+            description: 'Bony growth on underside of heel bone, often associated with plantar fasciitis.',
+            keySymptoms: [
+                'Sharp pain under heel',
+                'Pain worse during running',
+                'Tender spot on heel',
+                'Pain when standing after rest'
+            ],
+            riskFactors: ['Plantar fasciitis', 'Flat feet', 'High arches', 'Obesity', 'Age'],
+            recovery: {
+                conservative: '6-12 months',
+                with_treatment: '3-6 months'
+            },
+            science: 'Lemont et al. (2003): Often asymptomatic; treat underlying plantar fasciitis.',
+            exercises: {
+                pre_run: ['plantar_stretch', 'calf_stretch_gastric'],
+                post_run: ['ice_arch', 'foot_roll'],
+                rest_day: ['towel_scrunches', 'arch_doming', 'calf_stretch_soleus'],
+                always: ['cushioned_heel_cups', 'avoid_barefoot']
+            }
+        },
+
+        fat_pad_syndrome: {
+            name: 'Fat Pad Syndrome',
+            prevalence: '3% of runners',
+            description: 'Bruising or atrophy of the fat pad that cushions the heel.',
+            keySymptoms: [
+                'Deep bruise-like pain in center of heel',
+                'Worse on hard surfaces',
+                'Pain increases throughout run',
+                'Tender to deep pressure'
+            ],
+            riskFactors: ['Hard surface running', 'Minimal shoes', 'Age (fat pad thins)', 'High impact landing'],
+            recovery: {
+                typical: '2-4 weeks with rest',
+                chronic: '2-3 months'
+            },
+            science: 'Rome (1998): Heel cups and soft surfaces most effective.',
+            exercises: {
+                pre_run: ['calf_stretch_gastric', 'ankle_circles'],
+                post_run: ['ice_arch', 'foot_roll'],
+                rest_day: ['pool_running', 'cycling'],
+                always: ['heel_cups', 'avoid_hard_surfaces', 'cushioned_shoes']
+            }
+        },
+
+        heel_bruise: {
+            name: 'Heel Bruise (Stone Bruise)',
+            prevalence: '5% of runners',
+            description: 'Bruise to the fat pad or bone of the heel from impact.',
+            keySymptoms: [
+                'Acute onset after stepping on object',
+                'Localized heel pain',
+                'Possible visible bruising',
+                'Pain with direct pressure'
+            ],
+            riskFactors: ['Trail running', 'Minimal footwear', 'Rocky terrain', 'Hard landings'],
+            recovery: {
+                typical: '1-2 weeks',
+                severe: '4-6 weeks'
+            },
+            science: 'Often self-limiting; protection and rest primary treatment.',
+            exercises: {
+                pre_run: ['calf_stretch_gastric'],
+                post_run: ['ice_arch'],
+                rest_day: ['pool_running', 'cycling'],
+                always: ['heel_cups', 'avoid_impact']
+            }
+        },
+
+        anterior_ankle_impingement: {
+            name: 'Anterior Ankle Impingement',
+            prevalence: '3% of runners',
+            description: 'Pinching of soft tissue or bone at front of ankle during dorsiflexion.',
+            keySymptoms: [
+                'Pain at front of ankle',
+                'Worse going uphill',
+                'Reduced ankle mobility',
+                'Pain with deep squats'
+            ],
+            riskFactors: ['Previous ankle sprain', 'Bone spurs', 'Tight calves', 'Excessive dorsiflexion'],
+            recovery: {
+                mild: '2-4 weeks',
+                moderate: '6-12 weeks'
+            },
+            science: 'Tol et al. (2001): Manual therapy and mobility work effective for soft tissue impingement.',
+            exercises: {
+                pre_run: ['ankle_mobility', 'ankle_circles', 'calf_stretch_gastric'],
+                post_run: ['ice_ankle', 'ankle_circles'],
+                rest_day: ['ankle_mobility', 'calf_stretch_soleus', 'single_leg_balance'],
+                always: ['heel_lifts_if_severe', 'avoid_deep_dorsiflexion']
+            }
+        },
+
+        calf_strain: {
+            name: 'Calf Strain',
+            prevalence: '12% of runners',
+            description: 'Strain of the gastrocnemius or soleus muscle in the calf.',
+            keySymptoms: [
+                'Pain in calf muscle',
+                'Worse pushing off',
+                'Possible swelling',
+                'Tight/knotted feeling'
+            ],
+            riskFactors: ['Sudden speed increase', 'Hill running', 'Tight calves', 'Inadequate warm-up'],
+            recovery: {
+                grade_1: '1-2 weeks',
+                grade_2: '4-6 weeks',
+                grade_3: '3-4 months'
+            },
+            science: 'Green & Pizzari (2017): Progressive loading superior to rest alone.',
+            exercises: {
+                pre_run: ['calf_stretch_gastric', 'calf_stretch_soleus', 'heel_walks'],
+                post_run: ['foam_roll_calves', 'calf_stretch_gastric'],
+                rest_day: ['eccentric_heel_drops', 'calf_stretch_soleus', 'ankle_mobility'],
+                always: ['gradual_return', 'avoid_hills_initially']
+            }
+        },
+
+        soleus_strain: {
+            name: 'Soleus Strain',
+            prevalence: '8% of runners',
+            description: 'Strain of the deeper soleus muscle, often misdiagnosed as Achilles issues.',
+            keySymptoms: [
+                'Deep calf pain (lower than gastrocnemius)',
+                'Pain with bent-knee calf raise',
+                'Stiffness in morning',
+                'Ache during long runs'
+            ],
+            riskFactors: ['High mileage', 'Uphill running', 'Tight ankles', 'Sudden volume increase'],
+            recovery: {
+                mild: '2-3 weeks',
+                moderate: '4-8 weeks'
+            },
+            science: 'Differs from gastrocnemius strain - requires bent-knee rehab protocol.',
+            exercises: {
+                pre_run: ['calf_stretch_soleus', 'ankle_mobility'],
+                post_run: ['foam_roll_calves', 'calf_stretch_soleus'],
+                rest_day: ['eccentric_heel_drops', 'bent_knee_calf_raises', 'ankle_circles'],
+                always: ['reduce_hills', 'gradual_progression']
+            }
+        },
+
+        calf_tightness: {
+            name: 'Chronic Calf Tightness',
+            prevalence: '25% of runners',
+            description: 'Chronic tension in calf muscles often leading to other injuries if not addressed.',
+            keySymptoms: [
+                'Persistent tight feeling',
+                'Limited ankle flexibility',
+                'Ache after runs',
+                'May lead to Achilles or plantar issues'
+            ],
+            riskFactors: ['Desk job (seated)', 'High heels', 'Dehydration', 'Overtraining'],
+            recovery: {
+                typical: '2-4 weeks with consistent stretching'
+            },
+            science: 'Regularly addressing calf flexibility prevents downstream injuries.',
+            exercises: {
+                pre_run: ['calf_stretch_gastric', 'calf_stretch_soleus', 'ankle_circles'],
+                post_run: ['foam_roll_calves', 'calf_stretch_gastric', 'calf_stretch_soleus'],
+                rest_day: ['eccentric_heel_drops', 'ankle_mobility', 'foam_roll_calves'],
+                always: ['hydrate', 'regular_stretching']
+            }
+        },
+
+        calf_tear: {
+            name: 'Calf Muscle Tear',
+            prevalence: '2% of runners',
+            description: 'Partial or complete tear of calf muscle, often gastrocnemius.',
+            keySymptoms: [
+                'Sudden sharp pain (felt a "pop")',
+                'Unable to walk on toes',
+                'Visible bruising',
+                'Significant swelling'
+            ],
+            riskFactors: ['Sprinting', 'Cold muscles', 'Previous calf injury', 'Age over 40'],
+            recovery: {
+                partial: '6-12 weeks',
+                complete: '4-6 months'
+            },
+            science: 'Serious injury requiring professional assessment. RICE initially, then progressive loading.',
+            exercises: {
+                pre_run: [],
+                post_run: ['ice_calf'],
+                rest_day: ['see_professional', 'pool_running'],
+                always: ['no_running_until_cleared', 'physio_essential']
+            }
+        },
+
+        gastrocnemius_strain: {
+            name: 'Gastrocnemius Strain',
+            prevalence: '10% of runners',
+            description: 'Strain of the outer/upper calf muscle (gastrocnemius).',
+            keySymptoms: [
+                'Pain in upper/outer calf',
+                'Pain with straight-leg calf raise',
+                'Feels like being "kicked"',
+                'Tender to touch'
+            ],
+            riskFactors: ['Explosive movements', 'Cold weather', 'Poor warm-up', 'Fatigue'],
+            recovery: {
+                grade_1: '1-3 weeks',
+                grade_2: '4-8 weeks'
+            },
+            science: 'Different from soleus - responds to straight-leg rehab exercises.',
+            exercises: {
+                pre_run: ['calf_stretch_gastric', 'heel_walks', 'toe_walks'],
+                post_run: ['foam_roll_calves', 'ice_calf'],
+                rest_day: ['eccentric_heel_drops', 'calf_stretch_gastric', 'ankle_mobility'],
+                always: ['warm_up_properly', 'avoid_sprints']
+            }
+        },
+
+        hamstring_tear: {
+            name: 'Hamstring Tear',
+            prevalence: '4% of runners',
+            description: 'Partial or complete tear of hamstring muscle, serious injury.',
+            keySymptoms: [
+                'Sudden sharp pain in back of thigh',
+                'Felt a "pop"',
+                'Immediate weakness',
+                'Bruising visible'
+            ],
+            riskFactors: ['Sprinting', 'Poor flexibility', 'Previous hamstring injury', 'Fatigue'],
+            recovery: {
+                partial: '6-12 weeks',
+                complete: '4-6 months'
+            },
+            science: 'Heiderscheit et al. (2010): Progressive loading essential; too much rest delays healing.',
+            exercises: {
+                pre_run: [],
+                post_run: ['ice_hamstring'],
+                rest_day: ['see_professional', 'pool_running', 'gentle_hamstring_stretch'],
+                always: ['no_running_until_cleared', 'progressive_loading']
+            }
+        },
+
+        quad_strain: {
+            name: 'Quadriceps Strain',
+            prevalence: '5% of runners',
+            description: 'Strain of one of the four quadriceps muscles.',
+            keySymptoms: [
+                'Pain in front of thigh',
+                'Worse going downhill',
+                'Pain extending knee against resistance',
+                'Swelling in severe cases'
+            ],
+            riskFactors: ['Hill running', 'Speed work', 'Tight quads', 'Muscle imbalance'],
+            recovery: {
+                mild: '1-2 weeks',
+                moderate: '4-6 weeks'
+            },
+            science: 'Progressive strengthening after initial rest and protection.',
+            exercises: {
+                pre_run: ['quad_stretch', 'hip_flexor_stretch'],
+                post_run: ['foam_roll_quads', 'ice_quad'],
+                rest_day: ['gentle_quad_stretch', 'cycling', 'step_downs_slow'],
+                always: ['avoid_downhills_initially', 'gradual_return']
+            }
+        },
+
+        quad_tendinopathy: {
+            name: 'Quadriceps Tendinopathy',
+            prevalence: '3% of runners',
+            description: 'Degeneration of the quadriceps tendon above the kneecap.',
+            keySymptoms: [
+                'Pain above kneecap',
+                'Worse with jumping/stairs',
+                'Stiffness after sitting',
+                'Gradual onset'
+            ],
+            riskFactors: ['Jumping sports', 'Overtraining', 'Hill running', 'Muscle weakness'],
+            recovery: {
+                typical: '3-6 months with proper rehab'
+            },
+            science: 'Eccentric loading protocol similar to patellar tendinopathy.',
+            exercises: {
+                pre_run: ['quad_stretch', 'glute_activation'],
+                post_run: ['ice_knee', 'quad_stretch'],
+                rest_day: ['step_downs_slow', 'terminal_knee_extensions', 'cycling'],
+                always: ['strengthen_glutes', 'avoid_deep_squats']
+            }
+        },
+
+        adductor_strain: {
+            name: 'Adductor (Groin) Strain',
+            prevalence: '5% of runners',
+            description: 'Strain of inner thigh muscles, common with lateral movements.',
+            keySymptoms: [
+                'Pain in inner thigh/groin',
+                'Worse with side-to-side movement',
+                'Pain squeezing legs together',
+                'Tender to touch'
+            ],
+            riskFactors: ['Trail running', 'Uneven terrain', 'Weak adductors', 'Sudden direction changes'],
+            recovery: {
+                mild: '1-3 weeks',
+                moderate: '4-8 weeks'
+            },
+            science: 'Copenhagen adductor protocol shown effective for prevention and rehab.',
+            exercises: {
+                pre_run: ['adductor_stretch', 'hip_circles'],
+                post_run: ['ice_groin', 'adductor_stretch'],
+                rest_day: ['copenhagen_plank', 'side_lying_adduction', 'hip_circles'],
+                always: ['strengthen_adductors', 'avoid_lateral_movements_initially']
+            }
+        },
+
+        it_band_tightness: {
+            name: 'IT Band Tightness',
+            prevalence: '20% of runners',
+            description: 'Chronic tightness of the iliotibial band, often precursor to IT band syndrome.',
+            keySymptoms: [
+                'Tight feeling on outer thigh',
+                'Pain with foam rolling',
+                'May cause knee or hip pain',
+                'Snapping sensation at hip'
+            ],
+            riskFactors: ['Weak glutes', 'High mileage', 'Cambered roads', 'Worn shoes'],
+            recovery: {
+                typical: '2-4 weeks with consistent work'
+            },
+            science: 'Foam rolling and hip strengthening more effective than stretching.',
+            exercises: {
+                pre_run: ['hip_circles', 'glute_activation', 'monster_walks'],
+                post_run: ['foam_roll_it_band', 'hip_flexor_stretch'],
+                rest_day: ['clamshells', 'side_lying_leg_raises', 'glute_bridges'],
+                always: ['strengthen_glutes', 'vary_running_surfaces']
+            }
+        },
+
+        tfl_strain: {
+            name: 'TFL (Tensor Fasciae Latae) Strain',
+            prevalence: '3% of runners',
+            description: 'Strain of the small muscle at front/side of hip that connects to IT band.',
+            keySymptoms: [
+                'Pain at front/side of hip',
+                'Worse with hip flexion',
+                'Snapping at hip',
+                'Tight IT band'
+            ],
+            riskFactors: ['Overstriding', 'Weak glutes', 'Excessive hip flexion', 'Hill running'],
+            recovery: {
+                typical: '2-4 weeks'
+            },
+            science: 'Often compensating for weak gluteus medius - address root cause.',
+            exercises: {
+                pre_run: ['hip_flexor_stretch', 'glute_activation'],
+                post_run: ['foam_roll_tfl', 'hip_flexor_stretch'],
+                rest_day: ['clamshells', 'side_lying_leg_raises', 'monster_walks'],
+                always: ['strengthen_glute_med', 'shorten_stride']
+            }
+        },
+
+        hip_impingement: {
+            name: 'Hip Impingement (FAI)',
+            prevalence: '15% of population',
+            description: 'Femoral acetabular impingement - bone spurs cause pinching in hip joint.',
+            keySymptoms: [
+                'Deep groin pain',
+                'Pain with deep flexion',
+                'Stiffness after sitting',
+                'Clicking or catching'
+            ],
+            riskFactors: ['Genetics', 'High-impact sports in youth', 'Deep squatting activities'],
+            recovery: {
+                conservative: '3-6 months',
+                surgical: '4-6 months post-op'
+            },
+            science: 'Griffin et al. (2016): Physical therapy effective for many; surgery for severe cases.',
+            exercises: {
+                pre_run: ['hip_circles', 'glute_activation'],
+                post_run: ['gentle_hip_stretch', 'ice_hip'],
+                rest_day: ['glute_bridges', 'clamshells', 'core_work'],
+                always: ['avoid_deep_flexion', 'see_specialist']
+            }
+        },
+
+        extensor_tendinitis: {
+            name: 'Extensor Tendinitis',
+            prevalence: '5% of runners',
+            description: 'Inflammation of tendons on top of foot from tight lacing or overuse.',
+            keySymptoms: [
+                'Pain on top of foot',
+                'Worse with tight shoes',
+                'Pain lifting toes',
+                'Tender over tendons'
+            ],
+            riskFactors: ['Tight shoes', 'High arches', 'Running uphill', 'Lacing too tight'],
+            recovery: {
+                typical: '2-4 weeks'
+            },
+            science: 'Usually caused by external pressure - address footwear first.',
+            exercises: {
+                pre_run: ['ankle_circles', 'toe_stretches'],
+                post_run: ['ice_top_of_foot', 'foot_massage'],
+                rest_day: ['ankle_mobility', 'toe_spreads'],
+                always: ['loosen_laces', 'check_shoe_fit']
+            }
+        },
+
+        mortons_neuroma: {
+            name: "Morton's Neuroma",
+            prevalence: '5% of runners',
+            description: 'Thickening of nerve tissue between toes, usually 3rd and 4th.',
+            keySymptoms: [
+                'Burning pain in ball of foot',
+                'Feels like pebble in shoe',
+                'Numbness/tingling in toes',
+                'Worse in tight shoes'
+            ],
+            riskFactors: ['Narrow shoes', 'High heels', 'Forefoot striking', 'High arches'],
+            recovery: {
+                conservative: '2-4 months',
+                with_injection: '1-3 months'
+            },
+            science: 'Wide toe box shoes and metatarsal pads often provide relief.',
+            exercises: {
+                pre_run: ['toe_spreads', 'foot_massage'],
+                post_run: ['ice_ball_of_foot', 'toe_stretches'],
+                rest_day: ['toe_yoga', 'arch_strengthening'],
+                always: ['wide_toe_box_shoes', 'metatarsal_pads']
+            }
+        },
+
+        sesamoiditis: {
+            name: 'Sesamoiditis',
+            prevalence: '2% of runners',
+            description: 'Inflammation of sesamoid bones under big toe joint.',
+            keySymptoms: [
+                'Pain under big toe joint',
+                'Worse pushing off',
+                'Swelling at ball of foot',
+                'Pain bending big toe'
+            ],
+            riskFactors: ['Forefoot striking', 'High arches', 'Dancing', 'Sudden mileage increase'],
+            recovery: {
+                typical: '4-8 weeks',
+                severe: '3-6 months'
+            },
+            science: 'Offloading with pads and modified footwear primary treatment.',
+            exercises: {
+                pre_run: ['toe_stretches', 'calf_stretch_gastric'],
+                post_run: ['ice_ball_of_foot', 'foot_massage'],
+                rest_day: ['pool_running', 'cycling'],
+                always: ['dancer_pads', 'stiff_soled_shoes']
+            }
+        },
+
+        mcl_strain: {
+            name: 'MCL (Medial Collateral Ligament) Strain',
+            prevalence: '2% of runners',
+            description: 'Strain of ligament on inside of knee, usually from twist or fall.',
+            keySymptoms: [
+                'Pain on inside of knee',
+                'Swelling',
+                'Instability with lateral movement',
+                'Tender along ligament'
+            ],
+            riskFactors: ['Trail running', 'Uneven terrain', 'Previous knee injury', 'Weak legs'],
+            recovery: {
+                grade_1: '1-2 weeks',
+                grade_2: '4-6 weeks',
+                grade_3: '3-4 months'
+            },
+            science: 'Most MCL strains heal without surgery with proper bracing and rehab.',
+            exercises: {
+                pre_run: [],
+                post_run: ['ice_knee'],
+                rest_day: ['quad_sets', 'straight_leg_raises', 'cycling'],
+                always: ['brace_if_needed', 'avoid_lateral_stress']
+            }
+        },
+
+        bakers_cyst: {
+            name: "Baker's Cyst",
+            prevalence: '3% of runners',
+            description: 'Fluid-filled cyst behind knee, often secondary to other knee issues.',
+            keySymptoms: [
+                'Swelling behind knee',
+                'Tightness when bending',
+                'Pain may radiate down calf',
+                'Worsens with activity'
+            ],
+            riskFactors: ['Knee arthritis', 'Meniscus tear', 'Other knee problems', 'Age'],
+            recovery: {
+                typical: '4-8 weeks (treating underlying cause)'
+            },
+            science: 'Usually secondary to another knee problem - treat root cause.',
+            exercises: {
+                pre_run: ['gentle_knee_flexion', 'quad_stretch'],
+                post_run: ['ice_knee', 'elevation'],
+                rest_day: ['quad_strengthening', 'hamstring_stretch'],
+                always: ['address_underlying_cause', 'see_specialist']
+            }
+        },
+
+        hamstring_tendinopathy: {
+            name: 'Hamstring Tendinopathy',
+            prevalence: '4% of runners',
+            description: 'Degeneration of hamstring tendon, often at attachment behind knee.',
+            keySymptoms: [
+                'Pain behind knee',
+                'Worse at start of run',
+                'Pain with lunges',
+                'Tender at tendon attachment'
+            ],
+            riskFactors: ['Speed work', 'Hill running', 'Tight hamstrings', 'Overtraining'],
+            recovery: {
+                typical: '3-6 months'
+            },
+            science: 'Slow eccentric loading most effective; patience required.',
+            exercises: {
+                pre_run: ['hamstring_stretch_gentle', 'glute_activation'],
+                post_run: ['foam_roll_hamstrings', 'ice_hamstring'],
+                rest_day: ['nordic_hamstring_curls', 'single_leg_deadlifts', 'bridges'],
+                always: ['reduce_speed_work', 'patience_required']
+            }
+        },
+
+        chronic_ankle_instability: {
+            name: 'Chronic Ankle Instability',
+            prevalence: '10% after ankle sprain',
+            description: 'Recurring ankle sprains or feeling of ankle "giving way".',
+            keySymptoms: [
+                'Ankle gives way',
+                'Recurrent sprains',
+                'Chronic swelling',
+                'Difficulty on uneven terrain'
+            ],
+            riskFactors: ['Previous ankle sprain', 'Poor rehab after sprain', 'Weak peroneals', 'Poor proprioception'],
+            recovery: {
+                typical: '3-6 months of balance training'
+            },
+            science: 'Proprioceptive training reduces recurrence by 50% (Hupperets et al. 2009).',
+            exercises: {
+                pre_run: ['ankle_circles', 'single_leg_balance'],
+                post_run: ['ankle_circles', 'ice_if_swollen'],
+                rest_day: ['single_leg_balance', 'wobble_board', 'peroneal_strengthening'],
+                always: ['balance_training_daily', 'ankle_brace_for_trails']
+            }
+        },
+
+        lateral_ankle_impingement: {
+            name: 'Lateral Ankle Impingement',
+            prevalence: '2% of runners',
+            description: 'Pinching of tissue on outside of ankle, often after sprain.',
+            keySymptoms: [
+                'Pain on outer ankle',
+                'Worse with certain movements',
+                'Swelling after activity',
+                'History of ankle sprain'
+            ],
+            riskFactors: ['Previous ankle sprain', 'Scar tissue', 'Bone spurs'],
+            recovery: {
+                conservative: '6-12 weeks',
+                surgical: '3-6 months'
+            },
+            science: 'Manual therapy and gradual return to activity often effective.',
+            exercises: {
+                pre_run: ['ankle_mobility', 'ankle_circles'],
+                post_run: ['ice_ankle', 'ankle_circles'],
+                rest_day: ['peroneal_strengthening', 'balance_exercises'],
+                always: ['supportive_footwear', 'gradual_progression']
+            }
+        },
+
+        medial_ankle_impingement: {
+            name: 'Medial Ankle Impingement',
+            prevalence: '1% of runners',
+            description: 'Pinching of tissue on inside of ankle during dorsiflexion.',
+            keySymptoms: [
+                'Pain on inner ankle',
+                'Worse with dorsiflexion',
+                'Swelling',
+                'Restricted movement'
+            ],
+            riskFactors: ['Flat feet', 'Previous injury', 'Overpronation'],
+            recovery: {
+                typical: '4-8 weeks'
+            },
+            science: 'Address biomechanics and strength deficits.',
+            exercises: {
+                pre_run: ['ankle_mobility', 'posterior_tib_activation'],
+                post_run: ['ice_ankle', 'ankle_circles'],
+                rest_day: ['arch_strengthening', 'posterior_tib_exercises'],
+                always: ['arch_support', 'stability_shoes']
+            }
+        },
+
+        retrocalcaneal_bursitis: {
+            name: 'Retrocalcaneal Bursitis',
+            prevalence: '3% of runners',
+            description: 'Inflammation of bursa between Achilles and heel bone.',
+            keySymptoms: [
+                'Pain at back of heel (deep)',
+                'Swelling at Achilles insertion',
+                'Pain with heel raises',
+                'Tender to squeeze'
+            ],
+            riskFactors: ['Tight Achilles', 'Haglund deformity', 'Overuse', 'Tight heel counter on shoes'],
+            recovery: {
+                typical: '6-12 weeks'
+            },
+            science: 'Often coexists with Achilles tendinopathy; address both.',
+            exercises: {
+                pre_run: ['calf_stretch_gastric', 'calf_stretch_soleus'],
+                post_run: ['ice_achilles', 'calf_stretch'],
+                rest_day: ['eccentric_heel_drops', 'ankle_mobility'],
+                always: ['heel_lifts', 'open_back_shoes']
+            }
+        },
+
+        anterior_shin_splints: {
+            name: 'Anterior Shin Splints',
+            prevalence: '8% of runners',
+            description: 'Pain in the muscles at the front/outer shin (tibialis anterior).',
+            keySymptoms: [
+                'Pain in front of shin',
+                'Worse early in run',
+                'Pain lifting foot/toes',
+                'Tight anterior compartment'
+            ],
+            riskFactors: ['New to running', 'Dorsiflexion weakness', 'Hard surfaces', 'Running downhill'],
+            recovery: {
+                typical: '2-4 weeks'
+            },
+            science: 'Often responds quickly to toe raise strengthening.',
+            exercises: {
+                pre_run: ['tibialis_raises', 'ankle_circles'],
+                post_run: ['shin_massage', 'ice_shins'],
+                rest_day: ['tibialis_raises', 'heel_walks', 'toe_stretches'],
+                always: ['strengthen_tibialis', 'avoid_downhills_initially']
+            }
+        },
+
+        popliteal_artery_entrapment: {
+            name: 'Popliteal Artery Entrapment',
+            prevalence: '0.5% of runners',
+            description: 'Compression of artery behind knee - serious condition requiring evaluation.',
+            keySymptoms: [
+                'Cramping/aching in calf during exercise',
+                'Symptoms stop with rest',
+                'Cold/numb foot after exercise',
+                'Claudication symptoms'
+            ],
+            riskFactors: ['Muscular calves', 'Anatomical variation', 'Young athletes'],
+            recovery: {
+                typical: 'Requires surgical evaluation'
+            },
+            science: 'Rare but serious - requires vascular specialist evaluation.',
+            exercises: {
+                pre_run: [],
+                post_run: [],
+                rest_day: ['see_professional'],
+                always: ['urgent_specialist_referral', 'do_not_ignore']
+            }
+        },
+
+        sports_hernia: {
+            name: 'Sports Hernia (Athletic Pubalgia)',
+            prevalence: '2% of runners',
+            description: 'Tear in muscles/tendons of lower abdomen/groin area.',
+            keySymptoms: [
+                'Deep groin pain',
+                'Worse with twisting/turning',
+                'Pain with coughing/sneezing',
+                'Gradual onset'
+            ],
+            riskFactors: ['Twisting sports', 'Weak core', 'Muscle imbalances', 'Sudden movements'],
+            recovery: {
+                conservative: '3-6 months',
+                surgical: '4-6 months'
+            },
+            science: 'Often requires surgical repair for full return to sport.',
+            exercises: {
+                pre_run: ['core_activation', 'glute_activation'],
+                post_run: ['ice_groin', 'gentle_stretch'],
+                rest_day: ['core_strengthening', 'adductor_work'],
+                always: ['see_specialist', 'avoid_aggravating_activities']
+            }
+        },
+
+        stress_fracture_5th_metatarsal: {
+            name: 'Jones Fracture (5th Metatarsal Stress Fracture)',
+            prevalence: '2% of runners',
+            description: 'Stress fracture at base of 5th metatarsal - slow healing bone.',
+            keySymptoms: [
+                'Pain on outside of foot',
+                'Pinpoint tenderness',
+                'Worse with activity',
+                'May have gradual onset'
+            ],
+            riskFactors: ['High arches', 'Supination', 'Rapid mileage increase', 'Previous fracture'],
+            recovery: {
+                typical: '6-12 weeks (often requires boot)',
+                surgical: '8-12 weeks post-op'
+            },
+            science: 'High-risk fracture due to poor blood supply - often requires immobilization.',
+            exercises: {
+                pre_run: [],
+                post_run: [],
+                rest_day: ['pool_running', 'upper_body_work'],
+                always: ['see_orthopedist', 'likely_needs_boot', 'no_weight_bearing']
+            }
         }
     },
     
