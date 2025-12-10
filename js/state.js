@@ -1167,8 +1167,68 @@ const State = {
         // ALSO update today's runDistance for day score calculation
         this.updateToday({ runDistance: runData.distance });
         
+        // Auto-update VDOT if this was a quality effort
+        this.autoUpdateVDOT(entry);
+        
         this.save();
         return entry;
+    },
+    
+    /**
+     * Auto-update VDOT based on logged runs
+     * Only updates if new estimate is higher (showing improvement)
+     */
+    autoUpdateVDOT(runEntry) {
+        // Only calculate from tempo/long runs with high effort
+        if (!runEntry.time || !runEntry.distance) return;
+        if (runEntry.effort < 7) return; // Need quality effort
+        if (!['tempo', 'long', 'intervals'].includes(runEntry.type)) return;
+        
+        // Calculate pace in min/mile
+        const pace = this.calculatePace(runEntry.distance, runEntry.time);
+        if (!pace) return;
+        
+        // Estimate VDOT from pace (simplified)
+        // Based on Daniels' tables - tempo pace approximations
+        const paceMinutes = this.paceToMinutes(pace);
+        if (!paceMinutes) return;
+        
+        let estimatedVDOT = 30; // Default low
+        
+        // VDOT estimation from tempo pace (min/mile)
+        if (paceMinutes <= 6.0) estimatedVDOT = 60;
+        else if (paceMinutes <= 6.5) estimatedVDOT = 55;
+        else if (paceMinutes <= 7.0) estimatedVDOT = 50;
+        else if (paceMinutes <= 7.5) estimatedVDOT = 45;
+        else if (paceMinutes <= 8.25) estimatedVDOT = 40;
+        else if (paceMinutes <= 9.25) estimatedVDOT = 35;
+        else if (paceMinutes <= 10.5) estimatedVDOT = 30;
+        
+        // Adjust for run type (easy runs don't reflect true VDOT)
+        if (runEntry.type === 'easy') {
+            estimatedVDOT = Math.round(estimatedVDOT * 0.85); // Easy pace is ~15% slower
+        }
+        
+        const currentVDOT = this._data.running?.vdot || 0;
+        
+        // Only update if improvement detected
+        if (estimatedVDOT > currentVDOT) {
+            this._data.running.vdot = estimatedVDOT;
+            this._data.running.vdotUpdatedAt = new Date().toISOString();
+            this._data.running.vdotUpdateReason = `${runEntry.type} run: ${pace}/mi`;
+            
+            console.log(`VDOT improved: ${currentVDOT} → ${estimatedVDOT}`);
+        }
+    },
+    
+    /**
+     * Convert pace string to decimal minutes
+     */
+    paceToMinutes(pace) {
+        if (!pace || typeof pace !== 'string') return null;
+        const parts = pace.split(':');
+        if (parts.length !== 2) return null;
+        return parseInt(parts[0]) + parseInt(parts[1]) / 60;
     },
 
     /**
@@ -1311,23 +1371,69 @@ const State = {
     },
 
     /**
-     * Get current training phase
+     * Get current training phase (auto-calculated from week progress)
      */
     getCurrentPhase() {
         const running = this._data?.running;
         if (!running?.startDate || !running?.goal) return null;
         
         const goal = CONFIG.RUNNING.GOALS.find(g => g.id === running.goal);
-        if (!goal?.weeks) return null;
+        if (!goal?.weeks) return { phase: 'base', name: 'Base Building' }; // Casual/no-week goals
+        
+        // Auto-advance week number based on actual time passed
+        this.autoAdvanceWeek();
         
         const weekNum = running.weekNumber;
         const totalWeeks = goal.weeks;
+        const progress = weekNum / totalWeeks;
         
-        // Determine phase based on week number
-        if (weekNum <= 4) return 'base';
-        if (weekNum <= totalWeeks - 5) return 'build';
-        if (weekNum <= totalWeeks - 2) return 'peak';
-        return 'taper';
+        // Phase breakdown: Base (35%), Build (35%), Peak (20%), Taper (10%)
+        let phase, name, description;
+        if (progress < 0.35) {
+            phase = 'base';
+            name = 'Base Building';
+            description = 'Building aerobic foundation with easy mileage';
+        } else if (progress < 0.70) {
+            phase = 'build';
+            name = 'Build Phase';
+            description = 'Increasing volume and adding quality workouts';
+        } else if (progress < 0.90) {
+            phase = 'peak';
+            name = 'Peak Phase';
+            description = 'Race-specific workouts, highest intensity';
+        } else {
+            phase = 'taper';
+            name = 'Taper';
+            description = 'Reducing volume while maintaining intensity';
+        }
+        
+        return { 
+            phase, 
+            name, 
+            description,
+            weekNum,
+            totalWeeks,
+            progress: Math.round(progress * 100)
+        };
+    },
+    
+    /**
+     * Auto-advance week number based on time since start
+     */
+    autoAdvanceWeek() {
+        const running = this._data?.running;
+        if (!running?.startDate) return;
+        
+        const startDate = new Date(running.startDate);
+        const now = new Date();
+        const daysSinceStart = Math.floor((now - startDate) / (1000 * 60 * 60 * 24));
+        const calculatedWeek = Math.floor(daysSinceStart / 7) + 1;
+        
+        // Only advance forward, never backward
+        if (calculatedWeek > running.weekNumber) {
+            running.weekNumber = calculatedWeek;
+            // Don't call save() here to avoid infinite loop - caller will save
+        }
     },
 
     // ==========================================

@@ -80,6 +80,12 @@ const RunningView = {
         const injuryProtocol = this.getInjuryProtocol(running.injuries);
         const prescribedDistance = runInfo.distance;
         
+        // Check 10% rule
+        const mileageWarning = this.checkMileageRule(running);
+        
+        // Check if run type was modified due to injury
+        const wasModified = todaysRun.injuryModified || todaysRun.injuryBlocked;
+        
         // Determine completion status
         let runStatus = 'pending';
         let statusClass = '';
@@ -112,6 +118,21 @@ const RunningView = {
                     <span class="section-title">TODAY'S RUN</span>
                     <span class="section-badge ${statusClass}">${runStatus === 'complete' ? 'DONE' : runStatus === 'partial' ? 'PARTIAL' : todaysRun.type.toUpperCase()}</span>
                 </div>
+                
+                ${mileageWarning ? `
+                    <div class="mileage-warning">
+                        <span class="warning-icon">⚠</span>
+                        <span>Weekly mileage up ${mileageWarning.increase}% (${mileageWarning.lastWeek}→${mileageWarning.projected}mi) - exceeds 10% rule</span>
+                    </div>
+                ` : ''}
+                
+                ${wasModified ? `
+                    <div class="run-modified-notice">
+                        <span class="modified-badge">${todaysRun.injuryBlocked ? 'BLOCKED' : 'MODIFIED'}</span>
+                        <span>${todaysRun.blockReason || todaysRun.modifyReason}</span>
+                    </div>
+                ` : ''}
+                
                 <div class="running-card-clean ${statusClass}">
                     ${this.renderTrackIndicator(trackStatus)}
                     
@@ -159,19 +180,104 @@ const RunningView = {
     getTodaysRun(running) {
         // JavaScript getDay(): 0=Sunday, 1=Monday, ..., 6=Saturday
         // BASE_WEEK array: [0]=Sunday, [1]=Monday, ..., [6]=Saturday
-        // They match directly - no mapping needed
         const dayOfWeek = new Date().getDay();
         
-        const run = CONFIG.RUNNING.BASE_WEEK[dayOfWeek];
+        let run = { ...CONFIG.RUNNING.BASE_WEEK[dayOfWeek] };
         
         // Add coordination note
         if (run) {
             run.coordinationNote = run.orderReason;
         }
         
+        // Apply injury adjustments (run type blocking)
+        if (run && run.type !== 'rest' && typeof InjuryIntelligence !== 'undefined') {
+            const adjustments = InjuryIntelligence.getTrainingAdjustments();
+            if (adjustments && adjustments.avoidTypes && adjustments.avoidTypes.length > 0) {
+                if (adjustments.avoidTypes.includes(run.type)) {
+                    // Block this run type - convert to easy or rest
+                    const originalType = run.type;
+                    
+                    if (adjustments.shouldStop) {
+                        // Severe injury - convert to rest
+                        run.type = 'rest';
+                        run.description = 'Rest (injury)';
+                        run.injuryBlocked = true;
+                        run.blockReason = `${adjustments.injuries[0].name} - ${originalType} runs blocked`;
+                    } else {
+                        // Moderate injury - convert to easy
+                        run.type = 'easy';
+                        run.description = 'Easy Run (modified)';
+                        run.injuryModified = true;
+                        run.originalType = originalType;
+                        run.modifyReason = `${adjustments.injuries[0].name} - ${originalType} converted to easy`;
+                    }
+                }
+            }
+        }
+        
         return run;
     },
 
+    /**
+     * Check 10% rule - warn if weekly mileage increase exceeds 10%
+     */
+    checkMileageRule(running) {
+        const runLog = State._data?.runLog || [];
+        if (runLog.length < 7) return null; // Need at least a week of data
+        
+        const now = new Date();
+        const oneWeekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
+        const twoWeeksAgo = new Date(now.getTime() - 14 * 24 * 60 * 60 * 1000);
+        
+        // Calculate last week's mileage
+        const lastWeekRuns = runLog.filter(r => {
+            const d = new Date(r.date || r.timestamp);
+            return d >= twoWeeksAgo && d < oneWeekAgo;
+        });
+        const lastWeekMiles = lastWeekRuns.reduce((sum, r) => sum + (parseFloat(r.distance) || 0), 0);
+        
+        // Calculate this week's mileage so far
+        const thisWeekRuns = runLog.filter(r => {
+            const d = new Date(r.date || r.timestamp);
+            return d >= oneWeekAgo;
+        });
+        const thisWeekMiles = thisWeekRuns.reduce((sum, r) => sum + (parseFloat(r.distance) || 0), 0);
+        
+        // Calculate projected weekly total based on prescribed runs remaining
+        const daysRemaining = 7 - thisWeekRuns.length;
+        const avgPrescribedPerDay = this.getWeeklyPrescription(running) / 7;
+        const projectedTotal = thisWeekMiles + (daysRemaining * avgPrescribedPerDay);
+        
+        if (lastWeekMiles > 0 && projectedTotal > lastWeekMiles * 1.1) {
+            return {
+                warning: true,
+                lastWeek: lastWeekMiles.toFixed(1),
+                thisWeek: thisWeekMiles.toFixed(1),
+                projected: projectedTotal.toFixed(1),
+                increase: Math.round(((projectedTotal / lastWeekMiles) - 1) * 100)
+            };
+        }
+        
+        return null;
+    },
+    
+    /**
+     * Get total weekly prescription
+     */
+    getWeeklyPrescription(running) {
+        if (!running?.goal) return 0;
+        
+        let total = 0;
+        for (let day = 0; day < 7; day++) {
+            const dayRun = CONFIG.RUNNING.BASE_WEEK[day];
+            if (dayRun && dayRun.type !== 'rest') {
+                const runInfo = this.getRunInfo(dayRun, running);
+                total += parseFloat(runInfo.distance) || 0;
+            }
+        }
+        return total;
+    },
+    
     /**
      * Get run info with injury-adjusted distance and performance-based adjustment
      */

@@ -2442,6 +2442,60 @@ button, .btn {
 }
 
 /* Clean Running Card Redesign */
+/* Mileage Warning */
+.mileage-warning {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    border-radius: 8px;
+    font-size: 12px;
+    color: var(--error);
+    margin-bottom: 12px;
+}
+
+.mileage-warning .warning-icon {
+    font-size: 14px;
+}
+
+/* Run Modified Notice */
+.run-modified-notice {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 12px;
+    background: rgba(234, 179, 8, 0.1);
+    border: 1px solid rgba(234, 179, 8, 0.3);
+    border-radius: 8px;
+    font-size: 12px;
+    color: var(--warning);
+    margin-bottom: 12px;
+}
+
+.run-modified-notice .modified-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 6px;
+    background: var(--warning);
+    color: white;
+    border-radius: 4px;
+}
+
+/* Section Badges Row */
+.section-badges {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.section-badge.timing {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+}
+
 .running-card-clean {
     background: var(--surface);
     border: 1px solid var(--border);

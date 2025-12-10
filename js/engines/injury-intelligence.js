@@ -1037,10 +1037,67 @@ const InjuryIntelligence = {
     },
     
     /**
+     * Get timing context for exercise recommendations
+     * Returns: 'pre_run', 'post_run', 'rest_day', 'any'
+     */
+    getExerciseTiming() {
+        const hour = new Date().getHours();
+        const todayData = State.getDayData();
+        const hasRunToday = (todayData?.runDistance || 0) > 0;
+        const running = State.getRunningData();
+        
+        // Check if today is a run day
+        const dayOfWeek = new Date().getDay();
+        const todaysRun = CONFIG.RUNNING?.BASE_WEEK?.[dayOfWeek];
+        const isRunDay = running?.goal && todaysRun && todaysRun.type !== 'rest';
+        
+        if (!isRunDay) {
+            return { timing: 'rest_day', label: 'Rest Day', icon: '🧘' };
+        }
+        
+        if (hasRunToday) {
+            return { timing: 'post_run', label: 'Post-Run', icon: '✓' };
+        }
+        
+        // Morning = pre-run, afternoon = likely post-run
+        if (hour < 14) {
+            return { timing: 'pre_run', label: 'Pre-Run', icon: '→' };
+        }
+        
+        return { timing: 'post_run', label: 'Post-Run', icon: '✓' };
+    },
+    
+    /**
+     * Filter exercises by timing (pre_run, post_run, rest_day, always)
+     */
+    filterExercisesByTiming(exercises, timing) {
+        if (!exercises || !timing) return exercises;
+        
+        // Map timing to relevant exercise tags
+        const timingMap = {
+            pre_run: ['pre_run', 'always', 'any'],
+            post_run: ['post_run', 'always', 'any'],
+            rest_day: ['rest_day', 'always', 'any', 'post_run'] // Rest days can do everything
+        };
+        
+        const allowedTimings = timingMap[timing] || ['always', 'any'];
+        
+        return exercises.filter(ex => {
+            // Check if exercise has timing info
+            const exTiming = ex.timing || 'any';
+            return allowedTimings.includes(exTiming) || exTiming === 'any';
+        });
+    },
+    
+    /**
      * Render recovery exercises for daily view with severity-based protocol
      */
     renderDailyRecoverySection() {
-        const { exercises, protocol } = this.getTodaysRecoveryExercises();
+        const { exercises: allExercises, protocol } = this.getTodaysRecoveryExercises();
+        const timingContext = this.getExerciseTiming();
+        
+        // Filter exercises by timing context
+        const exercises = this.filterExercisesByTiming(allExercises, timingContext.timing);
         
         if (!exercises || exercises.length === 0) return '';
         
@@ -1053,7 +1110,10 @@ const InjuryIntelligence = {
             <section class="section recovery-section ${severityClass}">
                 <div class="section-header">
                     <span class="section-title">RECOVERY PROTOCOL</span>
-                    <span class="section-badge ${severityClass}">${severityLabel}</span>
+                    <div class="section-badges">
+                        <span class="section-badge timing">${timingContext.label}</span>
+                        <span class="section-badge ${severityClass}">${severityLabel}</span>
+                    </div>
                 </div>
                 
                 <!-- Protocol Overview -->
