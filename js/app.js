@@ -137,6 +137,13 @@ const App = {
                 // Silent fail
             }
             
+            // One-time data fixes
+            try {
+                this.applyDataFixes();
+            } catch (e) {
+                // Silent fail
+            }
+            
             // Check midnight reset
             this.setupMidnightReset();
             
@@ -150,6 +157,28 @@ const App = {
         this.setupModals();
     },
 
+    /**
+     * Apply one-time data fixes (version migrations, bad data cleanup)
+     */
+    applyDataFixes() {
+        const fixesApplied = State._data?.fixesApplied || {};
+        
+        // Fix 1: Delete erroneous 50-mile run on Dec 5, 2024
+        if (!fixesApplied.dec5RunFix) {
+            const runLog = State._data?.runLog || [];
+            const badRun = runLog.find(r => r.date?.startsWith('2024-12-05') && parseFloat(r.distance) >= 50);
+            if (badRun) {
+                State.deleteRun('2024-12-05');
+                console.log('Applied fix: Removed erroneous 50-mile run from Dec 5');
+            }
+            
+            // Mark as applied even if no bad run found
+            if (!State._data.fixesApplied) State._data.fixesApplied = {};
+            State._data.fixesApplied.dec5RunFix = true;
+            State.save();
+        }
+    },
+    
     /**
      * Set up modals with iOS-style drag behavior
      */

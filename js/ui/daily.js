@@ -439,17 +439,20 @@ const DailyView = {
         // Running status - use helper to get from either source
         const running = State.getRunningData();
         const runDistance = State.getTodayRunDistance(todayKey);
-        const todaysRun = running?.goal && typeof RunningView !== 'undefined' 
-            ? RunningView.getTodaysRun(running) : null;
         
-        // Get the actual prescribed distance using getRunInfo
+        // Get today's run from schedule
+        let todaysRun = null;
         let prescribedDistance = 0;
-        if (todaysRun && typeof RunningView !== 'undefined') {
-            const runInfo = RunningView.getRunInfo(todaysRun, running);
-            prescribedDistance = parseFloat(runInfo?.distance) || 0;
+        
+        if (running?.goal && typeof RunningView !== 'undefined') {
+            todaysRun = RunningView.getTodaysRun(running);
+            if (todaysRun && todaysRun.type !== 'rest') {
+                const runInfo = RunningView.getRunInfo(todaysRun, running);
+                prescribedDistance = parseFloat(runInfo?.distance) || 0;
+            }
         }
         
-        const isRestDay = !todaysRun || todaysRun.type === 'rest' || prescribedDistance === 0;
+        const isRestDay = !running?.goal || !todaysRun || todaysRun.type === 'rest' || prescribedDistance === 0;
         const runPercent = prescribedDistance > 0 ? Math.round((runDistance / prescribedDistance) * 100) : 0;
         
         // Build running display
