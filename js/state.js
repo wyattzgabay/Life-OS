@@ -493,9 +493,10 @@ const State = {
             
             // Reading tracking
             reading: {
-                currentBook: null, // { title, totalPages, pagesRead, startDate }
+                currentBook: null, // { title, totalPages, pagesRead, startDate } - deprecated, migrated to library
                 completedBooks: [], // { title, totalPages, completedDate }
                 yearlyGoal: 12, // books per year
+                library: [], // Array of books: { id, title, author, totalPages, pagesRead, startDate, dailyProgress: [{date, pages}] }
             },
             
             // Exercise variation tracking (to cycle exercises)
@@ -1325,6 +1326,131 @@ const State = {
      */
     getCompletedBooks() {
         return this._data?.reading?.completedBooks ? [...this._data.reading.completedBooks] : [];
+    },
+
+    /**
+     * Get library (all books in progress)
+     */
+    getLibrary() {
+        // Migrate currentBook to library if needed
+        if (this._data?.reading?.currentBook && (!this._data.reading.library || this._data.reading.library.length === 0)) {
+            const cb = this._data.reading.currentBook;
+            this._data.reading.library = [{
+                id: Date.now().toString(),
+                title: cb.title,
+                author: '',
+                totalPages: cb.totalPages,
+                pagesRead: cb.pagesRead,
+                startDate: cb.startDate,
+                dailyProgress: []
+            }];
+            this._data.reading.currentBook = null;
+            this.save();
+        }
+        return this._data?.reading?.library ? [...this._data.reading.library] : [];
+    },
+
+    /**
+     * Add book to library
+     */
+    addBookToLibrary(title, author, totalPages) {
+        if (!this._data.reading.library) {
+            this._data.reading.library = [];
+        }
+        
+        const book = {
+            id: Date.now().toString(),
+            title,
+            author: author || '',
+            totalPages,
+            pagesRead: 0,
+            startDate: new Date().toISOString(),
+            dailyProgress: []
+        };
+        
+        this._data.reading.library.push(book);
+        this.save();
+        return book;
+    },
+
+    /**
+     * Update book progress (log daily reading)
+     */
+    logBookProgress(bookId, pagesRead, pagesAddedToday) {
+        const book = this._data.reading.library?.find(b => b.id === bookId);
+        if (!book) return;
+
+        book.pagesRead = pagesRead;
+        
+        // Log daily progress
+        const today = this.getTodayKey();
+        const existingEntry = book.dailyProgress?.find(d => d.date === today);
+        if (existingEntry) {
+            existingEntry.pages = pagesAddedToday;
+        } else {
+            if (!book.dailyProgress) book.dailyProgress = [];
+            book.dailyProgress.push({ date: today, pages: pagesAddedToday });
+        }
+
+        // Check if book is complete
+        if (book.pagesRead >= book.totalPages) {
+            this.completeBookFromLibrary(bookId);
+        } else {
+            this.save();
+        }
+    },
+
+    /**
+     * Complete book from library
+     */
+    completeBookFromLibrary(bookId) {
+        const bookIndex = this._data.reading.library?.findIndex(b => b.id === bookId);
+        if (bookIndex === -1 || bookIndex === undefined) return;
+
+        const book = this._data.reading.library[bookIndex];
+        
+        // Add to completed books
+        this._data.reading.completedBooks.push({
+            title: book.title,
+            author: book.author,
+            totalPages: book.totalPages,
+            completedDate: new Date().toISOString(),
+            startDate: book.startDate,
+            dailyProgress: book.dailyProgress
+        });
+
+        // Remove from library
+        this._data.reading.library.splice(bookIndex, 1);
+        this.save();
+    },
+
+    /**
+     * Remove book from library
+     */
+    removeBookFromLibrary(bookId) {
+        const index = this._data.reading.library?.findIndex(b => b.id === bookId);
+        if (index !== -1 && index !== undefined) {
+            this._data.reading.library.splice(index, 1);
+            this.save();
+        }
+    },
+
+    /**
+     * Get today's reading progress across all books
+     */
+    getTodaysReadingProgress() {
+        const today = this.getTodayKey();
+        let totalPagesToday = 0;
+        const library = this.getLibrary();
+        
+        library.forEach(book => {
+            const todayEntry = book.dailyProgress?.find(d => d.date === today);
+            if (todayEntry) {
+                totalPagesToday += todayEntry.pages;
+            }
+        });
+        
+        return totalPagesToday;
     },
 
     // ==========================================

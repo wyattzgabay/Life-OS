@@ -4208,90 +4208,374 @@ button, .btn {
 }
 
 /* ==========================================
-   READING MODULE
+   READING MODULE - Library System
    ========================================== */
 
 .reading-empty {
-    background: var(--surface);
-    border-radius: 12px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
     padding: 24px;
     text-align: center;
     cursor: pointer;
 }
 
 .reading-empty:active {
-    background: var(--surface-2);
+    background: var(--surface);
 }
 
 .empty-text {
     color: var(--text-muted);
-    font-size: 13px;
+    font-size: 14px;
     margin-bottom: 8px;
 }
 
 .empty-action {
-    font-family: var(--font-mono);
-    font-size: 11px;
-    color: var(--text);
-    letter-spacing: 0.1em;
+    font-family: var(--font-sans);
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--navy);
 }
 
-.reading-card {
-    background: var(--surface);
-    border-radius: 12px;
-    padding: 18px;
+/* Library Cards Container */
+.library-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.library-more {
+    text-align: center;
+    padding: 12px;
+    color: var(--text-muted);
+    font-size: 13px;
     cursor: pointer;
 }
 
-.reading-card:active {
-    background: var(--surface-2);
+.library-more:hover {
+    color: var(--navy);
+}
+
+/* Book Card */
+.book-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    cursor: pointer;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.book-card:hover {
+    border-color: var(--navy);
+}
+
+.book-card:active {
+    background: var(--surface);
+}
+
+.book-card.compact {
+    padding: 14px;
+}
+
+.book-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.book-card-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.book-info {
+    flex: 1;
 }
 
 .book-title {
     font-size: 15px;
     font-weight: 600;
-    margin-bottom: 12px;
+    color: var(--text);
+    margin-bottom: 4px;
 }
 
-.book-title-large {
-    font-size: 18px;
+.book-author {
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.today-badge {
+    background: var(--success-muted);
+    color: var(--success);
+    font-size: 11px;
     font-weight: 600;
-    margin-bottom: 16px;
-}
-
-.book-title-modal {
-    font-size: 16px;
-    font-weight: 600;
-    text-align: center;
-    margin-bottom: 20px;
-}
-
-.book-progress-bar {
-    height: 8px;
-    background: var(--surface-3);
+    padding: 4px 8px;
     border-radius: 4px;
+}
+
+/* Progress Circle */
+.book-progress-circle {
+    width: 50px;
+    height: 50px;
+    position: relative;
+}
+
+.book-progress-circle svg {
+    transform: rotate(-90deg);
+}
+
+.book-progress-circle .circle-bg {
+    fill: none;
+    stroke: var(--surface-3);
+    stroke-width: 3;
+}
+
+.book-progress-circle .circle-fill {
+    fill: none;
+    stroke: var(--navy);
+    stroke-width: 3;
+    stroke-linecap: round;
+}
+
+.book-progress-circle .progress-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 11px;
+    font-weight: 600;
+}
+
+/* Progress Bar */
+.book-progress-bar {
+    height: 6px;
+    background: var(--surface-2);
+    border-radius: 3px;
     overflow: hidden;
     margin-bottom: 8px;
 }
 
 .book-progress-fill {
     height: 100%;
-    background: var(--text);
-    border-radius: 4px;
+    background: var(--navy);
+    border-radius: 3px;
     transition: width 0.3s ease;
 }
 
-.book-stats {
+.book-meta, .book-stats {
     display: flex;
     justify-content: space-between;
-    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+/* Reading Stats Row */
+.reading-stats-row {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 16px;
+}
+
+.stat-card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 16px 12px;
+    text-align: center;
+}
+
+.stat-value {
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 4px;
+}
+
+.stat-label {
     font-size: 11px;
     color: var(--text-muted);
+    text-transform: uppercase;
+}
+
+/* Add Book Button */
+.add-book-btn {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--navy);
+    cursor: pointer;
+}
+
+.add-book-btn:hover {
+    background: var(--navy);
+    color: #FFFFFF;
+}
+
+/* Empty Library */
+.empty-library {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.empty-icon {
+    font-size: 48px;
+    margin-bottom: 16px;
+}
+
+/* Library List */
+.library-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+/* Book Update Modal */
+.book-update-header {
+    margin-bottom: 20px;
+}
+
+.book-title-modal {
+    font-size: 18px;
+    font-weight: 600;
+    text-align: center;
+    margin-bottom: 16px;
+    color: var(--text);
+}
+
+.book-progress-visual {
+    margin-bottom: 16px;
+}
+
+.progress-bar-large {
+    height: 10px;
+    background: var(--surface-2);
+    border-radius: 5px;
+    overflow: hidden;
+    margin-bottom: 8px;
+}
+
+.progress-fill-large {
+    height: 100%;
+    background: var(--navy);
+    border-radius: 5px;
+    transition: width 0.3s ease;
+}
+
+.progress-stats {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.pages-input-section {
+    margin-bottom: 16px;
+}
+
+.pages-input-section label,
+.quick-add-section label {
+    display: block;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+}
+
+.today-reading-note {
+    text-align: center;
+    font-size: 13px;
+    color: var(--success);
+    background: var(--success-muted);
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+}
+
+.book-actions-row {
+    margin-bottom: 16px;
+}
+
+.book-secondary-actions {
+    display: flex;
+    justify-content: space-between;
+    padding-top: 16px;
+    border-top: 1px solid var(--border);
+}
+
+.text-btn {
+    background: none;
+    border: none;
+    font-size: 13px;
+    color: var(--text-muted);
+    cursor: pointer;
+    padding: 8px;
+}
+
+.text-btn:hover {
+    color: var(--text);
+}
+
+.text-btn.danger {
+    color: var(--error);
+}
+
+/* Completed Books */
+.completed-books-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.completed-book-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.completed-book-item:last-child {
+    border-bottom: none;
+}
+
+.completed-book-info {
+    flex: 1;
+}
+
+.completed-book-title {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 2px;
+}
+
+.completed-book-author {
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.completed-book-meta {
+    font-size: 11px;
+    color: var(--text-dim);
+    text-align: right;
+}
+
+/* Legacy styles for backward compat */
+.book-title-large {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 16px;
 }
 
 .big-progress-bar {
     height: 12px;
-    background: var(--surface-3);
+    background: var(--surface-2);
     border-radius: 6px;
     overflow: hidden;
     flex: 1;
@@ -4299,7 +4583,7 @@ button, .btn {
 
 .big-progress-fill {
     height: 100%;
-    background: var(--text);
+    background: var(--navy);
     border-radius: 6px;
     transition: width 0.3s ease;
 }
@@ -4312,7 +4596,6 @@ button, .btn {
 }
 
 .big-progress-text {
-    font-family: var(--font-mono);
     font-size: 14px;
     font-weight: 700;
     min-width: 45px;
@@ -4329,15 +4612,15 @@ button, .btn {
 }
 
 .page-stat-num {
-    font-family: var(--font-mono);
     font-size: 24px;
     font-weight: 700;
+    color: var(--navy);
 }
 
 .page-stat-label {
-    font-size: 9px;
+    font-size: 10px;
     color: var(--text-muted);
-    letter-spacing: 0.1em;
+    text-transform: uppercase;
     margin-top: 4px;
 }
 
@@ -4349,15 +4632,13 @@ button, .btn {
 .book-action-btn {
     flex: 1;
     padding: 14px;
-    border-radius: 10px;
+    border-radius: var(--radius-md);
     border: none;
-    font-family: var(--font-mono);
-    font-size: 11px;
+    font-size: 13px;
     font-weight: 600;
-    letter-spacing: 0.1em;
     cursor: pointer;
-    background: var(--text);
-    color: var(--bg);
+    background: var(--gradient-navy);
+    color: #FFFFFF;
 }
 
 .book-action-btn.secondary {

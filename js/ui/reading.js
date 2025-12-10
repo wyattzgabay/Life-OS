@@ -1,157 +1,173 @@
 /**
  * READING.JS
- * Reading tracker - current book, pages, completed books list
+ * Reading tracker with Library system - multiple books, progress tracking, daily reading
  */
 
 const ReadingView = {
     /**
-     * Render reading section for daily view
+     * Render reading section for daily view (compact)
      */
     renderDailyReading() {
-        const reading = State.getReadingData();
+        const library = State.getLibrary();
+        const todaysPages = State.getTodaysReadingProgress();
         
-        if (!reading?.currentBook) {
+        if (library.length === 0) {
             return `
                 <section class="section">
                     <div class="section-header">
                         <span class="section-title">READING</span>
                     </div>
                     <div class="reading-empty" onclick="ReadingView.openAddBook()">
-                        <div class="empty-text">No book in progress</div>
+                        <div class="empty-text">No books in your library</div>
                         <div class="empty-action">+ Add Book</div>
                     </div>
                 </section>
             `;
         }
 
-        const book = reading.currentBook;
-        const progress = Math.round((book.pagesRead / book.totalPages) * 100);
-
         return `
             <section class="section">
                 <div class="section-header">
                     <span class="section-title">READING</span>
-                    <span class="section-count">${reading.completedBooks.length} books</span>
+                    <span class="section-count">${todaysPages} pages today</span>
                 </div>
-                <div class="reading-card" onclick="ReadingView.openUpdatePages()">
-                    <div class="book-title">${book.title}</div>
-                    <div class="book-progress-bar">
-                        <div class="book-progress-fill" style="width: ${progress}%"></div>
-                    </div>
-                    <div class="book-stats">
-                        <span>${book.pagesRead} / ${book.totalPages} pages</span>
-                        <span>${progress}%</span>
-                    </div>
+                <div class="library-cards">
+                    ${library.slice(0, 2).map(book => this.renderBookCard(book, true)).join('')}
+                    ${library.length > 2 ? `
+                        <div class="library-more" onclick="App.showView('reading')">
+                            +${library.length - 2} more in library
+                        </div>
+                    ` : ''}
                 </div>
             </section>
         `;
     },
 
     /**
-     * Render full reading view
+     * Render a single book card
      */
-    render() {
-        const reading = State.getReadingData();
-        const books = State.getCompletedBooks();
-        const thisYear = new Date().getFullYear();
-        const booksThisYear = books.filter(b => 
-            new Date(b.completedDate).getFullYear() === thisYear
-        ).length;
+    renderBookCard(book, compact = false) {
+        const progress = Math.round((book.pagesRead / book.totalPages) * 100);
+        const today = State.getTodayKey();
+        const todayEntry = book.dailyProgress?.find(d => d.date === today);
+        const pagesReadToday = todayEntry?.pages || 0;
 
-        return `
-            ${Header.renderSimple('READING')}
-            
-            ${this.renderCurrentBook(reading)}
-            ${this.renderYearlyGoal(booksThisYear, reading?.yearlyGoal || 12)}
-            ${this.renderCompletedBooks(books)}
-        `;
-    },
-
-    /**
-     * Render current book section
-     */
-    renderCurrentBook(reading) {
-        if (!reading?.currentBook) {
+        if (compact) {
             return `
-                <div class="analysis-card">
-                    <div class="analysis-header">
-                        <span class="analysis-title">CURRENT BOOK</span>
+                <div class="book-card compact" onclick="ReadingView.openUpdatePages('${book.id}')">
+                    <div class="book-card-header">
+                        <div class="book-title">${book.title}</div>
+                        ${pagesReadToday > 0 ? `<span class="today-badge">+${pagesReadToday} today</span>` : ''}
                     </div>
-                    <div style="text-align: center; padding: 30px;">
-                        <button class="save-btn" onclick="ReadingView.openAddBook()">
-                            START A BOOK
-                        </button>
+                    <div class="book-progress-bar">
+                        <div class="book-progress-fill" style="width: ${progress}%"></div>
+                    </div>
+                    <div class="book-stats">
+                        <span>${book.pagesRead} / ${book.totalPages}</span>
+                        <span>${progress}%</span>
                     </div>
                 </div>
             `;
         }
 
-        const book = reading.currentBook;
-        const progress = Math.round((book.pagesRead / book.totalPages) * 100);
-        const pagesLeft = book.totalPages - book.pagesRead;
-
         return `
-            <div class="analysis-card">
-                <div class="analysis-header">
-                    <span class="analysis-title">CURRENT BOOK</span>
+            <div class="book-card" onclick="ReadingView.openUpdatePages('${book.id}')">
+                <div class="book-card-content">
+                    <div class="book-info">
+                        <div class="book-title">${book.title}</div>
+                        ${book.author ? `<div class="book-author">by ${book.author}</div>` : ''}
+                    </div>
+                    <div class="book-progress-circle">
+                        <svg viewBox="0 0 36 36">
+                            <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                            <path class="circle-fill" stroke-dasharray="${progress}, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"/>
+                        </svg>
+                        <span class="progress-text">${progress}%</span>
+                    </div>
                 </div>
-                <div class="current-book-display">
-                    <div class="book-title-large">${book.title}</div>
-                    <div class="book-big-progress">
-                        <div class="big-progress-bar">
-                            <div class="big-progress-fill" style="width: ${progress}%"></div>
-                        </div>
-                        <div class="big-progress-text">${progress}%</div>
-                    </div>
-                    <div class="book-page-stats">
-                        <div class="page-stat">
-                            <div class="page-stat-num">${book.pagesRead}</div>
-                            <div class="page-stat-label">READ</div>
-                        </div>
-                        <div class="page-stat">
-                            <div class="page-stat-num">${pagesLeft}</div>
-                            <div class="page-stat-label">LEFT</div>
-                        </div>
-                        <div class="page-stat">
-                            <div class="page-stat-num">${book.totalPages}</div>
-                            <div class="page-stat-label">TOTAL</div>
-                        </div>
-                    </div>
-                    <div class="book-actions">
-                        <button class="book-action-btn" onclick="ReadingView.openUpdatePages()">
-                            UPDATE PAGES
-                        </button>
-                        <button class="book-action-btn secondary" onclick="ReadingView.finishBook()">
-                            MARK COMPLETE
-                        </button>
-                    </div>
+                <div class="book-progress-bar">
+                    <div class="book-progress-fill" style="width: ${progress}%"></div>
+                </div>
+                <div class="book-meta">
+                    <span>${book.pagesRead} of ${book.totalPages} pages</span>
+                    ${pagesReadToday > 0 ? `<span class="today-badge">+${pagesReadToday} today</span>` : ''}
                 </div>
             </div>
         `;
     },
 
     /**
-     * Render yearly goal
+     * Render full reading view (Library)
      */
-    renderYearlyGoal(completed, goal) {
-        const progress = Math.round((completed / goal) * 100);
+    render() {
+        const library = State.getLibrary();
+        const completedBooks = State.getCompletedBooks();
+        const reading = State.getReadingData();
+        const thisYear = new Date().getFullYear();
+        const booksThisYear = completedBooks.filter(b => 
+            new Date(b.completedDate).getFullYear() === thisYear
+        ).length;
 
+        return `
+            <div class="view-header">
+                <div class="view-title">Library</div>
+            </div>
+            
+            ${this.renderStats(library, completedBooks, booksThisYear, reading?.yearlyGoal || 12)}
+            ${this.renderLibrary(library)}
+            ${this.renderCompletedBooks(completedBooks)}
+            
+            <div class="tab-spacer"></div>
+        `;
+    },
+
+    /**
+     * Render reading stats
+     */
+    renderStats(library, completed, booksThisYear, yearlyGoal) {
+        const totalPagesRead = library.reduce((sum, b) => sum + b.pagesRead, 0) +
+                              completed.reduce((sum, b) => sum + b.totalPages, 0);
+        const todaysPages = State.getTodaysReadingProgress();
+
+        return `
+            <div class="reading-stats-row">
+                <div class="stat-card">
+                    <div class="stat-value">${todaysPages}</div>
+                    <div class="stat-label">Pages Today</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${library.length}</div>
+                    <div class="stat-label">In Progress</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">${booksThisYear}/${yearlyGoal}</div>
+                    <div class="stat-label">${new Date().getFullYear()} Goal</div>
+                </div>
+            </div>
+        `;
+    },
+
+    /**
+     * Render library section
+     */
+    renderLibrary(library) {
         return `
             <div class="analysis-card">
                 <div class="analysis-header">
-                    <span class="analysis-title">${new Date().getFullYear()} GOAL</span>
+                    <span class="analysis-title">CURRENTLY READING</span>
+                    <button class="add-book-btn" onclick="ReadingView.openAddBook()">+ Add</button>
                 </div>
-                <div class="yearly-goal">
-                    <div class="goal-progress-ring">
-                        <svg viewBox="0 0 100 100">
-                            <circle class="ring-bg" cx="50" cy="50" r="40"/>
-                            <circle class="ring-fill" cx="50" cy="50" r="40" 
-                                    style="stroke-dasharray: 251; stroke-dashoffset: ${251 - (progress / 100) * 251}"/>
-                        </svg>
-                        <div class="goal-progress-text">${completed}/${goal}</div>
+                ${library.length === 0 ? `
+                    <div class="empty-library">
+                        <div class="empty-icon">📚</div>
+                        <div class="empty-text">Your library is empty</div>
+                        <button class="save-btn" onclick="ReadingView.openAddBook()">ADD YOUR FIRST BOOK</button>
                     </div>
-                    <div class="goal-label">books this year</div>
-                </div>
+                ` : `
+                    <div class="library-list">
+                        ${library.map(book => this.renderBookCard(book)).join('')}
+                    </div>
+                `}
             </div>
         `;
     },
@@ -182,12 +198,15 @@ const ReadingView = {
             <div class="analysis-card">
                 <div class="analysis-header">
                     <span class="analysis-title">COMPLETED</span>
-                    <span class="section-count">${books.length} total</span>
+                    <span class="section-count">${books.length} books</span>
                 </div>
                 <div class="completed-books-list">
                     ${sorted.map(book => `
                         <div class="completed-book-item">
-                            <div class="completed-book-title">${book.title}</div>
+                            <div class="completed-book-info">
+                                <div class="completed-book-title">${book.title}</div>
+                                ${book.author ? `<div class="completed-book-author">${book.author}</div>` : ''}
+                            </div>
                             <div class="completed-book-meta">
                                 ${book.totalPages} pages · ${this.formatDate(book.completedDate)}
                             </div>
@@ -215,11 +234,16 @@ const ReadingView = {
         modal.innerHTML = `
             <div class="modal-sheet" onclick="event.stopPropagation()">
                 <div class="modal-handle"></div>
-                <div class="modal-title">START A BOOK</div>
+                <div class="modal-title">Add to Library</div>
                 
                 <div class="input-group">
                     <label>Book Title</label>
                     <input type="text" class="input-field" id="book-title" placeholder="Enter title">
+                </div>
+                
+                <div class="input-group">
+                    <label>Author (optional)</label>
+                    <input type="text" class="input-field" id="book-author" placeholder="Author name">
                 </div>
                 
                 <div class="input-group">
@@ -228,7 +252,7 @@ const ReadingView = {
                            placeholder="300" inputmode="numeric">
                 </div>
                 
-                <button class="save-btn" onclick="ReadingView.saveNewBook()">START READING</button>
+                <button class="save-btn" onclick="ReadingView.saveNewBook()">ADD TO LIBRARY</button>
             </div>
         `;
         
@@ -237,10 +261,11 @@ const ReadingView = {
     },
 
     /**
-     * Save new book
+     * Save new book to library
      */
     saveNewBook() {
         const title = document.getElementById('book-title')?.value?.trim();
+        const author = document.getElementById('book-author')?.value?.trim();
         const pages = parseInt(document.getElementById('book-pages')?.value);
 
         if (!title || !pages) {
@@ -248,43 +273,85 @@ const ReadingView = {
             return;
         }
 
-        State.startBook(title, pages);
+        State.addBookToLibrary(title, author, pages);
         document.getElementById('logger-modal').classList.remove('active');
         App.render();
     },
 
     /**
-     * Open update pages modal
+     * Open update pages modal for a specific book
      */
-    openUpdatePages() {
-        const reading = State.getReadingData();
-        if (!reading?.currentBook) return;
+    openUpdatePages(bookId) {
+        const library = State.getLibrary();
+        const book = library.find(b => b.id === bookId);
+        if (!book) return;
+
+        const today = State.getTodayKey();
+        const todayEntry = book.dailyProgress?.find(d => d.date === today);
+        const pagesReadToday = todayEntry?.pages || 0;
+        const progress = Math.round((book.pagesRead / book.totalPages) * 100);
 
         const modal = document.getElementById('logger-modal');
         
         modal.innerHTML = `
             <div class="modal-sheet" onclick="event.stopPropagation()">
                 <div class="modal-handle"></div>
-                <div class="modal-title">UPDATE PAGES</div>
-                
-                <div class="book-title-modal">${reading.currentBook.title}</div>
-                
-                <input type="number" class="logger-input" id="pages-input" 
-                       value="${reading.currentBook.pagesRead}" 
-                       placeholder="0" inputmode="numeric">
-                
-                <div class="preset-grid">
-                    <button class="preset-btn" onclick="ReadingView.addPages(10)">+10</button>
-                    <button class="preset-btn" onclick="ReadingView.addPages(20)">+20</button>
-                    <button class="preset-btn" onclick="ReadingView.addPages(30)">+30</button>
+                <div class="modal-header-row">
+                    <div style="width: 36px;"></div>
+                    <div class="modal-title">Update Progress</div>
+                    <button class="modal-close" onclick="document.getElementById('logger-modal').classList.remove('active')">×</button>
                 </div>
                 
-                <div class="logger-goal">of ${reading.currentBook.totalPages} pages</div>
+                <div class="book-update-header">
+                    <div class="book-title-modal">${book.title}</div>
+                    <div class="book-progress-visual">
+                        <div class="progress-bar-large">
+                            <div class="progress-fill-large" style="width: ${progress}%"></div>
+                        </div>
+                        <div class="progress-stats">
+                            <span>${book.pagesRead} / ${book.totalPages} pages</span>
+                            <span>${progress}%</span>
+                        </div>
+                    </div>
+                </div>
                 
-                <button class="save-btn" onclick="ReadingView.savePages()">SAVE</button>
+                <div class="pages-input-section">
+                    <label>Current page you're on</label>
+                    <input type="number" class="logger-input" id="pages-input" 
+                           value="${book.pagesRead}" 
+                           placeholder="0" inputmode="numeric"
+                           onfocus="this.select()">
+                </div>
+                
+                <div class="quick-add-section">
+                    <label>Quick add pages</label>
+                    <div class="preset-grid">
+                        <button class="preset-btn" onclick="ReadingView.addPages(10)">+10</button>
+                        <button class="preset-btn" onclick="ReadingView.addPages(20)">+20</button>
+                        <button class="preset-btn" onclick="ReadingView.addPages(30)">+30</button>
+                        <button class="preset-btn" onclick="ReadingView.addPages(50)">+50</button>
+                    </div>
+                </div>
+                
+                ${pagesReadToday > 0 ? `
+                    <div class="today-reading-note">
+                        You've logged ${pagesReadToday} pages today
+                    </div>
+                ` : ''}
+                
+                <div class="book-actions-row">
+                    <button class="save-btn" onclick="ReadingView.savePages('${bookId}')">SAVE PROGRESS</button>
+                </div>
+                
+                <div class="book-secondary-actions">
+                    <button class="text-btn" onclick="ReadingView.finishBook('${bookId}')">Mark as Complete</button>
+                    <button class="text-btn danger" onclick="ReadingView.removeBook('${bookId}')">Remove Book</button>
+                </div>
             </div>
         `;
         
+        this.currentBookId = bookId;
+        this.originalPages = book.pagesRead;
         modal.classList.add('active');
     },
 
@@ -300,29 +367,52 @@ const ReadingView = {
     /**
      * Save page update
      */
-    savePages() {
+    savePages(bookId) {
         const pages = parseInt(document.getElementById('pages-input')?.value);
         if (isNaN(pages)) return;
 
-        State.updatePagesRead(pages);
+        const library = State.getLibrary();
+        const book = library.find(b => b.id === bookId);
+        if (!book) return;
+
+        const pagesAddedToday = Math.max(0, pages - this.originalPages);
+        
+        State.logBookProgress(bookId, pages, pagesAddedToday);
         document.getElementById('logger-modal').classList.remove('active');
         
         // Award XP for reading progress
-        App.awardXP(10, 'discipline');
+        if (pagesAddedToday > 0) {
+            const xp = Math.min(30, Math.floor(pagesAddedToday / 10) * 5 + 5); // 5-30 XP based on pages
+            App.awardXP(xp, 'discipline');
+        }
+        
         App.render();
     },
 
     /**
-     * Finish current book
+     * Finish a book from library
      */
-    finishBook() {
+    finishBook(bookId) {
         if (confirm('Mark this book as complete?')) {
-            State.completeBook();
+            State.completeBookFromLibrary(bookId);
+            document.getElementById('logger-modal').classList.remove('active');
             App.awardXP(50, 'discipline'); // Bonus XP for finishing a book
             App.render();
         }
-    }
+    },
+
+    /**
+     * Remove book from library
+     */
+    removeBook(bookId) {
+        if (confirm('Remove this book from your library?')) {
+            State.removeBookFromLibrary(bookId);
+            document.getElementById('logger-modal').classList.remove('active');
+            App.render();
+        }
+    },
+
+    // Storage for tracking original pages when updating
+    currentBookId: null,
+    originalPages: 0
 };
-
-
-
