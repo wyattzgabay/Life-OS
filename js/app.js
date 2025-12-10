@@ -239,7 +239,6 @@ const App = {
         
         banner.innerHTML = `
             <div class="countdown-content">
-                <span class="countdown-icon">⏱</span>
                 <span class="countdown-text">Day ends in <strong>${timeStr}</strong></span>
                 <span class="countdown-hint">Log remaining data now</span>
             </div>
@@ -642,7 +641,7 @@ const App = {
                     </svg>
                     <div class="completion-check">
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                            <polyline points="20 6 9 17 4 12"/>
+                            <polyline points="4 12 9 17 20 6"/>
                         </svg>
                     </div>
                 </div>

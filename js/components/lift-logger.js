@@ -432,6 +432,16 @@ const LiftLogger = {
         // Set guidance based on current set count
         const nextSetNum = this.currentSets.length + 1;
         const setGuidance = this.getSetGuidance(nextSetNum);
+        
+        // Check if bodyweight exercise
+        const isBodyweight = this.isBodyweightExercise();
+        const canWeight = this.canAddWeight();
+        
+        // For pure bodyweight (band pull aparts, etc), hide weight entirely
+        // For weighted bodyweight (pull-ups, dips), show optional weight
+        const showWeight = !isBodyweight || canWeight;
+        const weightLabel = isBodyweight && canWeight ? 'ADDED WEIGHT' : 'WEIGHT';
+        const weightPlaceholder = isBodyweight && canWeight ? '+lbs (optional)' : 'lbs';
 
         return `
             <div class="set-inputs">
@@ -439,17 +449,22 @@ const LiftLogger = {
                     <span class="set-number">SET ${nextSetNum}</span>
                     <span class="set-tip">${setGuidance}</span>
                 </div>
-                <div class="input-row">
-                    <div class="input-col">
-                        <label>WEIGHT</label>
-                        <input type="number" id="lift-weight" class="lift-input dark-input" 
-                               value="${defaultWeight}" placeholder="lbs" inputmode="decimal"
-                               style="color-scheme: dark;">
-                    </div>
-                    <div class="input-col">
+                <div class="input-row ${!showWeight ? 'reps-only' : ''}">
+                    ${showWeight ? `
+                        <div class="input-col">
+                            <label>${weightLabel}</label>
+                            <input type="number" id="lift-weight" class="lift-input dark-input" 
+                                   value="${isBodyweight ? '' : defaultWeight}" 
+                                   placeholder="${weightPlaceholder}" inputmode="decimal"
+                                   onfocus="this.select()"
+                                   style="color-scheme: dark;">
+                        </div>
+                    ` : ''}
+                    <div class="input-col ${!showWeight ? 'full-width' : ''}">
                         <label>REPS</label>
                         <input type="number" id="lift-reps" class="lift-input dark-input" 
                                value="${defaultReps}" placeholder="reps" inputmode="numeric"
+                               onfocus="this.select()"
                                style="color-scheme: dark;">
                     </div>
                 </div>
@@ -461,12 +476,56 @@ const LiftLogger = {
      * Get guidance text for current set
      * Dynamically based on target sets and current session performance
      */
+    /**
+     * Get target reps for current exercise from workout detail
+     */
+    getTargetReps() {
+        const workout = Utils.getTodaysWorkout();
+        const exercise = workout?.exercises?.find(e => e.name === this.currentExercise);
+        if (exercise?.detail) {
+            // Parse "4x6" or "3×8-12" format
+            const match = exercise.detail.match(/\d+[×x](\d+)(?:-(\d+))?/i);
+            if (match) {
+                // Return lower end of range if range exists, otherwise exact number
+                return parseInt(match[1]);
+            }
+        }
+        return 8; // Default
+    },
+    
+    /**
+     * Check if exercise is bodyweight (no external weight needed)
+     */
+    isBodyweightExercise() {
+        const bodyweightExercises = [
+            'Pull-ups', 'Pull-Ups', 'Chin-ups', 'Chin-Ups', 'Dips', 
+            'Push-ups', 'Push-Ups', 'Assisted Pull-ups', 'Assisted Pull-Ups',
+            'Band Pull-Aparts', 'Hanging Leg Raises', 'Planks', 'Plank Hold',
+            'Dead Hang', 'Inverted Rows'
+        ];
+        return bodyweightExercises.some(bw => 
+            this.currentExercise?.toLowerCase().includes(bw.toLowerCase())
+        );
+    },
+    
+    /**
+     * Check if exercise can have added weight (weighted bodyweight)
+     */
+    canAddWeight() {
+        const weightableBodyweight = [
+            'Pull-ups', 'Pull-Ups', 'Chin-ups', 'Chin-Ups', 'Dips'
+        ];
+        return weightableBodyweight.some(ex => 
+            this.currentExercise?.toLowerCase().includes(ex.toLowerCase())
+        );
+    },
+
     getSetGuidance(setNum) {
         const suggestion = State.getProgressionSuggestion(this.currentExercise);
         
         // Get target sets from exercise config
         const workout = Utils.getTodaysWorkout();
-        const exercise = workout.exercises.find(e => e.name === this.currentExercise);
+        const exercise = workout?.exercises?.find(e => e.name === this.currentExercise);
         let targetSets = 3;
         if (exercise?.detail) {
             const match = exercise.detail.match(/^(\d+)[×x]/i);
@@ -505,9 +564,12 @@ const LiftLogger = {
         // Middle sets - dynamic based on performance
         if (this.currentSets.length > 0) {
             const lastSet = this.currentSets[this.currentSets.length - 1];
+            const targetReps = this.getTargetReps();
+            
             if (lastSet.reps >= 12) {
                 return `Strong ${lastSet.reps} reps - consider +5 lbs`;
-            } else if (lastSet.reps <= 6) {
+            } else if (lastSet.reps < targetReps - 1) {
+                // Only suggest dropping weight if significantly below target
                 return `Only ${lastSet.reps} reps - stay at this weight or drop 5`;
             }
             return `Set ${setNum}/${targetSets} - match ${lastSet.weight} × ${lastSet.reps}`;
@@ -523,13 +585,15 @@ const LiftLogger = {
         if (this.currentSets.length === 0) {
             return `<div class="sets-list empty">No sets logged yet</div>`;
         }
+        
+        const isBodyweight = this.isBodyweightExercise();
 
         return `
             <div class="sets-list">
                 ${this.currentSets.map((set, i) => `
                     <div class="logged-set">
                         <span class="set-num">SET ${i + 1}</span>
-                        <span class="set-data">${set.weight} × ${set.reps}</span>
+                        <span class="set-data">${set.weight > 0 ? `${set.weight} × ` : ''}${set.reps}${set.weight === 0 && isBodyweight ? ' reps' : ''}</span>
                         <button class="set-remove" onclick="LiftLogger.removeSet(${i})">×</button>
                     </div>
                 `).join('')}
@@ -541,11 +605,20 @@ const LiftLogger = {
      * Add a set
      */
     addSet() {
-        const weight = parseFloat(document.getElementById('lift-weight').value);
+        const weightEl = document.getElementById('lift-weight');
+        const weight = weightEl ? parseFloat(weightEl.value) || 0 : 0;
         const reps = parseInt(document.getElementById('lift-reps').value);
+        
+        const isBodyweight = this.isBodyweightExercise();
+        const showWeight = !isBodyweight || this.canAddWeight();
 
-        if (!weight || !reps) {
+        // For bodyweight exercises, only require reps
+        if (showWeight && !weight && !isBodyweight) {
             this.showCustomAlert('Enter weight and reps');
+            return;
+        }
+        if (!reps) {
+            this.showCustomAlert('Enter reps');
             return;
         }
 

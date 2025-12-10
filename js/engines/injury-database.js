@@ -241,28 +241,37 @@ const InjuryDatabase = {
                     name: 'Front of hip',
                     timing: {
                         during_run: ['hip_flexor_strain', 'hip_impingement'],
-                        after_sitting: ['hip_flexor_tightness']
+                        after_sitting: ['hip_flexor_strain'],
+                        going_upstairs: ['hip_flexor_strain'],
+                        at_rest: ['hip_impingement']
                     }
                 },
                 side: {
                     name: 'Side of hip (greater trochanter)',
                     timing: {
                         lying_on_side: ['trochanteric_bursitis', 'gluteus_medius_tendinopathy'],
-                        during_run: ['trochanteric_bursitis']
+                        during_run: ['trochanteric_bursitis', 'it_band_syndrome'],
+                        going_upstairs: ['gluteus_medius_tendinopathy'],
+                        at_rest: ['trochanteric_bursitis']
                     }
                 },
                 back: {
                     name: 'Back of hip / deep in glute',
                     timing: {
                         sitting: ['piriformis_syndrome', 'high_hamstring_tendinopathy'],
-                        during_run: ['piriformis_syndrome']
+                        during_run: ['piriformis_syndrome', 'high_hamstring_tendinopathy'],
+                        after_run: ['piriformis_syndrome'],
+                        at_rest: ['piriformis_syndrome']
                     }
                 },
                 groin: {
                     name: 'Groin / deep hip',
                     timing: {
                         during_run: ['hip_impingement', 'labral_tear', 'adductor_strain'],
-                        rotation: ['hip_impingement', 'labral_tear']
+                        rotation: ['hip_impingement', 'labral_tear'],
+                        after_sitting: ['hip_impingement'],
+                        at_rest: ['labral_tear', 'hip_impingement'],
+                        sudden_sharp: ['adductor_strain']
                     }
                 }
             }
@@ -1243,4 +1252,5 @@ const InjuryDatabase = {
 if (typeof window !== 'undefined') {
     window.InjuryDatabase = InjuryDatabase;
 }
+
 

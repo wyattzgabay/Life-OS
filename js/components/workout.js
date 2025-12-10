@@ -212,7 +212,7 @@ const Workout = {
             <div class="${itemClasses}" onclick="${clickAction}">
                 <div class="workout-check">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                        <polyline points="20 6 9 17 4 12"/>
+                        <polyline points="4 12 9 17 20 6"/>
                     </svg>
                 </div>
                 <div class="workout-info">
@@ -267,7 +267,7 @@ const Workout = {
                  onclick="App.toggleHabit('${habit.id}')">
                 <div class="habit-check">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                        <polyline points="20 6 9 17 4 12"/>
+                        <polyline points="4 12 9 17 20 6"/>
                     </svg>
                 </div>
                 <span class="habit-name">${habit.name}</span>

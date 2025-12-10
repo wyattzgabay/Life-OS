@@ -25,17 +25,17 @@
 
 | Feature | Status | Location |
 |---------|--------|----------|
-| Weekly workout schedule |  Live | `config.js † WORKOUTS` |
-| Volume tracking (MEV/MAV/MRV) |  Live | `utils.js † getVolumeAdjustments()` |
-| Double progression model |  Live | `state.js † getProgressionSuggestion()` |
-| Running program (5K-Marathon) |  Live | `config.js † RUNNING` |
-| VDOT pace calculator |  Live | `config.js † VDOT_PACES` |
+| Weekly workout schedule |  Live | `config.js ï¿½ WORKOUTS` |
+| Volume tracking (MEV/MAV/MRV) |  Live | `utils.js ï¿½ getVolumeAdjustments()` |
+| Double progression model |  Live | `state.js ï¿½ getProgressionSuggestion()` |
+| Running program (5K-Marathon) |  Live | `config.js ï¿½ RUNNING` |
+| VDOT pace calculator |  Live | `config.js ï¿½ VDOT_PACES` |
 | AI food logging |  Live | `ai-nutrition.js` |
-| XP & leveling |  Live | `config.js † LEVELS, XP_REWARDS` |
-| Exercise swaps |  Live | `config.js † EXERCISE_ALTERNATIVES` |
-| Deload recommendations |  Live | `utils.js † shouldDeload()` |
-| Running injuries |  Live | `config.js † RUNNING.INJURIES` |
-| Daily scoring |  Live | `daily.js † calculateDayScore()` |
+| XP & leveling |  Live | `config.js ï¿½ LEVELS, XP_REWARDS` |
+| Exercise swaps |  Live | `config.js ï¿½ EXERCISE_ALTERNATIVES` |
+| Deload recommendations |  Live | `utils.js ï¿½ shouldDeload()` |
+| Running injuries |  Live | `config.js ï¿½ RUNNING.INJURIES` |
+| Daily scoring |  Live | `daily.js ï¿½ calculateDayScore()` |
 
 ### 1.2 What's NOT Implemented Yet
 
@@ -45,7 +45,7 @@
 | Chronic injury system |  Planned | v2.0 |
 | TrainingState object |  Planned | v2.0 |
 | Intra-workout RPE adjustments |  Planned | v2.0 |
-| Cross-domain feedback (food†lifting) |  Planned | v2.0 |
+| Cross-domain feedback (foodï¿½lifting) |  Planned | v2.0 |
 | Personal MRV/MEV learning |  Planned | v2.0 |
 | Fatigue modeling |  Planned | v2.0 |
 | Goal-specific programming |  Planned | v2.0 |
@@ -58,13 +58,13 @@
 
 ```
 CONFIG.WORKOUTS = {
-  0: Sunday    † LONG RUN DAY (Mobility only for lifting)
-  1: Monday    † UPPER STRENGTH + Optional Easy Run
-  2: Tuesday   † LOWER POWER (NO running)
-  3: Wednesday † UPPER HYPERTROPHY + Easy Run
-  4: Thursday  † TEMPO RUN DAY (Core only for lifting)
-  5: Friday    † LOWER HYPERTROPHY (NO running)
-  6: Saturday  † RECOVERY + MOBILITY (NO running)
+  0: Sunday    ï¿½ LONG RUN DAY (Mobility only for lifting)
+  1: Monday    ï¿½ UPPER STRENGTH + Optional Easy Run
+  2: Tuesday   ï¿½ LOWER POWER (NO running)
+  3: Wednesday ï¿½ UPPER HYPERTROPHY + Easy Run
+  4: Thursday  ï¿½ TEMPO RUN DAY (Core only for lifting)
+  5: Friday    ï¿½ LOWER HYPERTROPHY (NO running)
+  6: Saturday  ï¿½ RECOVERY + MOBILITY (NO running)
 }
 ```
 
@@ -82,7 +82,7 @@ Each day has:
   exercises: [
     {
       name: string,
-      detail: '4Ã6',             // Sets Ã Reps
+      detail: '4ï¿½6',             // Sets ï¿½ Reps
       xp: number,
       muscle: string[],          // For volume tracking
       posture: boolean           // For posture tracking
@@ -138,7 +138,7 @@ From `CONFIG.VOLUME_LANDMARKS` (sets per week):
 
 ### 3.2 Volume Adjustment Logic
 
-From `utils.js † getVolumeAdjustments()`:
+From `utils.js ï¿½ getVolumeAdjustments()`:
 
 ```javascript
 // Decision tree for volume adjustments
@@ -182,7 +182,7 @@ CONFIG.MUSCLE_GROUPS = {
 
 ### 3.4 Deload Logic
 
-From `utils.js † shouldDeload()`:
+From `utils.js ï¿½ shouldDeload()`:
 
 ```javascript
 // Deload triggers
@@ -202,7 +202,7 @@ From `utils.js † shouldDeload()`:
 
 ### 4.1 Double Progression Model
 
-From `state.js † getProgressionSuggestion()`:
+From `state.js ï¿½ getProgressionSuggestion()`:
 
 Uses 6-12 rep range:
 
@@ -241,13 +241,13 @@ if (avgReps < 6) {
 
 ### 4.2 Estimated 1RM Calculation
 
-From `state.js † calculateEstimated1RM()`:
+From `state.js ï¿½ calculateEstimated1RM()`:
 
 ```javascript
 // Epley formula
 estimated1RM = weight * (1 + (reps / 30))
 
-// Example: 185 lbs Ã 6 reps
+// Example: 185 lbs ï¿½ 6 reps
 // e1RM = 185 * (1 + 6/30) = 185 * 1.2 = 222 lbs
 ```
 
@@ -412,16 +412,16 @@ From `CONFIG.STREAK_MULTIPLIERS`:
 From `CONFIG.SKILL_TREES`:
 
 **STRENGTH (I)**
-- Foundation † Compound (150) † Progressive (400) † Advanced (800) † Elite (1500)
+- Foundation ï¿½ Compound (150) ï¿½ Progressive (400) ï¿½ Advanced (800) ï¿½ Elite (1500)
 
 **DISCIPLINE (II)**
-- Beginner † Consistent (200) † Dedicated (500) † Relentless (1000) † Unstoppable (2000)
+- Beginner ï¿½ Consistent (200) ï¿½ Dedicated (500) ï¿½ Relentless (1000) ï¿½ Unstoppable (2000)
 
 **NUTRITION (III)**
-- Tracker † Aware (100) † Optimized (300) † Precision (600) † Master (1200)
+- Tracker ï¿½ Aware (100) ï¿½ Optimized (300) ï¿½ Precision (600) ï¿½ Master (1200)
 
 **RECOVERY (IV)**
-- Rest † Sleep (100) † Restore (250) † Optimize (500) † Peak (1000)
+- Rest ï¿½ Sleep (100) ï¿½ Restore (250) ï¿½ Optimize (500) ï¿½ Peak (1000)
 
 ---
 
@@ -524,18 +524,18 @@ TrainingState = {
 
 Real-time adjustments based on:
 - RPE/RIR delta from target
-- Pain flags † immediate swap
-- Fatigue accumulation † modify accessories
+- Pain flags ï¿½ immediate swap
+- Fatigue accumulation ï¿½ modify accessories
 
 ### 9.5 Cross-Domain Feedback
 
-**Nutrition † Training:**
-- Deep deficit † reduce volume 15%
-- Low protein † bias toward intensity over volume
+**Nutrition ï¿½ Training:**
+- Deep deficit ï¿½ reduce volume 15%
+- Low protein ï¿½ bias toward intensity over volume
 
-**Running † Lifting:**
-- Long run † protect legs next day
-- High leg fatigue † swap to machines
+**Running ï¿½ Lifting:**
+- Long run ï¿½ protect legs next day
+- High leg fatigue ï¿½ swap to machines
 
 ### 9.6 Personal MRV/MEV Learning
 
@@ -543,34 +543,35 @@ Weekly refit based on:
 - Performance trend (up/flat/down)
 - Recovery scores
 - Volume vs current MRV
-- Adjust Â5-10% per muscle group
+- Adjust ï¿½5-10% per muscle group
 
 ---
 
 ## Appendix: Key Functions Reference
 
 ### Volume System
-- `Utils.getVolumeLandmarks(muscle)` † returns { MEV, MAV, MRV }
-- `Utils.getVolumeAdjustments()` † returns adjustments for today
-- `State.getWeeklyVolume(muscleGroup)` † returns { sets, exercises }
-- `State.getAllWeeklyVolumes()` † returns all muscle volumes
+- `Utils.getVolumeLandmarks(muscle)` ï¿½ returns { MEV, MAV, MRV }
+- `Utils.getVolumeAdjustments()` ï¿½ returns adjustments for today
+- `State.getWeeklyVolume(muscleGroup)` ï¿½ returns { sets, exercises }
+- `State.getAllWeeklyVolumes()` ï¿½ returns all muscle volumes
 
 ### Progression System
-- `State.getProgressionSuggestion(exerciseName)` † returns { weight, reps, message }
-- `State.calculateEstimated1RM(weight, reps)` † returns e1RM
-- `State.getLastLift(exerciseName)` † returns last session data
+- `State.getProgressionSuggestion(exerciseName)` ï¿½ returns { weight, reps, message }
+- `State.calculateEstimated1RM(weight, reps)` ï¿½ returns e1RM
+- `State.getLastLift(exerciseName)` ï¿½ returns last session data
 
 ### Workout Generation
-- `Utils.getTodaysWorkout()` † returns processed workout with adjustments
-- `Utils.shouldDeload()` † returns { shouldDeload, weeksSince, nextDeload }
-- `Utils.getCurrentBlock()` † returns 'accumulation' | 'intensification'
+- `Utils.getTodaysWorkout()` ï¿½ returns processed workout with adjustments
+- `Utils.shouldDeload()` ï¿½ returns { shouldDeload, weeksSince, nextDeload }
+- `Utils.getCurrentBlock()` ï¿½ returns 'accumulation' | 'intensification'
 
 ### Running System
-- `RunningView.getTodaysRun(running)` † returns today's run prescription
-- `RunningView.calculatePaces(vdot)` † returns pace table
-- `RunningView.getPhase(running)` † returns current training phase
+- `RunningView.getTodaysRun(running)` ï¿½ returns today's run prescription
+- `RunningView.calculatePaces(vdot)` ï¿½ returns pace table
+- `RunningView.getPhase(running)` ï¿½ returns current training phase
 
 ---
 
 *This document reflects the system as of December 2025. See PRODUCT_SPEC.md for planned v2.0 features.*
+
 

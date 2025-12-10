@@ -21,7 +21,7 @@ const CardioLogger = {
             unit: 'miles',
             workoutTypes: ['easy', 'tempo', 'intervals', 'long', 'recovery'],
             paceUnit: 'min/mile',
-            icon: '🏃',
+            icon: '',
             painAreas: [
                 { id: 'foot_arch', name: 'Foot Arch', group: 'foot' },
                 { id: 'ankle', name: 'Ankle', group: 'foot' },
@@ -525,7 +525,7 @@ const CardioLogger = {
                     <strong>Key symptoms:</strong>
                     <ul>${top.injury.keySymptoms?.slice(0, 3).map(s => `<li>${s}</li>`).join('') || ''}</ul>
                 </div>
-                <div class="injury-note">${top.injury.mustRest ? '⚠️ This injury requires REST - see a professional' : ''}</div>
+                <div class="injury-note">${top.injury.mustRest ? 'This injury requires REST - see a professional' : ''}</div>
             `;
             document.getElementById('likely-injury').style.display = 'block';
         }
@@ -653,7 +653,7 @@ const CardioLogger = {
             if (confidence >= pattern.confidence) {
                 warning.innerHTML = `
                     <div class="injury-warning">
-                        <strong>⚠️ Possible ${pattern.name}</strong>
+                        <strong>Possible ${pattern.name}</strong>
                         <p>${pattern.advice}</p>
                     </div>
                 `;

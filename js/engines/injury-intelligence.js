@@ -896,7 +896,7 @@ const InjuryIntelligence = {
                              onclick="InjuryIntelligence.completeRecoveryExercise('${ex.name}'); App.render();">
                             <div class="recovery-check">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
-                                    <polyline points="20 6 9 17 4 12"/>
+                                    <polyline points="4 12 9 17 20 6"/>
                                 </svg>
                             </div>
                             <div class="recovery-info">
@@ -1100,10 +1100,10 @@ const InjuryIntelligence = {
         }
         
         const icons = {
-            struggling: '⚠️',
-            overreaching: '🔥',
+            struggling: '!',
+            overreaching: '!!',
             progressing: '📈',
-            under_challenged: '💪',
+            under_challenged: '+',
             on_track: '✓'
         };
         

@@ -5060,6 +5060,16 @@ button, .btn {
     position: relative;
 }
 
+.input-col.full-width {
+    flex: 1;
+    max-width: 200px;
+    margin: 0 auto;
+}
+
+.input-row.reps-only {
+    justify-content: center;
+}
+
 .input-col label {
     font-family: 'JetBrains Mono', monospace;
     font-size: 9px;

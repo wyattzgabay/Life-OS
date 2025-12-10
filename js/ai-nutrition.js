@@ -80,10 +80,12 @@ FOOD QUALITY ASSESSMENT - BE SMART:
 - FITNESS SUPPLEMENTS (whey protein, creatine, collagen, BCAAs) = NEUTRAL, not "processed junk"
 - WHOLE PROTEINS (chicken, fish, beef, eggs, tuna) = WHOLE FOOD, high quality
 - CONDIMENTS (mayo, mustard, relish, salt) = MINOR, don't define meal quality
-- TRULY PROCESSED = fast food, chips, candy, frozen dinners, sugary cereals
+- TRULY PROCESSED = fast food, chips, candy, frozen dinners, sugary cereals, packaged snacks
+- NOT PROCESSED (whole foods): guacamole, hummus, salsa, fresh dips, nut butters, cheese, yogurt, fruits, vegetables, rice, beans, oatmeal, eggs, meat, fish
 - Judge the MAIN calories, not the condiments
 - Chicken + tuna + protein shake = HIGH QUALITY meal, even with mayo
 - Quality score should be 70+ if main calories come from whole proteins
+- Homemade or fresh-made items (guac, hummus) are WHOLE FOODS, not processed
 
 Response format (JSON only):
 {
