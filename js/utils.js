@@ -456,6 +456,7 @@ const Utils = {
     getTodaysWorkout() {
         const dayOfWeek = new Date().getDay();
         const baseWorkout = CONFIG.WORKOUTS[dayOfWeek];
+        const todayKey = State.getTodayKey();
         
         if (!baseWorkout) {
             console.error('No workout found for day:', dayOfWeek);
@@ -481,8 +482,22 @@ const Utils = {
             };
         }
         
-        // Get exercise week for cycling
-        const exerciseWeek = State.getExerciseWeek() || 0;
+        // Get exercise week for cycling - LOCK IT for this day
+        // This prevents exercises from changing mid-day
+        let exerciseWeek = State.getExerciseWeek() || 0;
+        
+        // Check if we've already locked exercises for today
+        const lockedWeek = State._data?.lockedExerciseWeek?.[todayKey];
+        if (lockedWeek !== undefined) {
+            exerciseWeek = lockedWeek;
+        } else {
+            // Lock the current exercise week for today
+            if (!State._data.lockedExerciseWeek) {
+                State._data.lockedExerciseWeek = {};
+            }
+            State._data.lockedExerciseWeek[todayKey] = exerciseWeek;
+            State.save();
+        }
         
         // Get volume adjustments
         const volumeAdjustments = this.getVolumeAdjustments();
