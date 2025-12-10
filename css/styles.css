@@ -2331,6 +2331,18 @@ button, .btn {
     box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.04);
 }
 
+/* Extend background below nav for overscroll */
+.bottom-nav::after {
+    content: '';
+    position: absolute;
+    bottom: -100px;
+    left: 0;
+    right: 0;
+    height: 100px;
+    background: var(--bg);
+    z-index: -1;
+}
+
 .nav-item {
     display: flex;
     flex-direction: column;
