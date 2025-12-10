@@ -1134,6 +1134,61 @@ const State = {
     },
 
     /**
+     * Delete a run by date
+     */
+    deleteRun(dateKey) {
+        if (!this._data?.runLog) return false;
+        
+        const beforeCount = this._data.runLog.length;
+        this._data.runLog = this._data.runLog.filter(r => !r.date?.startsWith(dateKey));
+        
+        // Also clear from cardioLog
+        if (this._data?.cardioLog) {
+            this._data.cardioLog = this._data.cardioLog.filter(c => !c.date?.startsWith(dateKey));
+        }
+        
+        // Also clear from day data
+        if (this._data?.days?.[dateKey]) {
+            this._data.days[dateKey].runDistance = 0;
+        }
+        
+        const deleted = beforeCount - this._data.runLog.length;
+        if (deleted > 0) {
+            this.save();
+            console.log(`Deleted ${deleted} run(s) from ${dateKey}`);
+        }
+        return deleted > 0;
+    },
+
+    /**
+     * Update a run's distance
+     */
+    updateRunDistance(dateKey, newDistance) {
+        if (!this._data?.runLog) return false;
+        
+        const run = this._data.runLog.find(r => r.date?.startsWith(dateKey));
+        if (run) {
+            run.distance = newDistance;
+            
+            // Also update cardioLog
+            const cardioEntry = this._data?.cardioLog?.find(c => c.date?.startsWith(dateKey));
+            if (cardioEntry) {
+                cardioEntry.distance = newDistance;
+            }
+            
+            // Also update day data
+            if (this._data?.days?.[dateKey]) {
+                this._data.days[dateKey].runDistance = newDistance;
+            }
+            
+            this.save();
+            console.log(`Updated run on ${dateKey} to ${newDistance} miles`);
+            return true;
+        }
+        return false;
+    },
+
+    /**
      * Get weekly mileage
      */
     getWeeklyMileage() {

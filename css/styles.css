@@ -2343,13 +2343,30 @@ button, .btn {
     gap: 3px;
     color: var(--text-muted);
     cursor: pointer;
-    padding: 6px 16px;
+    padding: 8px 16px;
     background: none;
     border: none;
-    transition: color 0.15s;
+    border-radius: 8px;
+    transition: all 0.15s ease;
 }
 
-.nav-item.active { color: var(--navy); }
+.nav-item:active {
+    transform: scale(0.92);
+    background: var(--surface);
+}
+
+.nav-item.active { 
+    color: var(--navy);
+    font-weight: 600;
+}
+
+.nav-item.active .nav-icon {
+    stroke-width: 2.5;
+}
+
+.nav-item.active .nav-text {
+    font-weight: 700;
+}
 
 .nav-icon {
     width: 22px;

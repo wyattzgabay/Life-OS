@@ -151,7 +151,7 @@ const App = {
     },
 
     /**
-     * Set up modals
+     * Set up modals with iOS-style drag behavior
      */
     setupModals() {
         const modal = document.getElementById('logger-modal');
@@ -162,6 +162,110 @@ const App = {
                 }
             });
         }
+        
+        // Also setup goals modal
+        const goalsModal = document.getElementById('goals-modal');
+        if (goalsModal) {
+            goalsModal.addEventListener('click', (e) => {
+                if (e.target === goalsModal) {
+                    goalsModal.classList.remove('active');
+                }
+            });
+        }
+        
+        // Set up drag-to-dismiss with bounce effect on modal sheets
+        this.setupModalDrag();
+    },
+    
+    /**
+     * Setup iOS-style modal drag with bounce effect
+     */
+    setupModalDrag() {
+        document.addEventListener('touchstart', (e) => {
+            const sheet = e.target.closest('.modal-sheet');
+            if (!sheet) return;
+            
+            this.dragState = {
+                startY: e.touches[0].clientY,
+                startScrollTop: sheet.scrollTop,
+                sheet: sheet,
+                isDragging: false,
+                direction: null
+            };
+        }, { passive: true });
+        
+        document.addEventListener('touchmove', (e) => {
+            if (!this.dragState?.sheet) return;
+            
+            const currentY = e.touches[0].clientY;
+            const deltaY = currentY - this.dragState.startY;
+            const sheet = this.dragState.sheet;
+            
+            // Determine direction
+            if (!this.dragState.direction && Math.abs(deltaY) > 5) {
+                this.dragState.direction = deltaY > 0 ? 'down' : 'up';
+            }
+            
+            // At top of scroll and dragging down - allow dismiss gesture
+            const atTop = sheet.scrollTop <= 0;
+            // At bottom of scroll and dragging up - allow bounce
+            const atBottom = sheet.scrollTop >= (sheet.scrollHeight - sheet.clientHeight - 1);
+            
+            if (atTop && deltaY > 0) {
+                // Dragging down from top - dismiss gesture with resistance
+                e.preventDefault();
+                this.dragState.isDragging = true;
+                const resistance = 0.5;
+                const transform = deltaY * resistance;
+                sheet.style.transform = `translateY(${transform}px)`;
+                sheet.style.transition = 'none';
+            } else if (atBottom && deltaY < 0) {
+                // Dragging up from bottom - bounce effect with strong resistance
+                e.preventDefault();
+                this.dragState.isDragging = true;
+                const resistance = 0.3;
+                const transform = deltaY * resistance;
+                sheet.style.transform = `translateY(${transform}px)`;
+                sheet.style.transition = 'none';
+            } else if (atTop && deltaY < 0) {
+                // At top dragging up - bounce effect
+                e.preventDefault();
+                this.dragState.isDragging = true;
+                const resistance = 0.25;
+                const transform = deltaY * resistance;
+                sheet.style.transform = `translateY(${transform}px)`;
+                sheet.style.transition = 'none';
+            }
+        }, { passive: false });
+        
+        document.addEventListener('touchend', (e) => {
+            if (!this.dragState?.sheet) return;
+            
+            const sheet = this.dragState.sheet;
+            const currentY = e.changedTouches[0].clientY;
+            const deltaY = currentY - this.dragState.startY;
+            
+            // Bounce back animation
+            sheet.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+            
+            // If dragged down more than 100px, close the modal
+            if (deltaY > 100 && this.dragState.isDragging) {
+                sheet.style.transform = 'translateY(100%)';
+                setTimeout(() => {
+                    sheet.closest('.modal')?.classList.remove('active');
+                    sheet.style.transform = '';
+                    sheet.style.transition = '';
+                }, 300);
+            } else {
+                // Bounce back to original position
+                sheet.style.transform = 'translateY(0)';
+                setTimeout(() => {
+                    sheet.style.transition = '';
+                }, 300);
+            }
+            
+            this.dragState = null;
+        }, { passive: true });
     },
 
     /**

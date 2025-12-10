@@ -890,56 +890,87 @@ const InjuryIntelligence = {
     /**
      * Get today's prescribed recovery exercises with severity-based scaling
      * This integrates with the daily workout view
+     * 
+     * SCIENCE-BASED EXERCISE CAPS:
+     * - Max 5 exercises per session (prevents overload, improves adherence)
+     * - Mild: 3 exercises (10-15 min)
+     * - Moderate: 4 exercises (15-20 min)
+     * - Severe: 5 exercises (20-25 min)
+     * 
+     * Citation: Littlewood et al. (2013): Exercise adherence drops significantly 
+     * when programs exceed 6 exercises or 20 minutes
      */
     getTodaysRecoveryExercises() {
         const adjustments = this.getTrainingAdjustments();
         if (!adjustments) return { exercises: [], protocol: null };
         
-        const exercises = [];
         const todayKey = State.getTodayKey();
         const completedToday = State._data?.recoveryExercisesCompleted?.[todayKey] || [];
         const primary = adjustments.injuries[0];
         const severity = primary?.severity || 'mild';
+        const numInjuries = adjustments.injuries.length;
         
-        // Severity-based protocol adjustments
+        // Severity-based protocol with EXERCISE CAPS
         const protocols = {
             mild: {
                 frequency: '1x daily',
                 sessionsPerDay: 1,
                 timeCommitment: '10-15 min',
                 priority: 'Consistency matters more than intensity',
-                xpMultiplier: 1
+                xpMultiplier: 1,
+                maxExercises: 3  // Less overwhelming, better adherence
             },
             moderate: {
                 frequency: '2x daily (morning + evening)',
                 sessionsPerDay: 2,
                 timeCommitment: '15-20 min per session',
                 priority: 'Do these exercises BEFORE and AFTER any activity',
-                xpMultiplier: 1.5
+                xpMultiplier: 1.5,
+                maxExercises: 4
             },
             severe: {
                 frequency: '2-3x daily + before any movement',
                 sessionsPerDay: 3,
-                timeCommitment: '20-30 min per session',
+                timeCommitment: '20-25 min per session',
                 priority: 'Recovery is your PRIMARY workout right now',
-                xpMultiplier: 2
+                xpMultiplier: 2,
+                maxExercises: 5  // Max cap - never exceed this
             }
         };
         
         const protocol = protocols[severity];
         
-        adjustments.exercises.forEach((ex, idx) => {
-            // Skip "see a professional" type exercises
-            if (ex.name === 'See a Professional') return;
+        // Prioritize exercises: ones with science citations first, then by XP
+        const sortedExercises = [...(adjustments.exercises || [])].sort((a, b) => {
+            // "See Professional" always last
+            if (a.name === 'See a Professional') return 1;
+            if (b.name === 'See a Professional') return -1;
+            // Science-backed first
+            if (a.science && !b.science) return -1;
+            if (!a.science && b.science) return 1;
+            // Higher XP = more important
+            return (b.xp || 5) - (a.xp || 5);
+        });
+        
+        const exercises = [];
+        const seenNames = new Set();
+        
+        for (const ex of sortedExercises) {
+            // Skip duplicates, "see professional", and enforce cap
+            if (seenNames.has(ex.name)) continue;
+            if (ex.name === 'See a Professional' || ex.name === 'See Professional') continue;
+            if (exercises.length >= protocol.maxExercises) break;
             
-            // First 2 exercises for severe injuries are PRIORITY
-            const isPriority = severity === 'severe' && idx < 2;
+            seenNames.add(ex.name);
+            
+            // First exercises for severe injuries are PRIORITY
+            const isPriority = severity === 'severe' && exercises.length < 2;
             
             exercises.push({
                 id: ex.name.toLowerCase().replace(/\s+/g, '_'),
                 name: ex.name,
                 description: ex.description,
-                frequency: ex.frequency,
+                frequency: ex.frequency || ex.reps || '2-3 sets',
                 xp: Math.round((ex.xp || 5) * protocol.xpMultiplier),
                 science: ex.science,
                 completed: completedToday.includes(ex.name),
@@ -947,7 +978,7 @@ const InjuryIntelligence = {
                 isPriority,
                 severity
             });
-        });
+        }
         
         return {
             exercises,
@@ -955,6 +986,7 @@ const InjuryIntelligence = {
                 ...protocol,
                 severity,
                 injuryName: primary?.name,
+                totalInjuries: numInjuries,
                 totalExercises: exercises.length,
                 completedToday: exercises.filter(e => e.completed).length,
                 message: primary?.recovery?.message,
