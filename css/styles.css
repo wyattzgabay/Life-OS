@@ -1,7 +1,7 @@
 /**
- * STYLES.CSS
- * All app styles in one place
- * Organized by section for easy maintenance
+ * STYLES.CSS - Life OS
+ * Professional Light Theme with Navy & Gold Accents
+ * Inspired by LinkedIn's clean, professional aesthetic
  */
 
 /* ==========================================
@@ -10,68 +10,78 @@
 
 :root {
     /* ═══════════════════════════════════════════
-       MIDNIGHT GOLD - Life OS Brand Identity
-       Premium dark theme with gold accents
+       LIFE OS - Professional Light Theme
+       Clean white with navy & gold accents
        ═══════════════════════════════════════════ */
     
-    /* Background Layers */
-    --bg: #050505;
-    --surface: #0c0c0c;
-    --surface-2: #141414;
-    --surface-3: #1c1c1c;
-    --surface-elevated: #1a1a1a;
-    --border: #262626;
-    --border-light: #333333;
+    /* Background Layers - Clean White */
+    --bg: #FFFFFF;
+    --surface: #F8F9FA;
+    --surface-2: #F3F4F6;
+    --surface-3: #E8EAED;
+    --surface-elevated: #FFFFFF;
+    --border: #E1E4E8;
+    --border-light: #EBEEF1;
     
-    /* Typography */
-    --text: #fafafa;
-    --text-2: #e5e5e5;
-    --text-muted: #737373;
-    --text-dim: #525252;
+    /* Typography - Dark for readability */
+    --text: #191919;
+    --text-2: #333333;
+    --text-muted: #666666;
+    --text-dim: #8B8B8B;
     
-    /* Primary - Midnight Gold */
-    --accent: #D4AF37;
-    --accent-glow: rgba(212, 175, 55, 0.15);
-    --accent-light: #E8C547;
-    --accent-dark: #B8960C;
-    --accent-muted: rgba(212, 175, 55, 0.6);
+    /* Primary - Deep Navy */
+    --navy: #0F172A;
+    --navy-light: #1E293B;
+    --navy-muted: #334155;
+    
+    /* Accent - Gold (kept) */
+    --accent: #B8860B;
+    --accent-glow: rgba(184, 134, 11, 0.12);
+    --accent-light: #D4A017;
+    --accent-dark: #996515;
+    --accent-muted: rgba(184, 134, 11, 0.7);
     
     /* Status Colors */
-    --success: #10b981;
-    --success-muted: rgba(16, 185, 129, 0.15);
-    --warning: #f59e0b;
-    --warning-muted: rgba(245, 158, 11, 0.15);
-    --error: #ef4444;
-    --error-muted: rgba(239, 68, 68, 0.15);
-    --info: #3b82f6;
+    --success: #059669;
+    --success-muted: rgba(5, 150, 105, 0.1);
+    --warning: #D97706;
+    --warning-muted: rgba(217, 119, 6, 0.1);
+    --error: #DC2626;
+    --error-muted: rgba(220, 38, 38, 0.1);
+    --info: #2563EB;
     
     /* Button States */
-    --btn-primary-bg: var(--accent);
-    --btn-primary-text: #0a0a0a;
+    --btn-primary-bg: var(--navy);
+    --btn-primary-text: #FFFFFF;
     --btn-secondary-bg: var(--surface-2);
     --btn-secondary-text: var(--text);
     --btn-ghost-bg: transparent;
     --btn-ghost-text: var(--text-muted);
     
-    /* Shadows */
-    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.5);
-    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
-    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.6);
-    --shadow-gold: 0 4px 20px rgba(212, 175, 55, 0.2);
+    /* Shadows - Subtle for light theme */
+    --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
+    --shadow-gold: 0 4px 20px rgba(184, 134, 11, 0.15);
     
     /* Gradients */
     --gradient-gold: linear-gradient(135deg, var(--accent) 0%, var(--accent-dark) 100%);
-    --gradient-surface: linear-gradient(180deg, var(--surface-2) 0%, var(--surface) 100%);
+    --gradient-surface: linear-gradient(180deg, var(--surface) 0%, var(--bg) 100%);
+    --gradient-navy: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
     
     /* Radius */
-    --radius-sm: 6px;
-    --radius-md: 10px;
+    --radius-sm: 8px;
+    --radius-md: 12px;
     --radius-lg: 16px;
     --radius-xl: 24px;
     
     /* Safe Areas */
     --safe-top: env(safe-area-inset-top);
     --safe-bottom: env(safe-area-inset-bottom);
+    
+    /* Font Stack - LinkedIn/Professional style */
+    --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    --font-mono: 'SF Mono', SFMono-Regular, ui-monospace, Menlo, Monaco, monospace;
 }
 
 /* ==========================================
@@ -84,8 +94,8 @@
     left: 0;
     right: 0;
     z-index: 9999;
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-    border-bottom: 2px solid #fbbf24;
+    background: var(--navy);
+    border-bottom: 2px solid var(--accent);
     padding: 12px 16px;
     padding-top: calc(12px + var(--safe-top));
     transform: translateY(-100%);
@@ -107,24 +117,25 @@
 
 .countdown-icon {
     font-size: 18px;
+    color: var(--accent);
     animation: pulse 1s infinite;
 }
 
 .countdown-text {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 14px;
-    color: #fbbf24;
+    color: var(--accent);
 }
 
 .countdown-text strong {
     font-size: 18px;
-    color: #fff;
+    color: #FFFFFF;
     margin-left: 4px;
 }
 
 .countdown-hint {
     font-size: 11px;
-    color: rgba(251, 191, 36, 0.7);
+    color: rgba(255, 255, 255, 0.6);
 }
 
 @keyframes pulse {
@@ -142,12 +153,12 @@
     box-sizing: border-box;
     -webkit-tap-highlight-color: transparent;
     -webkit-touch-callout: none;
-    color-scheme: dark;
+    color-scheme: light;
 }
 
-/* Force dark keyboard on iOS */
+/* Force light keyboard on iOS */
 input, textarea, select {
-    color-scheme: dark;
+    color-scheme: light;
 }
 
 html, body {
@@ -162,12 +173,14 @@ html, body {
 }
 
 body {
-    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    font-family: var(--font-sans);
     background: var(--bg);
     color: var(--text);
     height: 100%;
     overflow: hidden;
     -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
 }
 
 /* ==========================================
@@ -175,60 +188,81 @@ body {
    ========================================== */
 
 .hidden { display: none !important; }
-.mono { font-family: 'JetBrains Mono', monospace; }
+.mono { font-family: var(--font-mono); }
 
 /* ==========================================
    TACTILE BUTTON SYSTEM
-   Apple-inspired with depth and feedback
+   Professional, clean with subtle feedback
    ========================================== */
 
 /* Base Button Reset */
 button, .btn {
-    font-family: inherit;
+    font-family: var(--font-sans);
     cursor: pointer;
     border: none;
     outline: none;
-    transition: all 0.15s ease;
+    transition: all 0.2s ease;
     -webkit-tap-highlight-color: transparent;
 }
 
-/* Primary Button - Gold, ONLY for main save/submit actions */
+/* Primary Button - Navy, for main actions */
 .btn-primary {
-    background: var(--gradient-gold);
-    color: var(--bg);
+    background: var(--gradient-navy);
+    color: #FFFFFF;
     font-weight: 600;
     padding: 14px 24px;
     border-radius: var(--radius-md);
-    box-shadow: var(--shadow-sm);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    font-size: 13px;
+    box-shadow: var(--shadow-md);
+    letter-spacing: 0.3px;
+    font-size: 14px;
+}
+
+.btn-primary:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-1px);
 }
 
 .btn-primary:active {
-    transform: scale(0.98);
-    filter: brightness(0.95);
+    transform: scale(0.98) translateY(0);
+    box-shadow: var(--shadow-sm);
 }
 
-/* Secondary Button - Surface color, subtle */
+/* Gold Button - For special actions */
+.btn-gold {
+    background: var(--gradient-gold);
+    color: #FFFFFF;
+    font-weight: 600;
+    padding: 14px 24px;
+    border-radius: var(--radius-md);
+    box-shadow: var(--shadow-gold);
+    letter-spacing: 0.3px;
+    font-size: 14px;
+}
+
+.btn-gold:active {
+    transform: scale(0.98);
+}
+
+/* Secondary Button - Clean bordered */
 .btn-secondary {
-    background: var(--surface-2);
+    background: var(--bg);
     color: var(--text);
     font-weight: 500;
     padding: 12px 20px;
     border-radius: var(--radius-md);
     border: 1px solid var(--border);
-    box-shadow: var(--shadow-sm), inset 0 1px 0 rgba(255,255,255,0.03);
+    box-shadow: var(--shadow-sm);
 }
 
 .btn-secondary:hover {
-    background: var(--surface-3);
-    border-color: var(--border-light);
+    background: var(--surface);
+    border-color: var(--navy);
+    color: var(--navy);
 }
 
 .btn-secondary:active {
     transform: scale(0.98);
-    background: var(--surface);
+    background: var(--surface-2);
 }
 
 /* Ghost Button - Minimal, text-like */
@@ -240,17 +274,17 @@ button, .btn {
 }
 
 .btn-ghost:hover {
-    background: var(--surface-2);
+    background: var(--surface);
     color: var(--text);
 }
 
 .btn-ghost:active {
-    background: var(--surface);
+    background: var(--surface-2);
 }
 
 /* Chip/Toggle Buttons - Clean minimal style */
 .wt-btn, .pain-chip, .region-btn, .subregion-btn, .timing-btn {
-    background: transparent;
+    background: var(--bg);
     color: var(--text-muted);
     padding: 10px 16px;
     border-radius: 8px;
@@ -353,8 +387,9 @@ button, .btn {
 }
 
 .date-label {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 500;
     color: var(--text-muted);
     letter-spacing: 0.2em;
     margin-bottom: 4px;
@@ -377,7 +412,7 @@ button, .btn {
 }
 
 .xp-number {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 28px;
     font-weight: 700;
     line-height: 1;
@@ -390,7 +425,7 @@ button, .btn {
 }
 
 .streak-badge {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     font-weight: 700;
     background: var(--success);
@@ -414,7 +449,7 @@ button, .btn {
 }
 
 .level-badge {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     font-weight: 700;
     background: var(--accent);
@@ -425,7 +460,7 @@ button, .btn {
 }
 
 .level-title {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     color: var(--text-muted);
     letter-spacing: 0.15em;
@@ -446,7 +481,7 @@ button, .btn {
 }
 
 .level-xp-text {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 9px;
     color: var(--text-dim);
     margin-top: 8px;
@@ -472,14 +507,14 @@ button, .btn {
 }
 
 .acc-label {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 9px;
     color: var(--text-muted);
     letter-spacing: 0.1em;
 }
 
 .acc-score {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 14px;
     font-weight: 700;
 }
@@ -511,7 +546,7 @@ button, .btn {
 }
 
 .debt-header {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     color: var(--error);
     letter-spacing: 0.1em;
@@ -544,7 +579,7 @@ button, .btn {
     color: var(--text);
     padding: 6px 12px;
     border-radius: 6px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 9px;
     font-weight: 600;
     cursor: pointer;
@@ -563,7 +598,7 @@ button, .btn {
 }
 
 .insight-label {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 9px;
     color: var(--text-dim);
     letter-spacing: 0.15em;
@@ -592,28 +627,28 @@ button, .btn {
 }
 
 .section-title {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
+    font-family: var(--font-sans);
+    font-size: 12px;
     font-weight: 600;
-    color: var(--text-dim);
-    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    letter-spacing: 0.02em;
     text-transform: uppercase;
 }
 
 .section-badge {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
-    color: var(--accent);
+    font-family: var(--font-sans);
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--navy);
     background: var(--surface-2);
-    border: 1px solid var(--accent);
+    border: 1px solid var(--border);
     padding: 4px 10px;
-    border-radius: 4px;
-    letter-spacing: 0.05em;
+    border-radius: 6px;
 }
 
 .section-count {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
+    font-family: var(--font-sans);
+    font-size: 12px;
     color: var(--text-muted);
 }
 
@@ -622,8 +657,10 @@ button, .btn {
    ========================================== */
 
 .workout-list {
-    background: var(--surface);
-    border-radius: 12px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
     overflow: hidden;
 }
 
@@ -677,13 +714,13 @@ button, .btn {
 }
 
 .workout-detail {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     color: var(--text-muted);
 }
 
 .workout-xp {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     color: var(--text-dim);
 }
@@ -701,14 +738,14 @@ button, .btn {
     background: var(--surface-3);
     padding: 2px 6px;
     border-radius: 4px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     color: var(--text-muted);
     margin-left: 8px;
 }
 
 .workout-log-btn {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     font-weight: 600;
     letter-spacing: 0.1em;
@@ -754,7 +791,7 @@ button, .btn {
 
 .posture-badge {
     display: inline-block;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 8px;
     font-weight: 600;
     letter-spacing: 0.1em;
@@ -769,7 +806,7 @@ button, .btn {
 
 .swapped-badge {
     display: inline-block;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 8px;
     font-weight: 600;
     letter-spacing: 0.05em;
@@ -789,7 +826,7 @@ button, .btn {
 /* Volume adjustment indicators */
 .volume-adj {
     display: inline-block;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 9px;
     font-weight: 600;
     padding: 2px 6px;
@@ -812,7 +849,7 @@ button, .btn {
 
 .deload-badge {
     display: inline-block;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 8px;
     font-weight: 600;
     letter-spacing: 0.05em;
@@ -834,7 +871,7 @@ button, .btn {
     border-radius: 8px;
     margin-bottom: 12px;
     font-size: 11px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
 }
 
 .workout-adjustment.volume {
@@ -863,7 +900,7 @@ button, .btn {
     border-radius: 6px;
     margin-bottom: 8px;
     font-size: 11px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
 }
 
 .workout-alert.warning {
@@ -935,7 +972,7 @@ button, .btn {
 }
 
 .habit-xp {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     color: var(--text-dim);
 }
@@ -965,7 +1002,7 @@ button, .btn {
 }
 
 .log-value {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 18px;
     font-weight: 700;
     margin-bottom: 4px;
@@ -993,7 +1030,7 @@ button, .btn {
 .streak-item { text-align: center; }
 
 .streak-count {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 22px;
     font-weight: 700;
 }
@@ -1035,7 +1072,7 @@ button, .btn {
 }
 
 .tree-icon {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 12px;
     font-weight: 700;
     width: 28px;
@@ -1051,7 +1088,7 @@ button, .btn {
 .tree-info { flex: 1; }
 
 .tree-name {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.1em;
@@ -1063,7 +1100,7 @@ button, .btn {
 }
 
 .tree-xp {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     color: var(--text-dim);
 }
@@ -1099,10 +1136,12 @@ button, .btn {
    ========================================== */
 
 .analysis-card {
-    background: var(--surface);
-    border-radius: 12px;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
     padding: 18px;
     margin-bottom: 12px;
+    box-shadow: var(--shadow-sm);
 }
 
 .analysis-header {
@@ -1110,7 +1149,7 @@ button, .btn {
 }
 
 .analysis-title {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-sans);
     font-size: 10px;
     color: var(--text-muted);
     letter-spacing: 0.15em;
@@ -1127,7 +1166,7 @@ button, .btn {
 .weight-current, .weight-target { text-align: center; }
 
 .weight-num {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 32px;
     font-weight: 700;
 }
@@ -1140,7 +1179,7 @@ button, .btn {
 }
 
 .weight-change {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 14px;
     padding: 6px 12px;
     border-radius: 6px;
@@ -1176,7 +1215,7 @@ button, .btn {
 .progress-labels {
     display: flex;
     justify-content: space-between;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     color: var(--text-dim);
     margin-top: 6px;
@@ -1200,7 +1239,7 @@ button, .btn {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     font-weight: 600;
     min-width: 0; /* Allow shrinking */
@@ -1332,7 +1371,7 @@ button, .btn {
 .avg-item { text-align: center; }
 
 .avg-value {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 24px;
     font-weight: 700;
 }
@@ -1395,13 +1434,13 @@ button, .btn {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 28px;
     font-weight: 700;
 }
 
 .profile-title {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 12px;
     letter-spacing: 0.2em;
     margin-bottom: 6px;
@@ -1427,7 +1466,7 @@ button, .btn {
 }
 
 .stat-num {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 18px;
     font-weight: 700;
 }
@@ -1457,7 +1496,7 @@ button, .btn {
 .goal-row:last-child { border-bottom: none; }
 .goal-row span:first-child { color: var(--text-muted); }
 .goal-row span:last-child {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-weight: 600;
 }
 
@@ -1524,7 +1563,7 @@ button, .btn {
 }
 
 .backup-count {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
 }
 
 .cancel-btn {
@@ -1539,7 +1578,7 @@ button, .btn {
 }
 
 .setting-value {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     color: var(--text-muted);
 }
@@ -1551,7 +1590,7 @@ button, .btn {
     color: var(--text);
     padding: 6px 12px;
     border-radius: 6px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 9px;
     font-weight: 600;
     letter-spacing: 0.1em;
@@ -1566,7 +1605,9 @@ button, .btn {
     display: none;
     position: fixed;
     inset: 0;
-    background: rgba(0, 0, 0, 0.85);
+    background: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
     z-index: 200;
     align-items: flex-end;
 }
@@ -1577,8 +1618,8 @@ button, .btn {
 }
 
 .modal-sheet {
-    background: var(--surface);
-    border-radius: 16px 16px 0 0;
+    background: var(--bg);
+    border-radius: 20px 20px 0 0;
     width: 100%;
     padding: 20px;
     padding-top: 12px;
@@ -1586,6 +1627,7 @@ button, .btn {
     animation: slideUp 0.2s ease-out;
     max-height: 85vh;
     overflow-y: auto;
+    box-shadow: 0 -4px 30px rgba(0, 0, 0, 0.15);
     /* Hardware acceleration */
     transform: translateZ(0);
     will-change: transform;
@@ -1600,19 +1642,19 @@ button, .btn {
 .modal-handle {
     width: 40px;
     height: 5px;
-    background: var(--text-dim);
+    background: var(--border);
     border-radius: 3px;
     margin: 8px auto 16px;
-    opacity: 0.6;
 }
 
 .modal-title {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
+    font-family: var(--font-sans);
+    font-size: 15px;
     font-weight: 600;
-    letter-spacing: 0.15em;
+    letter-spacing: -0.01em;
     text-align: center;
     margin-bottom: 20px;
+    color: var(--text);
 }
 
 /* Logger Input */
@@ -1622,7 +1664,7 @@ button, .btn {
     border: 2px solid var(--border);
     border-radius: 12px;
     padding: 20px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 36px;
     font-weight: 700;
     color: var(--text);
@@ -1665,16 +1707,23 @@ button, .btn {
 /* Save Button */
 .save-btn {
     width: 100%;
-    background: var(--text);
-    color: var(--bg);
+    background: var(--gradient-navy);
+    color: #FFFFFF;
     border: none;
     padding: 16px;
-    border-radius: 10px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 0.15em;
+    border-radius: var(--radius-md);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    font-weight: 600;
+    letter-spacing: 0.02em;
     cursor: pointer;
+    box-shadow: var(--shadow-md);
+    transition: all 0.2s ease;
+}
+
+.save-btn:active {
+    transform: scale(0.98);
+    box-shadow: var(--shadow-sm);
 }
 
 /* Goal Inputs */
@@ -1684,25 +1733,28 @@ button, .btn {
 
 .input-group label {
     display: block;
-    font-size: 11px;
+    font-size: 12px;
+    font-weight: 500;
     color: var(--text-muted);
     margin-bottom: 8px;
 }
 
 .input-field {
     width: 100%;
-    background: var(--surface-2);
+    background: var(--bg);
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: var(--radius-md);
     padding: 14px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 18px;
+    font-family: var(--font-sans);
+    font-size: 16px;
     color: var(--text);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .input-field:focus {
     outline: none;
-    border-color: var(--text);
+    border-color: var(--navy);
+    box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.1);
 }
 
 /* Restore Textarea */
@@ -1713,7 +1765,7 @@ button, .btn {
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 14px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 12px;
     color: var(--text);
     resize: none;
@@ -1795,7 +1847,7 @@ button, .btn {
 }
 
 .completion-xp {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 24px;
     font-weight: 700;
     opacity: 0;
@@ -1803,7 +1855,7 @@ button, .btn {
 }
 
 .completion-mult {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 12px;
     color: var(--success);
     margin-top: 8px;
@@ -1861,7 +1913,7 @@ button, .btn {
 }
 
 .levelup-level {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 48px;
     font-weight: 900;
     color: #0d0d0d;
@@ -1869,7 +1921,7 @@ button, .btn {
 }
 
 .levelup-title {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 28px;
     font-weight: 700;
     color: #ffd700;
@@ -1934,7 +1986,7 @@ button, .btn {
 }
 
 .auth-logo {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 48px;
     font-weight: 700;
     color: var(--text);
@@ -1972,7 +2024,7 @@ button, .btn {
     border: 1px solid var(--border);
     border-radius: 8px;
     color: var(--text-muted);
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     font-weight: 600;
     cursor: pointer;
@@ -2028,7 +2080,7 @@ button, .btn {
     border: none;
     border-radius: 8px;
     color: var(--bg);
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
@@ -2059,7 +2111,7 @@ button, .btn {
 .onboard-step.active { display: block; }
 
 .onboard-title {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 48px;
     font-weight: 700;
     letter-spacing: 0.1em;
@@ -2082,7 +2134,7 @@ button, .btn {
 .onboard-text.dim { color: var(--text-dim); }
 
 .onboard-progress {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     color: var(--text-muted);
     letter-spacing: 0.1em;
@@ -2090,7 +2142,7 @@ button, .btn {
 }
 
 .onboard-step-title {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 14px;
     font-weight: 600;
     letter-spacing: 0.15em;
@@ -2104,7 +2156,7 @@ button, .btn {
     border: none;
     padding: 18px;
     border-radius: 12px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 13px;
     font-weight: 700;
     letter-spacing: 0.15em;
@@ -2143,7 +2195,7 @@ button, .btn {
 }
 
 .calc-value {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 20px;
     font-weight: 700;
 }
@@ -2176,7 +2228,7 @@ button, .btn {
 .schedule-day:last-child { border-bottom: none; }
 
 .schedule-day span:first-child {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     color: var(--text-muted);
     font-size: 11px;
     letter-spacing: 0.1em;
@@ -2192,7 +2244,7 @@ button, .btn {
 }
 
 .warn-title {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     color: var(--warning);
     letter-spacing: 0.1em;
@@ -2246,7 +2298,7 @@ button, .btn {
 }
 
 .feature-name {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     font-weight: 600;
     color: var(--text);
@@ -2261,7 +2313,7 @@ button, .btn {
 }
 .summary-item span:first-child { color: var(--text-muted); }
 .summary-item span:last-child {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-weight: 600;
 }
 
@@ -2274,13 +2326,14 @@ button, .btn {
     bottom: 0;
     left: 0;
     right: 0;
-    background: var(--surface);
+    background: var(--bg);
     border-top: 1px solid var(--border);
     display: flex;
     justify-content: space-around;
     padding: 8px 0;
     padding-bottom: calc(8px + var(--safe-bottom));
     z-index: 50;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.04);
 }
 
 .nav-item {
@@ -2288,7 +2341,7 @@ button, .btn {
     flex-direction: column;
     align-items: center;
     gap: 3px;
-    color: var(--text-dim);
+    color: var(--text-muted);
     cursor: pointer;
     padding: 6px 16px;
     background: none;
@@ -2296,7 +2349,7 @@ button, .btn {
     transition: color 0.15s;
 }
 
-.nav-item.active { color: var(--accent); }
+.nav-item.active { color: var(--navy); }
 
 .nav-icon {
     width: 22px;
@@ -2304,9 +2357,10 @@ button, .btn {
 }
 
 .nav-text {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 8px;
-    letter-spacing: 0.1em;
+    font-family: var(--font-sans);
+    font-size: 10px;
+    font-weight: 500;
+    letter-spacing: 0;
 }
 
 /* ==========================================
@@ -2322,10 +2376,11 @@ button, .btn {
 }
 
 .view-title {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 22px;
-    font-weight: 600;
-    letter-spacing: 0.1em;
+    font-family: var(--font-sans);
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--navy);
 }
 
 /* ==========================================
@@ -2366,7 +2421,7 @@ button, .btn {
 }
 
 .run-distance {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 48px;
     font-weight: 700;
     color: var(--text);
@@ -2392,7 +2447,7 @@ button, .btn {
 }
 
 .run-logged-status {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 14px;
     font-weight: 600;
     margin-top: 8px;
@@ -2432,7 +2487,7 @@ button, .btn {
 }
 
 .run-pace-target {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 14px;
     color: var(--text-muted);
     margin-top: 8px;
@@ -2473,7 +2528,7 @@ button, .btn {
 }
 
 .protocol-label {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 9px;
     letter-spacing: 0.1em;
     color: var(--text-dim);
@@ -2541,7 +2596,7 @@ button, .btn {
 }
 
 .order-item {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 16px;
     font-weight: 700;
     padding: 8px 16px;
@@ -2620,7 +2675,7 @@ button, .btn {
 }
 
 .progress-percent {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 16px;
     font-weight: 700;
     color: var(--text-muted);
@@ -2674,7 +2729,7 @@ button, .btn {
 }
 
 .progress-detail {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     color: var(--text-dim);
 }
@@ -2699,13 +2754,13 @@ button, .btn {
 }
 
 .streak-count {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 13px;
     color: var(--text);
 }
 
 .streak-mult {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     color: var(--success);
     background: rgba(34, 197, 94, 0.15);
@@ -2743,7 +2798,7 @@ button, .btn {
     border-radius: 6px;
     background: var(--surface-2);
     color: var(--text-dim);
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     font-weight: 600;
     cursor: pointer;
@@ -2766,7 +2821,7 @@ button, .btn {
 }
 
 .weight-stat .stat-value {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 20px;
     font-weight: 700;
     color: var(--text);
@@ -2798,7 +2853,7 @@ button, .btn {
 }
 
 .chart-label {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 9px;
     fill: var(--text-dim);
 }
@@ -2817,7 +2872,7 @@ button, .btn {
 }
 
 .target-label {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 8px;
     fill: #22c55e;
 }
@@ -2858,7 +2913,7 @@ button, .btn {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 32px;
     font-weight: 900;
 }
@@ -2901,7 +2956,7 @@ button, .btn {
 }
 
 .day-score-value {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 28px;
     font-weight: 700;
     color: var(--text);
@@ -2931,14 +2986,17 @@ button, .btn {
     align-items: center;
     gap: 4px;
     padding: 8px 4px;
-    background: var(--surface-2);
+    background: var(--surface);
+    border: 1px solid var(--border);
     border-radius: 8px;
-    font-size: 10px;
-    color: var(--text-dim);
+    font-size: 11px;
+    color: var(--text-muted);
 }
 
 .score-item.done {
     color: var(--text);
+    background: var(--success-muted);
+    border-color: var(--success);
 }
 
 .score-item.done .score-dot {
@@ -2953,7 +3011,7 @@ button, .btn {
 }
 
 .score-detail {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     font-weight: 600;
 }
@@ -2985,7 +3043,7 @@ button, .btn {
 }
 
 .weight-target {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     color: var(--text-muted);
 }
@@ -3003,7 +3061,7 @@ button, .btn {
     border: 1px solid var(--border);
     border-radius: 8px;
     padding: 10px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 16px;
     font-weight: 600;
     color: var(--text);
@@ -3025,7 +3083,7 @@ button, .btn {
     color: var(--bg);
     border: none;
     border-radius: 8px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     font-weight: 600;
     cursor: pointer;
@@ -3083,7 +3141,7 @@ button, .btn {
     border: 1px solid var(--border);
     border-radius: 8px;
     color: var(--text);
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 12px;
     font-weight: 600;
     letter-spacing: 0.05em;
@@ -3117,7 +3175,7 @@ button, .btn {
 }
 
 .feedback-date {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     color: var(--text-dim);
     white-space: nowrap;
@@ -3137,7 +3195,7 @@ button, .btn {
     border: 1px solid var(--border);
     border-radius: 8px;
     color: var(--text-muted);
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     cursor: pointer;
 }
@@ -3156,7 +3214,7 @@ button, .btn {
 }
 
 .feedback-meta {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     color: var(--text-dim);
     margin-bottom: 6px;
@@ -3176,7 +3234,7 @@ button, .btn {
     border: 1px solid var(--danger);
     border-radius: 8px;
     color: var(--danger);
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 12px;
     cursor: pointer;
 }
@@ -3190,7 +3248,7 @@ button, .btn {
     border-radius: 8px;
     padding: 12px;
     color: var(--text);
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     line-height: 1.5;
     resize: none;
@@ -3200,7 +3258,7 @@ button, .btn {
 }
 
 .run-type {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 16px;
     font-weight: 600;
     margin-bottom: 8px;
@@ -3221,7 +3279,7 @@ button, .btn {
 }
 
 .mods-label {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 9px;
     color: var(--warning);
     letter-spacing: 0.15em;
@@ -3376,7 +3434,7 @@ button, .btn {
    ========================================== */
 
 .run-type-badge {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     font-weight: 600;
     letter-spacing: 0.15em;
@@ -3408,7 +3466,7 @@ button, .btn {
 }
 
 .phase-indicator {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 9px;
     letter-spacing: 0.1em;
     color: var(--text-dim);
@@ -3427,7 +3485,7 @@ button, .btn {
 }
 
 .feeling-label {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 9px;
     letter-spacing: 0.15em;
     color: var(--text-muted);
@@ -3449,7 +3507,7 @@ button, .btn {
 }
 
 .science-label {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 9px;
     letter-spacing: 0.1em;
     color: var(--text-dim);
@@ -3469,7 +3527,7 @@ button, .btn {
     border: none;
     padding: 14px;
     border-radius: 10px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.1em;
@@ -3500,7 +3558,7 @@ button, .btn {
     color: var(--error);
     border: 1px solid var(--error);
     border-radius: 10px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.1em;
@@ -3532,7 +3590,7 @@ button, .btn {
 }
 
 .run-distance-big {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 48px;
     font-weight: 700;
     color: var(--accent);
@@ -3578,7 +3636,7 @@ button, .btn {
 .stat-actual {
     font-size: 28px;
     font-weight: 700;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
 }
 
 .stat-vs {
@@ -3699,7 +3757,7 @@ button, .btn {
     background: var(--surface-2);
     border: 2px solid transparent;
     border-radius: 6px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 12px;
     color: var(--text);
     cursor: pointer;
@@ -3733,7 +3791,7 @@ button, .btn {
 }
 
 .running-stat .stat-value {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 24px;
     font-weight: 700;
 }
@@ -3753,7 +3811,7 @@ button, .btn {
 }
 
 .phase-name {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 12px;
     font-weight: 600;
     letter-spacing: 0.1em;
@@ -3776,7 +3834,7 @@ button, .btn {
 }
 
 .paces-label {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 9px;
     color: var(--text-muted);
     letter-spacing: 0.1em;
@@ -3804,7 +3862,7 @@ button, .btn {
 }
 
 .pace-value {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 14px;
     font-weight: 600;
 }
@@ -3815,7 +3873,7 @@ button, .btn {
 }
 
 .runs-label {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 9px;
     color: var(--text-muted);
     letter-spacing: 0.1em;
@@ -3840,13 +3898,13 @@ button, .btn {
 }
 
 .run-dist {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-weight: 600;
     flex: 1;
 }
 
 .run-pace {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     color: var(--text-muted);
     width: 60px;
     text-align: right;
@@ -3885,7 +3943,7 @@ button, .btn {
 }
 
 .track-badge {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 9px;
     font-weight: 700;
     letter-spacing: 0.1em;
@@ -3927,7 +3985,7 @@ button, .btn {
 }
 
 .tomorrow-label {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 9px;
     letter-spacing: 0.1em;
     color: var(--text-dim);
@@ -3967,14 +4025,14 @@ button, .btn {
 }
 
 .polarized-title {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     letter-spacing: 0.1em;
     color: var(--text-muted);
 }
 
 .polarized-status {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 9px;
     font-weight: 600;
     padding: 3px 8px;
@@ -4022,7 +4080,7 @@ button, .btn {
 
 .polarized-easy span,
 .polarized-hard span {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     font-weight: 600;
     color: var(--bg);
@@ -4055,7 +4113,7 @@ button, .btn {
 }
 
 .predictor-header {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     letter-spacing: 0.1em;
     color: var(--text-muted);
@@ -4083,7 +4141,7 @@ button, .btn {
 }
 
 .race-time {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     font-weight: 600;
     color: var(--text);
@@ -4101,7 +4159,7 @@ button, .btn {
 }
 
 .vdot-header {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     letter-spacing: 0.1em;
     color: var(--text-muted);
@@ -4128,7 +4186,7 @@ button, .btn {
 }
 
 .vdot-num {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 28px;
     font-weight: 700;
     color: var(--text);
@@ -4140,7 +4198,7 @@ button, .btn {
 }
 
 .vdot-gain {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 14px;
     font-weight: 600;
     color: var(--success);
@@ -4172,7 +4230,7 @@ button, .btn {
 }
 
 .empty-action {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     color: var(--text);
     letter-spacing: 0.1em;
@@ -4226,7 +4284,7 @@ button, .btn {
 .book-stats {
     display: flex;
     justify-content: space-between;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     color: var(--text-muted);
 }
@@ -4254,7 +4312,7 @@ button, .btn {
 }
 
 .big-progress-text {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 14px;
     font-weight: 700;
     min-width: 45px;
@@ -4271,7 +4329,7 @@ button, .btn {
 }
 
 .page-stat-num {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 24px;
     font-weight: 700;
 }
@@ -4293,7 +4351,7 @@ button, .btn {
     padding: 14px;
     border-radius: 10px;
     border: none;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.1em;
@@ -4333,7 +4391,7 @@ button, .btn {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 18px;
     font-weight: 700;
 }
@@ -4380,7 +4438,7 @@ button, .btn {
 }
 
 .warning-header {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     color: var(--warning);
     letter-spacing: 0.15em;
@@ -4409,7 +4467,7 @@ button, .btn {
     color: var(--text-muted);
     padding: 12px 24px;
     border-radius: 8px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     letter-spacing: 0.15em;
     cursor: pointer;
@@ -4483,7 +4541,7 @@ button, .btn {
     width: 80px;
     background: transparent;
     border: none;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 48px;
     font-weight: 700;
     text-align: center;
@@ -4573,7 +4631,7 @@ button, .btn {
 .alcohol-stat { text-align: center; }
 
 .alcohol-stat-num {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 24px;
     font-weight: 700;
 }
@@ -4602,7 +4660,7 @@ button, .btn {
     position: fixed;
     top: calc(8px + var(--safe-top));
     right: 12px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 9px;
     letter-spacing: 0.1em;
     padding: 4px 8px;
@@ -4687,7 +4745,7 @@ button, .btn {
 }
 
 .cloud-status {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     font-weight: 600;
     letter-spacing: 0.1em;
@@ -4785,7 +4843,7 @@ button, .btn {
 }
 
 .rest-time {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 24px;
     font-weight: 700;
     color: var(--text);
@@ -4845,7 +4903,7 @@ button, .btn {
 }
 
 .perf-label {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 9px;
     color: var(--text-muted);
     letter-spacing: 0.1em;
@@ -4869,7 +4927,7 @@ button, .btn {
     background: var(--surface-3);
     padding: 6px 10px;
     border-radius: 6px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 13px;
 }
 
@@ -4894,7 +4952,7 @@ button, .btn {
 }
 
 .pr-label {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     font-weight: 700;
     color: var(--warning);
@@ -4904,7 +4962,7 @@ button, .btn {
 }
 
 .pr-value {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 16px;
     font-weight: 700;
 }
@@ -4924,7 +4982,7 @@ button, .btn {
 }
 
 .suggestion-label {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 9px;
     color: var(--success);
     letter-spacing: 0.1em;
@@ -4933,7 +4991,7 @@ button, .btn {
 }
 
 .suggestion-target {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 18px;
     font-weight: 700;
     display: block;
@@ -4994,7 +5052,7 @@ button, .btn {
     flex: 1;
     padding: 14px 20px;
     border-radius: 10px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 12px;
     font-weight: 600;
     letter-spacing: 0.05em;
@@ -5035,7 +5093,7 @@ button, .btn {
 }
 
 .set-number {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 12px;
     font-weight: 700;
     color: var(--text);
@@ -5071,7 +5129,7 @@ button, .btn {
 }
 
 .input-col label {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 9px;
     color: var(--text-muted);
     letter-spacing: 0.1em;
@@ -5085,7 +5143,7 @@ button, .btn {
     border: 2px solid var(--border);
     border-radius: 10px;
     padding: 14px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 24px;
     font-weight: 700;
     color: var(--text);
@@ -5117,7 +5175,7 @@ button, .btn {
     color: var(--text);
     padding: 8px 14px;
     border-radius: 6px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 12px;
     cursor: pointer;
 }
@@ -5157,7 +5215,7 @@ button, .btn {
 }
 
 .set-num {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     color: var(--text-muted);
     letter-spacing: 0.1em;
@@ -5165,7 +5223,7 @@ button, .btn {
 }
 
 .set-data {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 16px;
     font-weight: 600;
     flex: 1;
@@ -5203,7 +5261,7 @@ button, .btn {
     color: var(--text);
     padding: 14px;
     border-radius: 10px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
@@ -5235,7 +5293,7 @@ button, .btn {
 }
 
 .pr-icon {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 48px;
     font-weight: 700;
     color: var(--warning);
@@ -5243,7 +5301,7 @@ button, .btn {
 }
 
 .pr-title {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 14px;
     letter-spacing: 0.15em;
     color: var(--warning);
@@ -5261,7 +5319,7 @@ button, .btn {
 }
 
 .pr-new {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 32px;
     font-weight: 700;
     margin-bottom: 8px;
@@ -5273,14 +5331,14 @@ button, .btn {
 }
 
 .pr-gain {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 18px;
     color: var(--success);
     margin-top: 4px;
 }
 
 .pr-bonus {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 14px;
     color: var(--success);
     background: rgba(34, 197, 94, 0.15);
@@ -5294,7 +5352,7 @@ button, .btn {
    ========================================== */
 
 .volume-total {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     color: var(--text-muted);
 }
@@ -5313,7 +5371,7 @@ button, .btn {
 }
 
 .volume-label {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 9px;
     letter-spacing: 0.1em;
     color: var(--text-muted);
@@ -5373,7 +5431,7 @@ button, .btn {
 }
 
 .volume-count {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 14px;
     font-weight: 700;
     width: 30px;
@@ -5434,7 +5492,7 @@ button, .btn {
 }
 
 .volume-alert .alert-icon {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-weight: 700;
     font-size: 12px;
     flex-shrink: 0;
@@ -5464,7 +5522,7 @@ button, .btn {
 }
 
 .deload-label {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.1em;
@@ -5472,7 +5530,7 @@ button, .btn {
 }
 
 .deload-weeks {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 12px;
     color: var(--text-muted);
 }
@@ -5496,7 +5554,7 @@ button, .btn {
     border: none;
     padding: 12px;
     border-radius: 8px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     font-weight: 600;
     letter-spacing: 0.1em;
@@ -5509,7 +5567,7 @@ button, .btn {
     color: var(--text-muted);
     padding: 12px 16px;
     border-radius: 8px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     letter-spacing: 0.1em;
     cursor: pointer;
@@ -5592,7 +5650,7 @@ button, .btn {
 }
 
 .posture-focus {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     color: var(--text-dim);
     margin-top: 4px;
@@ -5624,7 +5682,7 @@ button, .btn {
 }
 
 .periodization-alert .alert-title {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     font-weight: 700;
     letter-spacing: 0.1em;
@@ -5660,7 +5718,7 @@ button, .btn {
     right: 12px;
     background: transparent;
     border: none;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 9px;
     color: var(--text-dim);
     cursor: pointer;
@@ -5672,7 +5730,7 @@ button, .btn {
    ========================================== */
 
 .forecast-rate {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
 }
 
@@ -5715,7 +5773,7 @@ button, .btn {
 }
 
 .forecast-weight {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 18px;
     font-weight: 700;
     color: var(--text);
@@ -5726,7 +5784,7 @@ button, .btn {
    ========================================== */
 
 .ai-log-btn {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     font-weight: 600;
     letter-spacing: 0.1em;
@@ -5789,7 +5847,7 @@ button, .btn {
 }
 
 .saved-meal-macros {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     color: var(--text-muted);
 }
@@ -5815,7 +5873,7 @@ button, .btn {
     border: 1px solid var(--border);
     border-radius: 8px;
     color: var(--text-muted);
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     cursor: pointer;
 }
@@ -5845,7 +5903,7 @@ button, .btn {
     border: 1px solid var(--border);
     border-radius: 8px;
     color: var(--text);
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 16px;
 }
 
@@ -5871,7 +5929,7 @@ button, .btn {
     border: 1px solid var(--border);
     border-radius: 8px;
     color: var(--text-muted);
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 12px;
     cursor: pointer;
 }
@@ -5883,7 +5941,7 @@ button, .btn {
     border: none;
     border-radius: 8px;
     color: var(--bg);
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 12px;
     font-weight: 600;
     cursor: pointer;
@@ -5986,7 +6044,7 @@ button, .btn {
     border: none;
     padding: 14px;
     border-radius: 10px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 12px;
     font-weight: 600;
     letter-spacing: 0.1em;
@@ -6005,7 +6063,7 @@ button, .btn {
 }
 
 .results-header {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     letter-spacing: 0.1em;
     color: var(--text-muted);
@@ -6034,13 +6092,13 @@ button, .btn {
 }
 
 .item-macros {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     color: var(--text-muted);
 }
 
 .item-macros-edit {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 12px;
     color: var(--text-muted);
     display: flex;
@@ -6056,7 +6114,7 @@ button, .btn {
     border: 1px solid var(--border);
     border-radius: 4px;
     color: var(--text);
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 12px;
     text-align: right;
     -webkit-appearance: none;
@@ -6111,7 +6169,7 @@ button, .btn {
 }
 
 .total-value {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 18px;
     font-weight: 700;
     color: var(--text);
@@ -6148,7 +6206,7 @@ button, .btn {
     color: var(--text-muted);
     padding: 12px;
     border-radius: 8px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.1em;
@@ -6162,7 +6220,7 @@ button, .btn {
     color: var(--bg);
     padding: 12px;
     border-radius: 8px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     font-weight: 600;
     letter-spacing: 0.1em;
@@ -6201,7 +6259,7 @@ button, .btn {
 }
 
 .error-icon {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-weight: 700;
 }
 
@@ -6218,7 +6276,7 @@ button, .btn {
     color: var(--bg);
     padding: 12px 24px;
     border-radius: 10px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 12px;
     font-weight: 600;
     letter-spacing: 0.05em;
@@ -6287,7 +6345,7 @@ button, .btn {
 }
 
 .log-progress {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     color: var(--text-dim);
     margin-top: 2px;
@@ -6311,7 +6369,7 @@ button, .btn {
 }
 
 .macro-bar-label {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 9px;
     letter-spacing: 0.1em;
     color: var(--text-dim);
@@ -6346,7 +6404,7 @@ button, .btn {
 }
 
 .macro-bar-value {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     color: var(--text-dim);
     width: 32px;
@@ -6386,7 +6444,7 @@ button, .btn {
 }
 
 .cal-value {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 32px;
     font-weight: 600;
     color: var(--text);
@@ -6435,7 +6493,7 @@ button, .btn {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 14px;
     font-weight: 600;
 }
@@ -6470,7 +6528,7 @@ button, .btn {
 }
 
 .macro-values {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 12px;
     color: var(--text-dim);
 }
@@ -6540,7 +6598,7 @@ button, .btn {
 }
 
 .meal-time {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     color: var(--text-dim);
 }
@@ -6581,7 +6639,7 @@ button, .btn {
 .meal-macros {
     display: flex;
     gap: 12px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     color: var(--text-dim);
 }
@@ -6650,7 +6708,7 @@ button, .btn {
 }
 
 .insight-icon {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-weight: 700;
     width: 20px;
     text-align: center;
@@ -6838,7 +6896,7 @@ button, .btn {
 }
 
 .time-icon {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     font-weight: 600;
     color: var(--text);
@@ -6873,7 +6931,7 @@ button, .btn {
 }
 
 .leucine-value {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 13px;
     font-weight: 600;
 }
@@ -6936,7 +6994,7 @@ button, .btn {
 }
 
 .briefing-ai {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 9px;
     padding: 2px 6px;
     background: var(--surface-2);
@@ -6956,7 +7014,7 @@ button, .btn {
    ========================================== */
 
 .dist-grade {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 14px;
     font-weight: 700;
     padding: 4px 10px;
@@ -6990,7 +7048,7 @@ button, .btn {
 }
 
 .dist-percent {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 16px;
     font-weight: 600;
     color: var(--text);
@@ -7020,7 +7078,7 @@ button, .btn {
 }
 
 .leucine-count {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 14px;
     font-weight: 600;
     color: var(--text);
@@ -7073,7 +7131,7 @@ button, .btn {
 .correlation-item.neutral { border-left: 3px solid var(--text-muted); }
 
 .corr-stat {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 18px;
     font-weight: 700;
     color: var(--text);
@@ -7104,7 +7162,7 @@ button, .btn {
 }
 
 .fun-stat-value {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 16px;
     font-weight: 700;
     color: var(--text);
@@ -7133,7 +7191,7 @@ button, .btn {
 }
 
 .alltime-value {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 24px;
     font-weight: 700;
     color: var(--text);
@@ -7172,7 +7230,7 @@ button, .btn {
 }
 
 .macro-value {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 14px;
     font-weight: 600;
     color: var(--text);
@@ -7247,7 +7305,7 @@ button, .btn {
 }
 
 .nutri-value {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 18px;
     font-weight: 600;
     color: var(--text);
@@ -7305,7 +7363,7 @@ button, .btn {
 }
 
 .recovery-title {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     letter-spacing: 0.15em;
     color: var(--text-dim);
@@ -7341,14 +7399,14 @@ button, .btn {
 }
 
 .recovery-section-title {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     letter-spacing: 0.1em;
     color: var(--text-dim);
 }
 
 .recovery-select-all {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     letter-spacing: 0.05em;
     color: var(--accent);
@@ -7438,7 +7496,7 @@ button, .btn {
 }
 
 .recovery-area-item .area-fatigue {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     font-weight: 600;
     padding: 4px 8px;
@@ -7484,7 +7542,7 @@ button, .btn {
     color: var(--text-muted);
     border: 1px solid var(--border);
     border-radius: 12px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 13px;
     font-weight: 600;
     letter-spacing: 0.1em;
@@ -7505,7 +7563,7 @@ button, .btn {
 
 /* Recovery modal - duration */
 .recovery-duration {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 12px;
     color: var(--text-muted);
     margin-top: 8px;
@@ -7519,7 +7577,7 @@ button, .btn {
 .targets-label,
 .technique-label,
 .posture-benefit-label {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     letter-spacing: 0.1em;
     color: var(--text-dim);
@@ -7594,7 +7652,7 @@ button, .btn {
     border-radius: 8px;
     padding: 12px;
     font-size: 18px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     color: var(--text);
     text-align: center;
     -moz-appearance: textfield;
@@ -7653,7 +7711,7 @@ button, .btn {
 }
 
 .set-number {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 11px;
     letter-spacing: 0.1em;
     color: var(--accent);
@@ -7764,7 +7822,7 @@ button, .btn {
     border-radius: 6px;
     padding: 10px 8px;
     font-size: 16px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     color: var(--text);
     text-align: center;
     -moz-appearance: textfield;
@@ -7923,7 +7981,7 @@ button, .btn {
 }
 
 .effort-value {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 18px;
     font-weight: 600;
     color: var(--text);
@@ -7970,20 +8028,21 @@ button, .btn {
 .cardio-save-btn {
     width: 100%;
     padding: 16px;
-    background: var(--text);
-    color: var(--bg);
+    background: var(--gradient-navy);
+    color: #FFFFFF;
     border: none;
     border-radius: var(--radius-md);
     font-size: 14px;
     font-weight: 600;
     cursor: pointer;
-    transition: all 0.15s ease;
+    transition: all 0.2s ease;
     margin-top: 16px;
+    box-shadow: var(--shadow-md);
 }
 
 .cardio-save-btn:active {
     transform: scale(0.98);
-    opacity: 0.9;
+    box-shadow: var(--shadow-sm);
 }
 
 /* ==========================================
@@ -8030,7 +8089,7 @@ button, .btn {
 }
 
 .injury-status {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 12px;
     font-weight: 700;
     letter-spacing: 0.05em;
@@ -8081,7 +8140,7 @@ button, .btn {
 
 .injury-stat .stat-value {
     display: block;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 18px;
     font-weight: 700;
     color: var(--accent);
@@ -8157,7 +8216,7 @@ button, .btn {
 }
 
 .injury-results-header {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 10px;
     letter-spacing: 0.1em;
     color: var(--text-dim);
@@ -8206,7 +8265,7 @@ button, .btn {
 }
 
 .injury-severity {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 9px;
     letter-spacing: 0.05em;
     padding: 3px 8px;
@@ -8336,7 +8395,7 @@ button, .btn {
 }
 
 .improving-badge {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 9px;
     letter-spacing: 0.1em;
     background: var(--success);
@@ -8391,7 +8450,7 @@ button, .btn {
 }
 
 .protocol-stat .stat-label {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 9px;
     letter-spacing: 0.1em;
     color: var(--text-dim);
@@ -8438,7 +8497,7 @@ button, .btn {
     position: absolute;
     top: -8px;
     left: 12px;
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 8px;
     letter-spacing: 0.1em;
     background: var(--error);
@@ -8464,7 +8523,7 @@ button, .btn {
 }
 
 .progress-count {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 14px;
     font-weight: 600;
 }
@@ -8517,7 +8576,7 @@ button, .btn {
 }
 
 .logged-pain-severity {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 8px;
     letter-spacing: 0.05em;
     padding: 2px 5px;
@@ -8638,7 +8697,7 @@ button, .btn {
 }
 
 .recovery-xp {
-    font-family: 'JetBrains Mono', monospace;
+    font-family: var(--font-mono);
     font-size: 12px;
     color: var(--accent);
     font-weight: 600;
