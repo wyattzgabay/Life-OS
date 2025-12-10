@@ -659,10 +659,15 @@ const RunningView = {
         const stats = State.getRunningStats();
         const paces = State.getTrainingPaces();
         const phase = State.getCurrentPhase();
-        const recentRuns = State.getRunLog(7);
+        const recentRuns = State.getRunLog(60);
         const polarized = this.getPolarizedRatio();
         const racePredictor = this.getRacePredictions();
-        const vdotHistory = this.getVDOTHistory();
+        const personalBests = this.getPersonalBests(recentRuns);
+        const weeklyMileage = this.getWeeklyMileageHistory(recentRuns);
+        const monthlyComparison = this.getMonthlyComparison(recentRuns);
+        const trainingLoad = this.getTrainingLoad(recentRuns);
+        const runStreak = this.getRunStreak(recentRuns);
+        const insights = this.getTrainingInsights(recentRuns, trainingLoad, polarized);
 
         if (!running?.goal) {
             return `
@@ -685,14 +690,16 @@ const RunningView = {
         const goal = CONFIG.RUNNING.GOALS.find(g => g.id === running.goal);
 
         return `
-            <div class="analysis-card">
+            <div class="analysis-card running-dashboard">
                 <div class="analysis-header">
-                    <span class="analysis-title">RUNNING - ${goal?.name || 'Training'}</span>
+                    <span class="analysis-title">RUNNING</span>
+                    ${goal ? `<span class="running-goal-badge">${goal.name}</span>` : ''}
                 </div>
                 
+                <!-- Primary Stats -->
                 <div class="running-stats-grid">
-                    <div class="running-stat">
-                        <div class="stat-value">${stats?.weeklyMileage || 0}</div>
+                    <div class="running-stat primary">
+                        <div class="stat-value">${stats?.weeklyMileage?.toFixed(1) || 0}</div>
                         <div class="stat-label">MILES THIS WEEK</div>
                     </div>
                     <div class="running-stat">
@@ -700,67 +707,548 @@ const RunningView = {
                         <div class="stat-label">RUNS</div>
                     </div>
                     <div class="running-stat">
-                        <div class="stat-value">${stats?.avgPace || '--'}</div>
-                        <div class="stat-label">AVG PACE</div>
+                        <div class="stat-value">${runStreak.current}</div>
+                        <div class="stat-label">DAY STREAK</div>
                     </div>
                     <div class="running-stat">
                         <div class="stat-value">${running.vdot || '--'}</div>
                         <div class="stat-label">VDOT</div>
                     </div>
                 </div>
+
+                <!-- Training Insights (Most Important) -->
+                ${this.renderTrainingInsights(insights)}
                 
+                <!-- Weekly Mileage Chart -->
+                ${this.renderWeeklyMileageChart(weeklyMileage)}
+                
+                <!-- Monthly Comparison -->
+                ${this.renderMonthlyComparison(monthlyComparison)}
+                
+                <!-- Training Load -->
+                ${this.renderTrainingLoad(trainingLoad)}
+                
+                <!-- 80/20 Balance -->
                 ${this.render8020Card(polarized)}
                 
-                ${phase ? `
-                    <div class="phase-card">
-                        <div class="phase-name">${CONFIG.RUNNING.PHASES[phase]?.name}</div>
-                        <div class="phase-desc">${CONFIG.RUNNING.PHASES[phase]?.description}</div>
-                        <div class="phase-week">Week ${running.weekNumber} of ${goal?.weeks || '?'}</div>
-                    </div>
-                ` : ''}
+                <!-- Personal Bests -->
+                ${this.renderPersonalBests(personalBests)}
                 
-                <div class="training-paces">
-                    <div class="paces-label">YOUR TRAINING PACES</div>
-                    <div class="paces-grid">
-                        <div class="pace-item">
-                            <span class="pace-type">Easy</span>
-                            <span class="pace-value">${paces.easy}</span>
+                <!-- Training Paces (collapsible) -->
+                <details class="training-paces-section">
+                    <summary class="paces-toggle">Training Paces</summary>
+                    <div class="training-paces">
+                        <div class="paces-grid">
+                            <div class="pace-item">
+                                <span class="pace-type">Easy</span>
+                                <span class="pace-value">${paces.easy}</span>
+                            </div>
+                            <div class="pace-item">
+                                <span class="pace-type">Marathon</span>
+                                <span class="pace-value">${paces.marathon || '--'}</span>
+                            </div>
+                            <div class="pace-item">
+                                <span class="pace-type">Tempo</span>
+                                <span class="pace-value">${paces.tempo}</span>
+                            </div>
+                            <div class="pace-item">
+                                <span class="pace-type">Interval</span>
+                                <span class="pace-value">${paces.interval}</span>
+                            </div>
                         </div>
-                        <div class="pace-item">
-                            <span class="pace-type">Marathon</span>
-                            <span class="pace-value">${paces.marathon || '--'}</span>
+                    </div>
+                </details>
+                
+                <!-- Race Predictions -->
+                ${this.renderRacePredictor(racePredictor)}
+                
+                <!-- Recent Runs -->
+                ${recentRuns.length > 0 ? `
+                    <details class="recent-runs-section">
+                        <summary class="runs-toggle">Recent Runs (${Math.min(recentRuns.length, 10)})</summary>
+                        <div class="recent-runs">
+                            ${recentRuns.slice(-10).reverse().map(run => `
+                                <div class="run-item">
+                                    <span class="run-date">${this.formatDate(run.date)}</span>
+                                    <span class="run-type-badge ${run.type || 'easy'}">${(run.type || 'easy').toUpperCase()}</span>
+                                    <span class="run-dist">${run.distance} mi</span>
+                                    <span class="run-pace">${run.pace || '--'}</span>
+                                </div>
+                            `).join('')}
                         </div>
-                        <div class="pace-item">
-                            <span class="pace-type">Tempo</span>
-                            <span class="pace-value">${paces.tempo}</span>
+                    </details>
+                ` : ''}
+            </div>
+        `;
+    },
+
+    /**
+     * Get personal bests from run history
+     */
+    getPersonalBests(runs) {
+        if (!runs || runs.length === 0) return null;
+        
+        let fastestPace = null;
+        let fastestPaceRun = null;
+        let longestRun = 0;
+        let longestRunDate = null;
+        let mostWeeklyMiles = 0;
+        let totalMiles = 0;
+        let totalRuns = runs.length;
+        
+        // Calculate weekly mileages
+        const weeklyMiles = {};
+        
+        runs.forEach(run => {
+            const dist = parseFloat(run.distance) || 0;
+            totalMiles += dist;
+            
+            // Longest run
+            if (dist > longestRun) {
+                longestRun = dist;
+                longestRunDate = run.date;
+            }
+            
+            // Fastest pace (only for runs > 1 mile to be meaningful)
+            if (run.pace && dist >= 1) {
+                const paceParts = run.pace.split(':');
+                const paceSeconds = parseInt(paceParts[0]) * 60 + parseInt(paceParts[1] || 0);
+                if (!fastestPace || paceSeconds < fastestPace) {
+                    fastestPace = paceSeconds;
+                    fastestPaceRun = run;
+                }
+            }
+            
+            // Weekly tracking
+            const weekStart = this.getWeekStart(run.date);
+            weeklyMiles[weekStart] = (weeklyMiles[weekStart] || 0) + dist;
+        });
+        
+        // Find highest mileage week
+        Object.entries(weeklyMiles).forEach(([week, miles]) => {
+            if (miles > mostWeeklyMiles) {
+                mostWeeklyMiles = miles;
+            }
+        });
+        
+        return {
+            fastestPace: fastestPaceRun?.pace,
+            fastestPaceDate: fastestPaceRun?.date,
+            longestRun: longestRun.toFixed(1),
+            longestRunDate,
+            mostWeeklyMiles: mostWeeklyMiles.toFixed(1),
+            totalMiles: totalMiles.toFixed(1),
+            totalRuns
+        };
+    },
+
+    /**
+     * Get week start date for grouping
+     */
+    getWeekStart(dateStr) {
+        const date = new Date(dateStr);
+        const day = date.getDay();
+        const diff = date.getDate() - day;
+        const weekStart = new Date(date.setDate(diff));
+        return weekStart.toISOString().split('T')[0];
+    },
+
+    /**
+     * Get weekly mileage history for chart
+     */
+    getWeeklyMileageHistory(runs) {
+        if (!runs || runs.length === 0) return [];
+        
+        const weeklyData = {};
+        const now = new Date();
+        
+        // Initialize last 8 weeks
+        for (let i = 7; i >= 0; i--) {
+            const weekDate = new Date(now);
+            weekDate.setDate(weekDate.getDate() - (i * 7));
+            const weekStart = this.getWeekStart(weekDate.toISOString().split('T')[0]);
+            weeklyData[weekStart] = { miles: 0, runs: 0, weekNum: 8 - i };
+        }
+        
+        // Sum up runs into weeks
+        runs.forEach(run => {
+            const weekStart = this.getWeekStart(run.date);
+            if (weeklyData[weekStart]) {
+                weeklyData[weekStart].miles += parseFloat(run.distance) || 0;
+                weeklyData[weekStart].runs++;
+            }
+        });
+        
+        return Object.entries(weeklyData)
+            .sort((a, b) => a[0].localeCompare(b[0]))
+            .map(([week, data]) => ({
+                week,
+                ...data
+            }));
+    },
+
+    /**
+     * Get monthly comparison
+     */
+    getMonthlyComparison(runs) {
+        if (!runs || runs.length === 0) return null;
+        
+        const now = new Date();
+        const thisMonth = now.getMonth();
+        const thisYear = now.getFullYear();
+        const lastMonth = thisMonth === 0 ? 11 : thisMonth - 1;
+        const lastMonthYear = thisMonth === 0 ? thisYear - 1 : thisYear;
+        
+        let thisMonthMiles = 0, thisMonthRuns = 0;
+        let lastMonthMiles = 0, lastMonthRuns = 0;
+        
+        runs.forEach(run => {
+            const runDate = new Date(run.date);
+            const dist = parseFloat(run.distance) || 0;
+            
+            if (runDate.getMonth() === thisMonth && runDate.getFullYear() === thisYear) {
+                thisMonthMiles += dist;
+                thisMonthRuns++;
+            } else if (runDate.getMonth() === lastMonth && runDate.getFullYear() === lastMonthYear) {
+                lastMonthMiles += dist;
+                lastMonthRuns++;
+            }
+        });
+        
+        const milesDiff = thisMonthMiles - lastMonthMiles;
+        const daysIntoMonth = now.getDate();
+        const projectedMiles = (thisMonthMiles / daysIntoMonth) * 30;
+        
+        return {
+            thisMonth: {
+                miles: thisMonthMiles.toFixed(1),
+                runs: thisMonthRuns,
+                name: now.toLocaleString('default', { month: 'short' })
+            },
+            lastMonth: {
+                miles: lastMonthMiles.toFixed(1),
+                runs: lastMonthRuns,
+                name: new Date(lastMonthYear, lastMonth).toLocaleString('default', { month: 'short' })
+            },
+            difference: milesDiff.toFixed(1),
+            isAhead: milesDiff >= 0,
+            projected: projectedMiles.toFixed(1)
+        };
+    },
+
+    /**
+     * Calculate acute:chronic training load ratio
+     * CITATION: Gabbett (2016) - ACWR between 0.8-1.3 is "sweet spot"
+     */
+    getTrainingLoad(runs) {
+        if (!runs || runs.length < 14) return null;
+        
+        const now = new Date();
+        let acute = 0; // Last 7 days
+        let chronic = 0; // Last 28 days
+        
+        runs.forEach(run => {
+            const runDate = new Date(run.date);
+            const daysAgo = Math.floor((now - runDate) / (1000 * 60 * 60 * 24));
+            const load = (parseFloat(run.distance) || 0) * (run.effort || 5) / 5; // Load = distance * relative effort
+            
+            if (daysAgo <= 7) {
+                acute += load;
+            }
+            if (daysAgo <= 28) {
+                chronic += load;
+            }
+        });
+        
+        const chronicWeekly = chronic / 4; // Average per week
+        const acwr = chronicWeekly > 0 ? (acute / chronicWeekly).toFixed(2) : 0;
+        
+        let status = 'optimal';
+        let message = 'Training load is in the sweet spot';
+        
+        if (acwr < 0.8) {
+            status = 'low';
+            message = 'Undertraining - safe to increase volume';
+        } else if (acwr > 1.5) {
+            status = 'high';
+            message = 'High injury risk - consider reducing';
+        } else if (acwr > 1.3) {
+            status = 'caution';
+            message = 'Approaching limits - be careful';
+        }
+        
+        return {
+            acute: acute.toFixed(1),
+            chronic: chronicWeekly.toFixed(1),
+            acwr,
+            status,
+            message
+        };
+    },
+
+    /**
+     * Get run streak
+     */
+    getRunStreak(runs) {
+        if (!runs || runs.length === 0) return { current: 0, best: 0 };
+        
+        // Sort by date descending
+        const sortedRuns = [...runs].sort((a, b) => new Date(b.date) - new Date(a.date));
+        const runDates = new Set(sortedRuns.map(r => r.date.split('T')[0]));
+        
+        let currentStreak = 0;
+        let bestStreak = 0;
+        let tempStreak = 0;
+        
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        // Check current streak from today
+        for (let i = 0; i < 365; i++) {
+            const checkDate = new Date(today);
+            checkDate.setDate(checkDate.getDate() - i);
+            const dateStr = checkDate.toISOString().split('T')[0];
+            
+            if (runDates.has(dateStr)) {
+                if (i === 0 || currentStreak > 0) {
+                    currentStreak++;
+                }
+                tempStreak++;
+            } else if (i === 0) {
+                // Didn't run today, check if ran yesterday
+                continue;
+            } else {
+                bestStreak = Math.max(bestStreak, tempStreak);
+                tempStreak = 0;
+                if (currentStreak > 0) break;
+            }
+        }
+        
+        bestStreak = Math.max(bestStreak, tempStreak, currentStreak);
+        
+        return { current: currentStreak, best: bestStreak };
+    },
+
+    /**
+     * Generate actionable training insights
+     */
+    getTrainingInsights(runs, trainingLoad, polarized) {
+        const insights = [];
+        
+        if (!runs || runs.length < 3) {
+            insights.push({
+                type: 'info',
+                title: 'Getting Started',
+                message: 'Log more runs to unlock personalized insights'
+            });
+            return insights;
+        }
+        
+        // Training load insights
+        if (trainingLoad) {
+            if (trainingLoad.status === 'high') {
+                insights.push({
+                    type: 'warning',
+                    title: 'High Training Load',
+                    message: 'Your acute:chronic ratio is high. Consider an easy week to avoid injury.'
+                });
+            } else if (trainingLoad.status === 'low') {
+                insights.push({
+                    type: 'success',
+                    title: 'Room to Grow',
+                    message: 'You can safely increase mileage by 10-15% this week.'
+                });
+            }
+        }
+        
+        // Polarization insights
+        if (polarized) {
+            if (polarized.easyPercent < 70) {
+                insights.push({
+                    type: 'warning',
+                    title: 'Too Much Intensity',
+                    message: `Only ${polarized.easyPercent}% easy runs. Add 2+ easy runs this week.`
+                });
+            } else if (polarized.easyPercent > 90 && runs.length >= 10) {
+                insights.push({
+                    type: 'info',
+                    title: 'Add Quality',
+                    message: 'Consider adding one tempo or interval session for fitness gains.'
+                });
+            }
+        }
+        
+        // Recent trend analysis
+        const recentWeeks = this.getWeeklyMileageHistory(runs);
+        if (recentWeeks.length >= 4) {
+            const lastTwo = recentWeeks.slice(-2);
+            const prevTwo = recentWeeks.slice(-4, -2);
+            const recentAvg = (lastTwo[0].miles + lastTwo[1].miles) / 2;
+            const prevAvg = (prevTwo[0].miles + prevTwo[1].miles) / 2;
+            
+            if (recentAvg > prevAvg * 1.2 && recentAvg > 0) {
+                insights.push({
+                    type: 'caution',
+                    title: 'Volume Spike',
+                    message: `Mileage up ${Math.round((recentAvg/prevAvg - 1) * 100)}% - don't increase more than 10%/week.`
+                });
+            } else if (recentAvg < prevAvg * 0.7 && prevAvg > 5) {
+                insights.push({
+                    type: 'info',
+                    title: 'Volume Drop',
+                    message: 'Mileage decreased. Intentional recovery or life getting in the way?'
+                });
+            }
+        }
+        
+        // If no issues, give positive feedback
+        if (insights.length === 0) {
+            insights.push({
+                type: 'success',
+                title: 'On Track',
+                message: 'Training is balanced. Keep up the consistency!'
+            });
+        }
+        
+        return insights;
+    },
+
+    /**
+     * Render training insights
+     */
+    renderTrainingInsights(insights) {
+        if (!insights || insights.length === 0) return '';
+        
+        return `
+            <div class="training-insights">
+                ${insights.map(insight => `
+                    <div class="insight-card ${insight.type}">
+                        <div class="insight-title">${insight.title}</div>
+                        <div class="insight-message">${insight.message}</div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    },
+
+    /**
+     * Render weekly mileage chart
+     */
+    renderWeeklyMileageChart(weeklyData) {
+        if (!weeklyData || weeklyData.length === 0) return '';
+        
+        const maxMiles = Math.max(...weeklyData.map(w => w.miles), 1);
+        
+        return `
+            <div class="weekly-mileage-chart">
+                <div class="chart-header">WEEKLY MILEAGE</div>
+                <div class="mileage-bars">
+                    ${weeklyData.map((week, i) => {
+                        const height = (week.miles / maxMiles) * 100;
+                        const isCurrentWeek = i === weeklyData.length - 1;
+                        return `
+                            <div class="mileage-bar-container">
+                                <div class="mileage-bar ${isCurrentWeek ? 'current' : ''}" 
+                                     style="height: ${Math.max(height, 2)}%"
+                                     title="${week.miles.toFixed(1)} miles">
+                                </div>
+                                <div class="bar-label">${week.miles.toFixed(0)}</div>
+                                <div class="week-label">W${week.weekNum}</div>
+                            </div>
+                        `;
+                    }).join('')}
+                </div>
+            </div>
+        `;
+    },
+
+    /**
+     * Render monthly comparison
+     */
+    renderMonthlyComparison(comparison) {
+        if (!comparison) return '';
+        
+        return `
+            <div class="monthly-comparison">
+                <div class="comparison-header">
+                    <span>MONTHLY PROGRESS</span>
+                    <span class="comparison-diff ${comparison.isAhead ? 'positive' : 'negative'}">
+                        ${comparison.isAhead ? '+' : ''}${comparison.difference} mi
+                    </span>
+                </div>
+                <div class="comparison-bars">
+                    <div class="month-bar">
+                        <span class="month-name">${comparison.thisMonth.name}</span>
+                        <div class="month-progress">
+                            <div class="month-fill" style="width: ${Math.min((comparison.thisMonth.miles / Math.max(comparison.lastMonth.miles, comparison.thisMonth.miles, 1)) * 100, 100)}%"></div>
                         </div>
-                        <div class="pace-item">
-                            <span class="pace-type">Interval</span>
-                            <span class="pace-value">${paces.interval}</span>
+                        <span class="month-miles">${comparison.thisMonth.miles} mi</span>
+                    </div>
+                    <div class="month-bar last">
+                        <span class="month-name">${comparison.lastMonth.name}</span>
+                        <div class="month-progress">
+                            <div class="month-fill" style="width: ${Math.min((comparison.lastMonth.miles / Math.max(comparison.lastMonth.miles, comparison.thisMonth.miles, 1)) * 100, 100)}%"></div>
                         </div>
-                        <div class="pace-item">
-                            <span class="pace-type">Repetition</span>
-                            <span class="pace-value">${paces.repetition || '--'}</span>
-                        </div>
+                        <span class="month-miles">${comparison.lastMonth.miles} mi</span>
                     </div>
                 </div>
-                
-                ${this.renderRacePredictor(racePredictor)}
-                ${this.renderVDOTProgress(vdotHistory)}
-                
-                ${recentRuns.length > 0 ? `
-                    <div class="recent-runs">
-                        <div class="runs-label">RECENT RUNS</div>
-                        ${recentRuns.slice(-5).reverse().map(run => `
-                            <div class="run-item">
-                                <span class="run-date">${this.formatDate(run.date)}</span>
-                                <span class="run-dist">${run.distance} mi</span>
-                                <span class="run-pace">${run.pace || '--'}</span>
-                                <span class="run-effort-dot" style="opacity: ${run.effort / 10}"></span>
-                            </div>
-                        `).join('')}
+                <div class="projected-miles">On pace for ~${comparison.projected} miles this month</div>
+            </div>
+        `;
+    },
+
+    /**
+     * Render training load card
+     */
+    renderTrainingLoad(load) {
+        if (!load) return '';
+        
+        return `
+            <div class="training-load-card ${load.status}">
+                <div class="load-header">
+                    <span>TRAINING LOAD (ACWR)</span>
+                    <span class="load-ratio">${load.acwr}</span>
+                </div>
+                <div class="load-bar">
+                    <div class="load-zones">
+                        <span class="zone low">Under</span>
+                        <span class="zone optimal">Optimal</span>
+                        <span class="zone high">High Risk</span>
                     </div>
-                ` : ''}
+                    <div class="load-marker" style="left: ${Math.min(Math.max((load.acwr / 2) * 100, 5), 95)}%"></div>
+                </div>
+                <div class="load-message">${load.message}</div>
+            </div>
+        `;
+    },
+
+    /**
+     * Render personal bests
+     */
+    renderPersonalBests(pbs) {
+        if (!pbs) return '';
+        
+        return `
+            <div class="personal-bests">
+                <div class="pbs-header">PERSONAL BESTS</div>
+                <div class="pbs-grid">
+                    <div class="pb-item">
+                        <div class="pb-value">${pbs.fastestPace || '--'}</div>
+                        <div class="pb-label">Fastest Pace</div>
+                    </div>
+                    <div class="pb-item">
+                        <div class="pb-value">${pbs.longestRun}</div>
+                        <div class="pb-label">Longest Run (mi)</div>
+                    </div>
+                    <div class="pb-item">
+                        <div class="pb-value">${pbs.mostWeeklyMiles}</div>
+                        <div class="pb-label">Best Week (mi)</div>
+                    </div>
+                    <div class="pb-item">
+                        <div class="pb-value">${pbs.totalMiles}</div>
+                        <div class="pb-label">Total Miles</div>
+                    </div>
+                </div>
             </div>
         `;
     },

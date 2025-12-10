@@ -4232,6 +4232,403 @@ button, .btn {
 }
 
 /* ==========================================
+   ENHANCED RUNNING DASHBOARD
+   ========================================== */
+
+.running-dashboard .analysis-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.running-goal-badge {
+    background: var(--navy);
+    color: #FFFFFF;
+    padding: 4px 10px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.running-stat.primary .stat-value {
+    font-size: 28px;
+    color: var(--navy);
+}
+
+/* Training Insights */
+.training-insights {
+    margin-bottom: 16px;
+}
+
+.insight-card {
+    padding: 12px 14px;
+    border-radius: var(--radius-md);
+    margin-bottom: 8px;
+    border-left: 3px solid;
+}
+
+.insight-card.success {
+    background: var(--success-muted);
+    border-color: var(--success);
+}
+
+.insight-card.warning {
+    background: var(--error-muted);
+    border-color: var(--error);
+}
+
+.insight-card.caution {
+    background: var(--warning-muted);
+    border-color: var(--warning);
+}
+
+.insight-card.info {
+    background: var(--surface);
+    border-color: var(--info);
+}
+
+.insight-title {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 4px;
+}
+
+.insight-message {
+    font-size: 12px;
+    color: var(--text-muted);
+    line-height: 1.4;
+}
+
+/* Weekly Mileage Chart */
+.weekly-mileage-chart {
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    padding: 14px;
+    margin-bottom: 14px;
+}
+
+.chart-header {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+}
+
+.mileage-bars {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    height: 80px;
+    gap: 6px;
+}
+
+.mileage-bar-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+}
+
+.mileage-bar {
+    width: 100%;
+    background: var(--border);
+    border-radius: 4px 4px 0 0;
+    min-height: 2px;
+    transition: height 0.3s ease;
+}
+
+.mileage-bar.current {
+    background: var(--navy);
+}
+
+.bar-label {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text);
+    margin-top: 4px;
+}
+
+.week-label {
+    font-size: 9px;
+    color: var(--text-dim);
+}
+
+/* Monthly Comparison */
+.monthly-comparison {
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    padding: 14px;
+    margin-bottom: 14px;
+}
+
+.comparison-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+
+.comparison-diff {
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-size: 12px;
+}
+
+.comparison-diff.positive {
+    background: var(--success-muted);
+    color: var(--success);
+}
+
+.comparison-diff.negative {
+    background: var(--error-muted);
+    color: var(--error);
+}
+
+.comparison-bars {
+    margin-bottom: 10px;
+}
+
+.month-bar {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.month-bar .month-name {
+    width: 40px;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.month-bar .month-progress {
+    flex: 1;
+    height: 20px;
+    background: var(--surface-2);
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.month-bar .month-fill {
+    height: 100%;
+    background: var(--navy);
+    border-radius: 4px;
+    transition: width 0.3s ease;
+}
+
+.month-bar.last .month-fill {
+    background: var(--text-dim);
+    opacity: 0.5;
+}
+
+.month-bar .month-miles {
+    width: 50px;
+    text-align: right;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.projected-miles {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+/* Training Load Card */
+.training-load-card {
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    padding: 14px;
+    margin-bottom: 14px;
+}
+
+.training-load-card.high {
+    border: 1px solid var(--error);
+    background: var(--error-muted);
+}
+
+.training-load-card.caution {
+    border: 1px solid var(--warning);
+}
+
+.load-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+
+.load-ratio {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--navy);
+}
+
+.load-bar {
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.load-zones {
+    display: flex;
+    height: 24px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.load-zones .zone {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 9px;
+    font-weight: 500;
+    text-transform: uppercase;
+}
+
+.load-zones .zone.low {
+    background: var(--surface-2);
+    color: var(--text-muted);
+}
+
+.load-zones .zone.optimal {
+    background: var(--success-muted);
+    color: var(--success);
+}
+
+.load-zones .zone.high {
+    background: var(--error-muted);
+    color: var(--error);
+}
+
+.load-marker {
+    position: absolute;
+    top: -2px;
+    width: 4px;
+    height: 28px;
+    background: var(--navy);
+    border-radius: 2px;
+    transform: translateX(-50%);
+}
+
+.load-message {
+    font-size: 12px;
+    color: var(--text-muted);
+    text-align: center;
+}
+
+/* Personal Bests */
+.personal-bests {
+    background: var(--surface);
+    border-radius: var(--radius-md);
+    padding: 14px;
+    margin-bottom: 14px;
+}
+
+.pbs-header {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+}
+
+.pbs-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+}
+
+.pb-item {
+    text-align: center;
+}
+
+.pb-value {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--navy);
+    margin-bottom: 2px;
+}
+
+.pb-label {
+    font-size: 9px;
+    color: var(--text-dim);
+    text-transform: uppercase;
+}
+
+/* Collapsible Sections */
+.training-paces-section,
+.recent-runs-section {
+    border-top: 1px solid var(--border);
+    margin-top: 14px;
+    padding-top: 14px;
+}
+
+.paces-toggle,
+.runs-toggle {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.paces-toggle::after,
+.runs-toggle::after {
+    content: '+';
+    font-size: 14px;
+}
+
+details[open] .paces-toggle::after,
+details[open] .runs-toggle::after {
+    content: '−';
+}
+
+.training-paces-section .training-paces,
+.recent-runs-section .recent-runs {
+    margin-top: 12px;
+}
+
+/* Run Type Badge */
+.run-type-badge {
+    font-size: 9px;
+    font-weight: 600;
+    padding: 2px 6px;
+    border-radius: 3px;
+    text-transform: uppercase;
+}
+
+.run-type-badge.easy,
+.run-type-badge.recovery {
+    background: var(--success-muted);
+    color: var(--success);
+}
+
+.run-type-badge.tempo,
+.run-type-badge.intervals {
+    background: var(--error-muted);
+    color: var(--error);
+}
+
+.run-type-badge.long {
+    background: var(--warning-muted);
+    color: var(--warning);
+}
+
+/* ==========================================
    RACE PREDICTOR
    ========================================== */
 
