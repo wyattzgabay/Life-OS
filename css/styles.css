@@ -8643,11 +8643,7 @@ details[open] .runs-toggle::after {
 .cardio-logger {
     width: 100%;
     padding: 16px;
-    padding-bottom: 0;
-    display: flex;
-    flex-direction: column;
-    max-height: 80vh;
-    overflow-y: auto;
+    padding-bottom: 80px; /* Space for sticky button */
 }
 
 .cardio-header {
@@ -8929,7 +8925,7 @@ details[open] .runs-toggle::after {
 }
 
 .cardio-save-btn {
-    width: 100%;
+    width: calc(100% - 32px);
     padding: 16px;
     background: var(--gradient-navy);
     color: #FFFFFF;
@@ -8939,11 +8935,12 @@ details[open] .runs-toggle::after {
     font-weight: 600;
     cursor: pointer;
     transition: all 0.2s ease;
-    margin-top: 16px;
     box-shadow: var(--shadow-md);
-    position: sticky;
-    bottom: 0;
-    z-index: 10;
+    position: fixed;
+    bottom: calc(20px + var(--safe-bottom));
+    left: 16px;
+    right: 16px;
+    z-index: 210;
 }
 
 .cardio-save-btn:active {
