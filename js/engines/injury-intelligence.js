@@ -630,11 +630,36 @@ const InjuryIntelligence = {
         // Also check user-reported severity from "when does it hurt" timing
         const reportedSeverity = this.getReportedSeverity(injuryKey, painHistory);
         
-        // Use whichever severity is worse
+        // Check for IMPROVEMENT: recent pain-free activities
+        const recentEntries = painHistory.slice(-7); // Last 7 logged activities
+        const recentPainFree = recentEntries.filter(entry => {
+            const hasPainForThisInjury = entry.painDetails?.some(pd => pd.injury === injuryKey) ||
+                                         entry.pain?.some(p => injury.earlySignals.includes(p));
+            return !hasPainForThisInjury;
+        }).length;
+        
+        // Determine base severity
         const severityOrder = { mild: 1, moderate: 2, severe: 3 };
         let severity = calculatedSeverity;
         if (reportedSeverity && (!calculatedSeverity || severityOrder[reportedSeverity] > severityOrder[calculatedSeverity])) {
             severity = reportedSeverity;
+        }
+        
+        // IMPROVEMENT LOGIC: Downgrade if recent activities are pain-free
+        let isImproving = false;
+        if (recentEntries.length >= 3 && recentPainFree >= 3) {
+            // At least 3 pain-free activities out of last 7 = improving
+            isImproving = true;
+            if (severity === 'severe' && recentPainFree >= 4) {
+                severity = 'moderate';
+            } else if (severity === 'moderate' && recentPainFree >= 5) {
+                severity = 'mild';
+            }
+        }
+        
+        // If ALL last 5+ activities are pain-free, consider resolved
+        if (recentEntries.length >= 5 && recentPainFree === recentEntries.length) {
+            return null; // Injury resolved - remove from active tracking
         }
         
         if (!severity) return null;
@@ -649,13 +674,18 @@ const InjuryIntelligence = {
             occurrences,
             daysSinceFirst,
             hasProgression,
+            isImproving,
+            painFreeActivities: recentPainFree,
+            recentActivities: recentEntries.length,
             affectedAreas: Array.from(allPainAreas),
             triggerTypes: Object.entries(triggerTypes).sort((a, b) => b[1] - a[1]),
             recovery: {
                 mileageReduction: recovery.mileageReduction,
                 avoidTypes: recovery.avoidTypes,
                 exercises: recovery.exercises.map(e => this.EXERCISES[e] || { name: e }),
-                message: recovery.message
+                message: isImproving 
+                    ? `Improving! ${recentPainFree}/${recentEntries.length} recent activities pain-free. ` + recovery.message
+                    : recovery.message
             }
         };
     },
@@ -927,7 +957,10 @@ const InjuryIntelligence = {
                 injuryName: primary?.name,
                 totalExercises: exercises.length,
                 completedToday: exercises.filter(e => e.completed).length,
-                message: primary?.recovery?.message
+                message: primary?.recovery?.message,
+                isImproving: primary?.isImproving,
+                painFreeActivities: primary?.painFreeActivities,
+                recentActivities: primary?.recentActivities
             }
         };
     },
@@ -993,7 +1026,18 @@ const InjuryIntelligence = {
                 
                 <!-- Protocol Overview -->
                 <div class="recovery-protocol-overview">
-                    <div class="protocol-injury">${protocol?.injuryName || 'Recovery'}</div>
+                    <div class="protocol-injury-row">
+                        <span class="protocol-injury">${protocol?.injuryName || 'Recovery'}</span>
+                        ${protocol?.isImproving ? `<span class="improving-badge">IMPROVING</span>` : ''}
+                    </div>
+                    ${protocol?.isImproving ? `
+                        <div class="improvement-tracker">
+                            <div class="improvement-bar">
+                                <div class="improvement-fill" style="width: ${Math.round((protocol.painFreeActivities / Math.max(protocol.recentActivities, 5)) * 100)}%"></div>
+                            </div>
+                            <span class="improvement-text">${protocol.painFreeActivities}/${protocol.recentActivities} recent activities pain-free</span>
+                        </div>
+                    ` : ''}
                     <div class="protocol-details">
                         <div class="protocol-stat">
                             <span class="stat-label">FREQUENCY</span>
@@ -1004,10 +1048,13 @@ const InjuryIntelligence = {
                             <span class="stat-value">${protocol?.timeCommitment}</span>
                         </div>
                     </div>
-                    ${protocol?.severity !== 'mild' ? `
+                    ${protocol?.severity !== 'mild' && !protocol?.isImproving ? `
                         <div class="protocol-priority">${protocol?.priority}</div>
                     ` : ''}
-                    ${protocol?.message ? `<div class="protocol-message">${protocol.message}</div>` : ''}
+                    ${protocol?.isImproving ? `
+                        <div class="protocol-priority improving">Keep doing the exercises - you're on the right track!</div>
+                    ` : ''}
+                    ${protocol?.message && !protocol?.isImproving ? `<div class="protocol-message">${protocol.message}</div>` : ''}
                 </div>
                 
                 <!-- Exercise List -->

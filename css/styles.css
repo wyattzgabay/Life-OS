@@ -8322,11 +8322,60 @@ button, .btn {
     background: rgba(245, 158, 11, 0.05);
 }
 
+.protocol-injury-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
 .protocol-injury {
     font-weight: 600;
     font-size: 15px;
     color: var(--text);
-    margin-bottom: 10px;
+}
+
+.improving-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.1em;
+    background: var(--success);
+    color: white;
+    padding: 3px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+.improvement-tracker {
+    background: var(--surface-2);
+    border-radius: 8px;
+    padding: 10px 12px;
+    margin-bottom: 12px;
+}
+
+.improvement-bar {
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-bottom: 6px;
+}
+
+.improvement-fill {
+    height: 100%;
+    background: var(--success);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+}
+
+.improvement-text {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.protocol-priority.improving {
+    background: rgba(34, 197, 94, 0.15);
+    color: var(--success);
 }
 
 .protocol-details {
