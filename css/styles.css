@@ -2790,7 +2790,7 @@ button, .btn {
    ========================================== */
 
 .tab-spacer {
-    height: 100px; /* Account for tab bar height + padding */
+    height: 70px; /* Account for tab bar height */
 }
 
 /* ==========================================

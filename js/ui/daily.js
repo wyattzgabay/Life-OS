@@ -441,8 +441,15 @@ const DailyView = {
         const runDistance = State.getTodayRunDistance(todayKey);
         const todaysRun = running?.goal && typeof RunningView !== 'undefined' 
             ? RunningView.getTodaysRun(running) : null;
-        const isRestDay = !todaysRun || todaysRun.type === 'rest' || todaysRun.distance === 0;
-        const prescribedDistance = todaysRun?.distance || 0;
+        
+        // Get the actual prescribed distance using getRunInfo
+        let prescribedDistance = 0;
+        if (todaysRun && typeof RunningView !== 'undefined') {
+            const runInfo = RunningView.getRunInfo(todaysRun, running);
+            prescribedDistance = parseFloat(runInfo?.distance) || 0;
+        }
+        
+        const isRestDay = !todaysRun || todaysRun.type === 'rest' || prescribedDistance === 0;
         const runPercent = prescribedDistance > 0 ? Math.round((runDistance / prescribedDistance) * 100) : 0;
         
         // Build running display
@@ -458,13 +465,19 @@ const DailyView = {
             runDisplay = `0/${prescribedDistance.toFixed(1)}mi`;
         }
         
-        // Recovery exercises status
-        const adjustments = typeof InjuryIntelligence !== 'undefined' 
-            ? InjuryIntelligence.getTrainingAdjustments() 
-            : null;
-        const hasRecovery = adjustments && adjustments.exercises && adjustments.exercises.length > 0;
-        const totalRecovery = hasRecovery ? Math.min(adjustments.exercises.length, 5) : 0;
-        const completedRecovery = State._data?.recoveryExercisesCompleted?.[todayKey]?.length || 0;
+        // Recovery exercises status - use getTodaysRecoveryExercises for accurate count
+        let totalRecovery = 0;
+        let completedRecovery = 0;
+        let hasRecovery = false;
+        
+        if (typeof InjuryIntelligence !== 'undefined') {
+            const recoveryData = InjuryIntelligence.getTodaysRecoveryExercises();
+            if (recoveryData?.exercises?.length > 0) {
+                hasRecovery = true;
+                totalRecovery = recoveryData.exercises.length;
+                completedRecovery = recoveryData.exercises.filter(e => e.completed).length;
+            }
+        }
         
         return `
             <div class="score-item ${exercisesDone > 0 ? 'done' : ''}">

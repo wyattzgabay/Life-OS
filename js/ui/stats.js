@@ -709,6 +709,7 @@ const StatsView = {
     renderAverages() {
         const avgs = Utils.getWeeklyAverages();
         const goals = State.getGoals();
+        const weeklyMileage = State.getWeeklyMileage();
 
         return `
             <div class="analysis-card">
@@ -727,9 +728,9 @@ const StatsView = {
                         <div class="avg-goal">/ ${goals?.dailyCalories || 2000}</div>
                     </div>
                     <div class="avg-item">
-                        <div class="avg-value">${avgs.sleep || '--'}</div>
-                        <div class="avg-label">SLEEP</div>
-                        <div class="avg-goal">/ 7+ hrs</div>
+                        <div class="avg-value">${weeklyMileage?.toFixed(1) || '--'}</div>
+                        <div class="avg-label">MILES RAN</div>
+                        <div class="avg-goal">this week</div>
                     </div>
                 </div>
             </div>
@@ -1026,7 +1027,7 @@ const StatsView = {
     },
     
     /**
-     * Render all-time stats
+     * Render all-time stats with comprehensive metrics
      */
     renderAllTimeStats() {
         const profile = State.getProfile();
@@ -1044,27 +1045,66 @@ const StatsView = {
         });
         const completionRate = allDays.length > 0 ? Math.round((completedDays / allDays.length) * 100) : 0;
         
+        // Calculate total weight lifted
+        const liftHistory = State._data?.liftHistory || {};
+        let totalVolume = 0;
+        let totalSets = 0;
+        Object.values(liftHistory).forEach(exerciseEntries => {
+            exerciseEntries.forEach(entry => {
+                totalVolume += entry.volume || 0;
+                totalSets += entry.sets?.length || 0;
+            });
+        });
+        const formattedVolume = totalVolume >= 1000000 
+            ? `${(totalVolume / 1000000).toFixed(1)}M` 
+            : totalVolume >= 1000 
+                ? `${(totalVolume / 1000).toFixed(0)}K` 
+                : totalVolume.toString();
+        
+        // Calculate total miles run
+        const runLog = State._data?.runLog || [];
+        const totalMiles = runLog.reduce((sum, run) => sum + (parseFloat(run.distance) || 0), 0);
+        const totalRuns = runLog.length;
+        
         return `
             <div class="analysis-card">
                 <div class="analysis-header">
-                    <span class="analysis-title">ALL-TIME</span>
+                    <span class="analysis-title">ALL-TIME STATS</span>
                 </div>
-                <div class="alltime-grid">
+                <div class="alltime-grid expanded">
                     <div class="alltime-item">
                         <div class="alltime-value">${level.level}</div>
                         <div class="alltime-label">LEVEL</div>
+                    </div>
+                    <div class="alltime-item">
+                        <div class="alltime-value">${State.getTotalXP().toLocaleString()}</div>
+                        <div class="alltime-label">TOTAL XP</div>
                     </div>
                     <div class="alltime-item">
                         <div class="alltime-value">${streak}</div>
                         <div class="alltime-label">STREAK</div>
                     </div>
                     <div class="alltime-item">
-                        <div class="alltime-value">${completionRate}%</div>
-                        <div class="alltime-label">COMPLETION</div>
-                    </div>
-                    <div class="alltime-item">
                         <div class="alltime-value">${allDays.length}</div>
                         <div class="alltime-label">DAYS</div>
+                    </div>
+                </div>
+                <div class="alltime-grid expanded" style="margin-top: 12px;">
+                    <div class="alltime-item">
+                        <div class="alltime-value">${formattedVolume}</div>
+                        <div class="alltime-label">LBS LIFTED</div>
+                    </div>
+                    <div class="alltime-item">
+                        <div class="alltime-value">${totalSets}</div>
+                        <div class="alltime-label">SETS</div>
+                    </div>
+                    <div class="alltime-item">
+                        <div class="alltime-value">${totalMiles.toFixed(1)}</div>
+                        <div class="alltime-label">MILES RUN</div>
+                    </div>
+                    <div class="alltime-item">
+                        <div class="alltime-value">${totalRuns}</div>
+                        <div class="alltime-label">RUNS</div>
                     </div>
                 </div>
             </div>
