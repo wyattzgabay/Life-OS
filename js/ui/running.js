@@ -322,19 +322,19 @@ const RunningView = {
             },
             tempo: {
                 title: 'THE SCIENCE OF TEMPO',
-                text: 'Tempo runs train your lactate threshold - the pace you can sustain for about an hour. By running at this "comfortably hard" effort, you teach your body to clear lactate more efficiently, allowing you to run faster before fatigue sets in.',
+                text: 'Tempo runs train your lactate threshold - the intensity you can sustain for ~1 hour. This "comfortably hard" effort improves lactate clearance efficiency (Faude et al. 2009, Sports Med).',
             },
             intervals: {
                 title: 'WHY INTERVALS WORK',
-                text: 'Interval training improves your VO2max - your body\'s maximum oxygen uptake. Short, hard efforts with recovery create adaptations that make you faster. The magic happens in the recovery: your body rebuilds stronger than before.',
+                text: 'High-intensity intervals produce superior VO2max improvements vs steady-state training (Milanović et al. 2015, Sports Med). The adaptation happens during recovery between efforts.',
             },
             long: {
                 title: 'LONG RUN ADAPTATIONS',
-                text: 'Long runs teach your body to burn fat as fuel and strengthen connective tissue. They also build mental toughness. Keep the pace easy - the goal is duration, not speed. Your body adapts to time on feet.',
+                text: 'Long runs increase mitochondrial density and fat oxidation capacity (Holloszy & Coyle 1984). Keep pace in Zone 2 - the goal is time on feet, not speed.',
             },
             recovery: {
                 title: 'ACTIVE RECOVERY SCIENCE',
-                text: 'Recovery runs increase blood flow to damaged muscles without adding training stress. Moving at very low intensity helps flush metabolic waste and speeds adaptation. Rest days grow your fitness; training days just stimulate it.',
+                text: 'Light activity enhances lactate clearance without adding training stress (Menzies et al. 2010). Easy days make hard days possible - this is how periodization works.',
             },
         };
         
@@ -767,6 +767,9 @@ const RunningView = {
 
     /**
      * Calculate 80/20 polarized training ratio
+     * CITATION: Seiler (2010) Int J Sports Physiol Perform - elite endurance athletes
+     *           train ~80% low intensity, ~20% high intensity
+     *           Stöggl & Sperlich (2014) Front Physiol - polarized > threshold training
      */
     getPolarizedRatio() {
         const runs = State.getRunLog(30); // Last 30 runs

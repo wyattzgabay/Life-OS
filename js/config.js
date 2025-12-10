@@ -130,16 +130,20 @@ const CONFIG = {
     ],
 
     // Alcohol tracking - science-based impacts
+    // CITATIONS:
+    // - Parr et al. (2014) PLoS ONE: Alcohol ingestion impairs MPS by 37%
+    // - Barnes et al. (2010) Eur J Appl Physiol: 24-48h recovery impairment
+    // - Ebrahim et al. (2013) Alcohol Clin Exp Res: Sleep architecture disruption
     ALCOHOL: {
         XP_PENALTY: 25,  // Lose XP when drinking
-        RECOVERY_IMPACT_HOURS: 48,  // Affects recovery for 48 hours
-        SLEEP_QUALITY_REDUCTION: 0.3,  // 30% worse sleep quality
-        MUSCLE_PROTEIN_SYNTHESIS_REDUCTION: 0.37,  // 37% reduction (studies show this)
+        RECOVERY_IMPACT_HOURS: 48,  // Barnes et al. (2010): 24-48h impairment
+        SLEEP_QUALITY_REDUCTION: 0.3,  // Ebrahim et al. (2013): REM suppression
+        MUSCLE_PROTEIN_SYNTHESIS_REDUCTION: 0.37,  // Parr et al. (2014): 37% reduction
         WARNINGS: [
-            'Alcohol reduces muscle protein synthesis by ~37% for up to 24 hours',
-            'Even moderate drinking disrupts REM sleep cycles',
+            'Alcohol reduces muscle protein synthesis by ~37% (Parr et al. 2014)',
+            'Even moderate drinking disrupts REM sleep cycles (Ebrahim et al. 2013)',
             'Dehydration from alcohol impairs next-day performance',
-            'Alcohol increases cortisol, hindering recovery',
+            'Alcohol increases cortisol, hindering recovery (Bianco et al. 2014)',
             'Empty calories: ~7 cal/gram with zero nutritional value',
         ]
     },
@@ -416,6 +420,10 @@ const CONFIG = {
     // MEV = Minimum Effective Volume (maintain/slow progress)
     // MAV = Maximum Adaptive Volume (sweet spot for gains)
     // MRV = Maximum Recoverable Volume (beyond = overtraining risk)
+    // VOLUME LANDMARKS - sets per muscle group per week
+    // CITATION: Schoenfeld et al. (2017) J Sports Sci - dose-response relationship
+    //           10-20 sets/week optimal for hypertrophy
+    //           Israetel et al. (2019) - MEV/MAV/MRV framework
     VOLUME_LANDMARKS: {
         chest:     { MEV: 8,  MAV: 14, MRV: 20 },  // Responds well to moderate volume
         back:      { MEV: 8,  MAV: 16, MRV: 25 },  // Can handle high volume, many muscles

@@ -74,7 +74,7 @@ IMPORTANT RULES:
 3. If unsure, use conservative middle-ground estimates
 4. Detect any alcohol (beer, wine, liquor, cocktails) and count standard drinks
 5. Estimate leucine content (8-10% of protein for animal sources, 6-8% for plant)
-6. A meal needs ~2.5-3g leucine to trigger muscle protein synthesis
+6. A meal needs ~2.5-3g leucine to trigger muscle protein synthesis (Phillips & Van Loon 2011, J Sports Sci)
 
 FOOD QUALITY ASSESSMENT - BE SMART:
 - FITNESS SUPPLEMENTS (whey protein, creatine, collagen, BCAAs) = NEUTRAL, not "processed junk"

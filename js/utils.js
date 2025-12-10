@@ -39,10 +39,17 @@ const Utils = {
 
     /**
      * Calculate nutrition targets based on goals
-     * Science-based macro split:
-     * - Protein: 1g per lb target weight (for muscle retention during cut)
-     * - Fats: 0.3-0.4g per lb bodyweight (hormone health minimum)
+     * 
+     * SCIENTIFIC BASIS:
+     * - Protein: 1g/lb (2.2g/kg) for muscle retention during deficit
+     *   Citation: Morton et al. (2018) Br J Sports Med - meta-analysis found 1.6g/kg optimal,
+     *   higher (2.2g/kg) beneficial during caloric deficit for muscle preservation
+     * - Fats: 0.3-0.4g/lb minimum for hormone health
+     *   Citation: Helms et al. (2014) Int J Sport Nutr Exerc Metab - natural bodybuilding guidelines
      * - Carbs: Fill remaining calories (fuel for training)
+     *   Citation: Thomas et al. (2016) J Acad Nutr Diet - carbs primary fuel for anaerobic exercise
+     * - 500 cal deficit ≈ 1 lb/week
+     *   Citation: Hall et al. (2011) Int J Obes - validated short-term, adapts over time
      * 
      * @param {number} currentWeight - Current weight in lbs
      * @param {number} targetWeight - Target weight in lbs
