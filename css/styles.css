@@ -161,26 +161,26 @@ input, textarea, select {
     color-scheme: light;
 }
 
-html, body {
+html {
     height: 100%;
-    overflow: hidden; /* Body doesn't scroll - views do */
-}
-
-/* Main content wrapper for scrolling */
-#main-app {
-    height: 100%;
-    overflow: hidden;
 }
 
 body {
     font-family: var(--font-sans);
     background: var(--bg);
     color: var(--text);
-    height: 100%;
-    overflow: hidden;
+    min-height: 100%;
+    margin: 0;
+    padding: 0;
+    padding-bottom: calc(60px + var(--safe-bottom));
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     text-rendering: optimizeLegibility;
+}
+
+/* Main content wrapper */
+#main-app {
+    position: relative;
 }
 
 /* ==========================================
@@ -345,12 +345,6 @@ button, .btn {
     display: none;
     padding: 0 16px 20px;
     animation: fadeIn 0.2s ease;
-    overflow-x: hidden;
-    overflow-y: auto;
-    height: calc(100vh - 60px);
-    height: calc(100dvh - 60px); /* Dynamic viewport height for iOS */
-    -webkit-overflow-scrolling: touch;
-    overscroll-behavior-y: auto;
 }
 
 .view.active {
@@ -2791,7 +2785,7 @@ button, .btn {
    ========================================== */
 
 .tab-spacer {
-    height: calc(60px + var(--safe-bottom)); /* Space for tab bar */
+    height: 10px; /* Small spacer at end of content */
 }
 
 /* ==========================================
