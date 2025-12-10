@@ -404,6 +404,7 @@ const ProfileView = {
     selectRunningGoal(goalId) {
         State.setRunningGoal(goalId);
         this.openRunningModal(); // Refresh modal
+        App.render(); // Refresh main views with new goal
     },
 
     /**
