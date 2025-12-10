@@ -187,7 +187,7 @@ const App = {
         if (modal) {
             modal.addEventListener('click', (e) => {
                 if (e.target === modal) {
-                    modal.classList.remove('active');
+                    this.closeModal(modal);
                 }
             });
         }
@@ -197,13 +197,26 @@ const App = {
         if (goalsModal) {
             goalsModal.addEventListener('click', (e) => {
                 if (e.target === goalsModal) {
-                    goalsModal.classList.remove('active');
+                    this.closeModal(goalsModal);
                 }
             });
         }
         
         // Set up drag-to-dismiss with bounce effect on modal sheets
         this.setupModalDrag();
+    },
+    
+    /**
+     * Close modal and restore body scroll
+     */
+    closeModal(modal) {
+        modal.classList.remove('active');
+        modal.innerHTML = '';
+        // Restore body scroll in case any logger locked it
+        document.body.style.overflow = '';
+        document.body.style.position = '';
+        document.body.style.width = '';
+        document.body.style.top = '';
     },
     
     /**
