@@ -617,14 +617,24 @@ const InjuryIntelligence = {
             }
         });
         
-        // Determine severity
-        let severity = null;
+        // Determine severity from pattern (days/occurrences)
+        let calculatedSeverity = null;
         if (daysSinceFirst >= injury.severity.severe.days || occurrences >= injury.severity.severe.occurrences) {
-            severity = 'severe';
+            calculatedSeverity = 'severe';
         } else if (daysSinceFirst >= injury.severity.moderate.days || occurrences >= injury.severity.moderate.occurrences) {
-            severity = 'moderate';
+            calculatedSeverity = 'moderate';
         } else if (occurrences >= injury.severity.mild.occurrences) {
-            severity = 'mild';
+            calculatedSeverity = 'mild';
+        }
+        
+        // Also check user-reported severity from "when does it hurt" timing
+        const reportedSeverity = this.getReportedSeverity(injuryKey, painHistory);
+        
+        // Use whichever severity is worse
+        const severityOrder = { mild: 1, moderate: 2, severe: 3 };
+        let severity = calculatedSeverity;
+        if (reportedSeverity && (!calculatedSeverity || severityOrder[reportedSeverity] > severityOrder[calculatedSeverity])) {
+            severity = reportedSeverity;
         }
         
         if (!severity) return null;
@@ -655,7 +665,51 @@ const InjuryIntelligence = {
      */
     getPainHistory() {
         const cardioLog = State._data?.cardioLog || [];
-        return cardioLog.filter(entry => entry.pain && entry.pain.length > 0);
+        // Include both legacy pain array and new painDetails with severity
+        return cardioLog.filter(entry => 
+            (entry.pain && entry.pain.length > 0) || 
+            (entry.painDetails && entry.painDetails.length > 0)
+        ).map(entry => ({
+            ...entry,
+            // Merge painDetails into pain array for backward compat
+            pain: [
+                ...(entry.pain || []),
+                ...(entry.painDetails || []).map(pd => pd.region + '_' + pd.subregion)
+            ],
+            // Keep painDetails for severity lookup
+            painDetails: entry.painDetails || []
+        }));
+    },
+    
+    /**
+     * Get highest reported severity for an injury from recent logs
+     * Normalizes 'high' to 'severe' for consistency with recovery protocols
+     */
+    getReportedSeverity(injuryId, painHistory) {
+        const severityOrder = { mild: 1, moderate: 2, high: 3, severe: 3 };
+        let maxSeverity = null;
+        let maxLevel = 0;
+        
+        // Check last 14 days of pain history for this injury
+        const twoWeeksAgo = Date.now() - (14 * 24 * 60 * 60 * 1000);
+        
+        painHistory.forEach(entry => {
+            const entryTime = new Date(entry.timestamp || entry.date).getTime();
+            if (entryTime < twoWeeksAgo) return; // Skip old entries
+            
+            (entry.painDetails || []).forEach(pd => {
+                if (pd.injury === injuryId && pd.severity) {
+                    const level = severityOrder[pd.severity] || 1;
+                    if (level > maxLevel) {
+                        maxLevel = level;
+                        // Normalize 'high' to 'severe' for recovery protocol lookup
+                        maxSeverity = pd.severity === 'high' ? 'severe' : pd.severity;
+                    }
+                }
+            });
+        });
+        
+        return maxSeverity;
     },
     
     /**
