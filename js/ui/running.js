@@ -204,17 +204,39 @@ const RunningView = {
         
         let distance = (baseDistances[run.type] || 2.5) * progression * goalMultiplier;
         
-        // Apply injury multiplier
-        const injuries = running.injuries || [];
-        let lowestMultiplier = 1;
-        injuries.forEach(injuryId => {
-            const injury = CONFIG.RUNNING.INJURIES.find(i => i.id === injuryId);
-            if (injury && injury.distanceMultiplier < lowestMultiplier) {
-                lowestMultiplier = injury.distanceMultiplier;
-            }
-        });
+        // Check InjuryIntelligence system FIRST (primary source of truth)
+        let injuryMultiplier = 1;
+        let injurySource = null;
         
-        distance = distance * lowestMultiplier;
+        if (typeof InjuryIntelligence !== 'undefined') {
+            const adjustments = InjuryIntelligence.getTrainingAdjustments();
+            if (adjustments && adjustments.mileageReduction) {
+                // Use the aggregated max reduction from all injuries
+                injuryMultiplier = 1 - adjustments.mileageReduction;
+                
+                // Find which injury has this reduction for display
+                if (adjustments.injuries && adjustments.injuries.length > 0) {
+                    const primary = adjustments.injuries.find(i => 
+                        i.recovery?.mileageReduction === adjustments.mileageReduction
+                    );
+                    injurySource = primary?.name || adjustments.injuries[0]?.name;
+                }
+            }
+        }
+        
+        // Fallback to old CONFIG.RUNNING.INJURIES system
+        if (injuryMultiplier === 1) {
+            const injuries = running.injuries || [];
+            injuries.forEach(injuryId => {
+                const injury = CONFIG.RUNNING.INJURIES.find(i => i.id === injuryId);
+                if (injury && injury.distanceMultiplier < injuryMultiplier) {
+                    injuryMultiplier = injury.distanceMultiplier;
+                    injurySource = injury.name;
+                }
+            });
+        }
+        
+        distance = distance * injuryMultiplier;
         
         // Apply performance-based adjustment factor (from AI analysis of past runs)
         const adjustmentFactor = running.adjustmentFactor || 1.0;
@@ -222,8 +244,10 @@ const RunningView = {
         
         return {
             distance: distance.toFixed(1),
-            adjusted: lowestMultiplier < 1 || adjustmentFactor < 1,
+            adjusted: injuryMultiplier < 1 || adjustmentFactor < 1,
             adjustmentFactor,
+            injuryMultiplier,
+            injurySource,
             type: run.type
         };
     },
