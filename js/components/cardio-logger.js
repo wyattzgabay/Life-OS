@@ -501,10 +501,27 @@ const CardioLogger = {
     selectTiming(timingId) {
         this.selectedTiming = timingId;
         
-        // Highlight
+        // Highlight selected timing
         document.querySelectorAll('.timing-btn').forEach(btn => {
             btn.classList.toggle('selected', btn.dataset.timing === timingId);
         });
+        
+        // Infer severity based on timing
+        const severityMap = {
+            at_rest: { level: 'high', label: 'SEVERE', note: 'Pain at rest indicates significant injury' },
+            lying_on_side: { level: 'moderate', label: 'MODERATE', note: '' },
+            sitting: { level: 'moderate', label: 'MODERATE', note: 'Persistent pain while sedentary' },
+            morning_first_steps: { level: 'moderate', label: 'MODERATE', note: 'Morning stiffness is common with this' },
+            after_sitting: { level: 'mild', label: 'MILD', note: 'Typically improves with movement' },
+            during_run: { level: 'mild', label: 'MILD-MOD', note: 'Monitor if it worsens during activity' },
+            after_run: { level: 'mild', label: 'MILD', note: 'Post-activity soreness' },
+            sudden_sharp: { level: 'high', label: 'ACUTE', note: 'Sudden onset may indicate strain/tear' },
+            going_downhill: { level: 'mild', label: 'MILD', note: 'Eccentric stress related' },
+            going_upstairs: { level: 'mild', label: 'MILD', note: 'Concentric loading issue' },
+            rotation: { level: 'moderate', label: 'MODERATE', note: 'Joint involvement likely' }
+        };
+        
+        const severity = severityMap[timingId] || { level: 'mild', label: 'MILD', note: '' };
         
         // Get likely injuries
         const injuries = InjuryDatabase?.getLikelyInjuries(
@@ -513,22 +530,94 @@ const CardioLogger = {
             this.selectedTiming
         );
         
+        const likelyInjuryEl = document.getElementById('likely-injury');
+        
         if (injuries && injuries.length > 0) {
-            const top = injuries[0];
-            this.detectedInjury = top;
+            // Store first injury as detected (for tracking)
+            this.detectedInjury = injuries[0];
+            this.detectedSeverity = severity.level;
             
-            document.getElementById('injury-name').textContent = top.injury.name;
-            document.getElementById('injury-confidence').textContent = 
-                `Prevalence: ${top.injury.prevalence || 'Common'}`;
-            document.getElementById('injury-advice').innerHTML = `
-                <div class="injury-symptoms">
-                    <strong>Key symptoms:</strong>
-                    <ul>${top.injury.keySymptoms?.slice(0, 3).map(s => `<li>${s}</li>`).join('') || ''}</ul>
+            // Show all possible injuries with severity
+            const injuryListHtml = injuries.map((inj, idx) => `
+                <div class="injury-option ${idx === 0 ? 'primary' : 'secondary'}" 
+                     onclick="CardioLogger.selectInjuryOption(${idx})">
+                    <div class="injury-option-header">
+                        <span class="injury-option-name">${inj.injury.name}</span>
+                        ${idx === 0 ? `<span class="injury-severity ${severity.level}">${severity.label}</span>` : ''}
+                    </div>
+                    <div class="injury-option-prevalence">${inj.injury.prevalence || 'Common'}</div>
                 </div>
-                <div class="injury-note">${top.injury.mustRest ? 'This injury requires REST - see a professional' : ''}</div>
+            `).join('');
+            
+            const top = injuries[0];
+            likelyInjuryEl.innerHTML = `
+                <div class="injury-results">
+                    <div class="injury-results-header">POSSIBLE INJURIES</div>
+                    <div class="injury-options-list">${injuryListHtml}</div>
+                    
+                    <div class="injury-detail-panel">
+                        <div class="injury-symptoms">
+                            <strong>Key symptoms:</strong>
+                            <ul>${top.injury.keySymptoms?.slice(0, 3).map(s => `<li>${s}</li>`).join('') || '<li>Consult a professional for diagnosis</li>'}</ul>
+                        </div>
+                        ${severity.note ? `<div class="severity-note">${severity.note}</div>` : ''}
+                        ${top.injury.mustRest ? '<div class="injury-warning">This injury requires REST - see a professional</div>' : ''}
+                    </div>
+                    
+                    <button class="confirm-injury-btn" onclick="CardioLogger.confirmInjury()">
+                        Track ${top.injury.name}
+                    </button>
+                </div>
             `;
-            document.getElementById('likely-injury').style.display = 'block';
+            likelyInjuryEl.style.display = 'block';
+        } else {
+            // No injuries mapped for this timing
+            likelyInjuryEl.innerHTML = `
+                <div class="injury-results">
+                    <div class="injury-results-header">NO MATCH FOUND</div>
+                    <div class="injury-no-match">
+                        This combination doesn't match a known pattern.<br>
+                        If pain persists, consult a professional.
+                    </div>
+                </div>
+            `;
+            likelyInjuryEl.style.display = 'block';
+            this.detectedInjury = null;
         }
+    },
+    
+    /**
+     * Select a different injury from the options list
+     */
+    selectInjuryOption(idx) {
+        const injuries = InjuryDatabase?.getLikelyInjuries(
+            this.selectedRegion, 
+            this.selectedSubregion, 
+            this.selectedTiming
+        );
+        
+        if (!injuries || !injuries[idx]) return;
+        
+        this.detectedInjury = injuries[idx];
+        
+        // Update selection state
+        document.querySelectorAll('.injury-option').forEach((el, i) => {
+            el.classList.toggle('primary', i === idx);
+            el.classList.toggle('secondary', i !== idx);
+        });
+        
+        // Update detail panel
+        const inj = injuries[idx];
+        document.querySelector('.injury-detail-panel').innerHTML = `
+            <div class="injury-symptoms">
+                <strong>Key symptoms:</strong>
+                <ul>${inj.injury.keySymptoms?.slice(0, 3).map(s => `<li>${s}</li>`).join('') || '<li>Consult a professional for diagnosis</li>'}</ul>
+            </div>
+            ${inj.injury.mustRest ? '<div class="injury-warning">This injury requires REST - see a professional</div>' : ''}
+        `;
+        
+        // Update button
+        document.querySelector('.confirm-injury-btn').textContent = `Track ${inj.injury.name}`;
     },
     
     /**
@@ -537,12 +626,13 @@ const CardioLogger = {
     confirmInjury() {
         if (!this.detectedInjury) return;
         
-        // Add to logged pains for this session
+        // Add to logged pains for this session with severity
         this.loggedPains.push({
             region: this.selectedRegion,
             subregion: this.selectedSubregion,
             timing: this.selectedTiming,
-            injury: this.detectedInjury.id
+            injury: this.detectedInjury.id,
+            severity: this.detectedSeverity || 'mild'
         });
         
         // Also add to painPoints for backward compatibility
@@ -571,13 +661,17 @@ const CardioLogger = {
             return;
         }
         
+        const severityLabels = { mild: 'MILD', moderate: 'MOD', high: 'SEV' };
+        
         container.innerHTML = `
             <div class="logged-pains">
                 ${this.loggedPains.map((pain, idx) => {
                     const injury = InjuryDatabase?.INJURIES?.[pain.injury];
+                    const sevLabel = severityLabels[pain.severity] || '';
                     return `
                         <div class="logged-pain-item">
-                            <span>${injury?.name || pain.region}</span>
+                            <span class="logged-pain-name">${injury?.name || pain.region}</span>
+                            ${sevLabel ? `<span class="logged-pain-severity ${pain.severity}">${sevLabel}</span>` : ''}
                             <button class="remove-pain" onclick="CardioLogger.removePain(${idx})">×</button>
                         </div>
                     `;
