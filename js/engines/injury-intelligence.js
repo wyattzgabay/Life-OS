@@ -858,34 +858,78 @@ const InjuryIntelligence = {
     // ==========================================
     
     /**
-     * Get today's prescribed recovery exercises
+     * Get today's prescribed recovery exercises with severity-based scaling
      * This integrates with the daily workout view
      */
     getTodaysRecoveryExercises() {
         const adjustments = this.getTrainingAdjustments();
-        if (!adjustments) return [];
+        if (!adjustments) return { exercises: [], protocol: null };
         
         const exercises = [];
         const todayKey = State.getTodayKey();
         const completedToday = State._data?.recoveryExercisesCompleted?.[todayKey] || [];
+        const primary = adjustments.injuries[0];
+        const severity = primary?.severity || 'mild';
         
-        adjustments.exercises.forEach(ex => {
+        // Severity-based protocol adjustments
+        const protocols = {
+            mild: {
+                frequency: '1x daily',
+                sessionsPerDay: 1,
+                timeCommitment: '10-15 min',
+                priority: 'Consistency matters more than intensity',
+                xpMultiplier: 1
+            },
+            moderate: {
+                frequency: '2x daily (morning + evening)',
+                sessionsPerDay: 2,
+                timeCommitment: '15-20 min per session',
+                priority: 'Do these exercises BEFORE and AFTER any activity',
+                xpMultiplier: 1.5
+            },
+            severe: {
+                frequency: '2-3x daily + before any movement',
+                sessionsPerDay: 3,
+                timeCommitment: '20-30 min per session',
+                priority: 'Recovery is your PRIMARY workout right now',
+                xpMultiplier: 2
+            }
+        };
+        
+        const protocol = protocols[severity];
+        
+        adjustments.exercises.forEach((ex, idx) => {
             // Skip "see a professional" type exercises
             if (ex.name === 'See a Professional') return;
+            
+            // First 2 exercises for severe injuries are PRIORITY
+            const isPriority = severity === 'severe' && idx < 2;
             
             exercises.push({
                 id: ex.name.toLowerCase().replace(/\s+/g, '_'),
                 name: ex.name,
                 description: ex.description,
                 frequency: ex.frequency,
-                xp: ex.xp || 5,
+                xp: Math.round((ex.xp || 5) * protocol.xpMultiplier),
                 science: ex.science,
                 completed: completedToday.includes(ex.name),
-                forInjury: adjustments.injuries[0]?.name
+                forInjury: primary?.name,
+                isPriority,
+                severity
             });
         });
         
-        return exercises;
+        return {
+            exercises,
+            protocol: {
+                ...protocol,
+                severity,
+                injuryName: primary?.name,
+                totalExercises: exercises.length,
+                completedToday: exercises.filter(e => e.completed).length,
+                message: primary?.recovery?.message
+            }
+        };
     },
     
     /**
@@ -905,19 +949,20 @@ const InjuryIntelligence = {
         if (!State._data.recoveryExercisesCompleted[todayKey].includes(exerciseName)) {
             State._data.recoveryExercisesCompleted[todayKey].push(exerciseName);
             
-            // Award XP
-            const exercise = Object.values(this.EXERCISES).find(e => e.name === exerciseName);
-            const xp = exercise?.xp || this.RECOVERY_XP.exercise;
+            // Award XP based on current protocol
+            const { exercises, protocol } = this.getTodaysRecoveryExercises();
+            const exerciseData = exercises?.find(e => e.name === exerciseName);
+            const xp = exerciseData?.xp || this.RECOVERY_XP.exercise;
             App.awardXP(xp, 'discipline');
             
             // Check if all exercises completed for bonus
-            const todaysExercises = this.getTodaysRecoveryExercises();
-            const allCompleted = todaysExercises.every(e => 
+            const allCompleted = exercises?.every(e => 
                 State._data.recoveryExercisesCompleted[todayKey].includes(e.name)
             );
             
-            if (allCompleted && todaysExercises.length >= 2) {
-                App.awardXP(this.RECOVERY_XP.fullProtocol, 'discipline');
+            if (allCompleted && exercises?.length >= 2) {
+                const bonusXP = Math.round(this.RECOVERY_XP.fullProtocol * (protocol?.xpMultiplier || 1));
+                App.awardXP(bonusXP, 'discipline');
             }
             
             State.save();
@@ -927,27 +972,50 @@ const InjuryIntelligence = {
     },
     
     /**
-     * Render recovery exercises for daily view
+     * Render recovery exercises for daily view with severity-based protocol
      */
     renderDailyRecoverySection() {
-        const exercises = this.getTodaysRecoveryExercises();
+        const { exercises, protocol } = this.getTodaysRecoveryExercises();
         
-        if (exercises.length === 0) return '';
+        if (!exercises || exercises.length === 0) return '';
         
-        const injury = exercises[0]?.forInjury || 'Recovery';
-        const completed = exercises.filter(e => e.completed).length;
-        const total = exercises.length;
+        const severityClass = protocol?.severity === 'severe' ? 'danger' : 
+                             protocol?.severity === 'moderate' ? 'warning' : 'caution';
+        
+        const severityLabel = protocol?.severity?.toUpperCase() || 'RECOVERY';
         
         return `
-            <section class="section recovery-section">
+            <section class="section recovery-section ${severityClass}">
                 <div class="section-header">
                     <span class="section-title">RECOVERY PROTOCOL</span>
-                    <span class="section-badge warning">${injury}</span>
+                    <span class="section-badge ${severityClass}">${severityLabel}</span>
                 </div>
+                
+                <!-- Protocol Overview -->
+                <div class="recovery-protocol-overview">
+                    <div class="protocol-injury">${protocol?.injuryName || 'Recovery'}</div>
+                    <div class="protocol-details">
+                        <div class="protocol-stat">
+                            <span class="stat-label">FREQUENCY</span>
+                            <span class="stat-value">${protocol?.frequency}</span>
+                        </div>
+                        <div class="protocol-stat">
+                            <span class="stat-label">TIME</span>
+                            <span class="stat-value">${protocol?.timeCommitment}</span>
+                        </div>
+                    </div>
+                    ${protocol?.severity !== 'mild' ? `
+                        <div class="protocol-priority">${protocol?.priority}</div>
+                    ` : ''}
+                    ${protocol?.message ? `<div class="protocol-message">${protocol.message}</div>` : ''}
+                </div>
+                
+                <!-- Exercise List -->
                 <div class="recovery-exercises-list">
                     ${exercises.map(ex => `
-                        <div class="recovery-exercise-item ${ex.completed ? 'completed' : ''}"
+                        <div class="recovery-exercise-item ${ex.completed ? 'completed' : ''} ${ex.isPriority ? 'priority' : ''}"
                              onclick="InjuryIntelligence.completeRecoveryExercise('${ex.name}'); App.render();">
+                            ${ex.isPriority ? '<div class="priority-badge">PRIORITY</div>' : ''}
                             <div class="recovery-check">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
                                     <polyline points="4 12 9 17 20 6"/>
@@ -962,13 +1030,17 @@ const InjuryIntelligence = {
                         </div>
                     `).join('')}
                 </div>
-                ${completed === total && total > 0 ? `
+                
+                <!-- Progress -->
+                ${protocol?.completedToday === protocol?.totalExercises && protocol?.totalExercises > 0 ? `
                     <div class="recovery-complete-bonus">
-                        Protocol complete! +${this.RECOVERY_XP.fullProtocol} XP bonus
+                        Session complete! +${Math.round(this.RECOVERY_XP.fullProtocol * (protocol?.xpMultiplier || 1))} XP
+                        ${protocol?.sessionsPerDay > 1 ? `<div class="next-session">Do again ${protocol.sessionsPerDay === 2 ? 'tonight' : 'in 4-6 hours'}</div>` : ''}
                     </div>
                 ` : `
                     <div class="recovery-progress">
-                        ${completed}/${total} exercises • Complete all for +${this.RECOVERY_XP.fullProtocol} bonus XP
+                        <div class="progress-count">${protocol?.completedToday || 0}/${protocol?.totalExercises || 0}</div>
+                        <div class="progress-hint">Complete all for +${Math.round(this.RECOVERY_XP.fullProtocol * (protocol?.xpMultiplier || 1))} bonus XP</div>
                     </div>
                 `}
             </section>
