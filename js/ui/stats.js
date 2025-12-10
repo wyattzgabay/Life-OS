@@ -13,6 +13,7 @@ const StatsView = {
         // Safely render each section
         const sections = [
             () => Header.renderSimple('ANALYTICS'),
+            () => this.renderMonthlyWeightChart(),
             () => this.renderPeriodizationAlerts(),
             () => this.renderProteinDistribution(),
             () => this.renderCorrelations(),
@@ -63,6 +64,196 @@ const StatsView = {
                         <button class="alert-dismiss" onclick="this.parentElement.remove()">DISMISS</button>
                     </div>
                 `).join('')}
+            </div>
+        `;
+    },
+
+    /**
+     * Get cumulative weight lifted data for a month
+     * @param {number} monthOffset - 0 for current month, -1 for last month
+     */
+    getMonthlyWeightData(monthOffset = 0) {
+        const liftHistory = State._data?.liftHistory || {};
+        const now = new Date();
+        const targetMonth = new Date(now.getFullYear(), now.getMonth() + monthOffset, 1);
+        const daysInMonth = new Date(targetMonth.getFullYear(), targetMonth.getMonth() + 1, 0).getDate();
+        
+        // Build daily volume data
+        const dailyVolume = {};
+        for (let day = 1; day <= daysInMonth; day++) {
+            const dateKey = `${targetMonth.getFullYear()}-${String(targetMonth.getMonth() + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+            dailyVolume[day] = 0;
+        }
+        
+        // Sum up volume from all exercises
+        Object.values(liftHistory).forEach(exerciseEntries => {
+            exerciseEntries.forEach(entry => {
+                const entryDate = new Date(entry.date);
+                if (entryDate.getMonth() === targetMonth.getMonth() && 
+                    entryDate.getFullYear() === targetMonth.getFullYear()) {
+                    const day = entryDate.getDate();
+                    dailyVolume[day] = (dailyVolume[day] || 0) + (entry.volume || 0);
+                }
+            });
+        });
+        
+        // Convert to cumulative
+        const cumulative = [];
+        let runningTotal = 0;
+        for (let day = 1; day <= daysInMonth; day++) {
+            runningTotal += dailyVolume[day];
+            cumulative.push({ day, volume: runningTotal });
+        }
+        
+        return {
+            monthName: targetMonth.toLocaleString('default', { month: 'short' }),
+            year: targetMonth.getFullYear(),
+            daysInMonth,
+            cumulative,
+            total: runningTotal
+        };
+    },
+
+    /**
+     * Render monthly cumulative weight chart (SVG)
+     */
+    renderMonthlyWeightChart() {
+        const thisMonth = this.getMonthlyWeightData(0);
+        const lastMonth = this.getMonthlyWeightData(-1);
+        
+        // If no data, don't show
+        if (thisMonth.total === 0 && lastMonth.total === 0) {
+            return '';
+        }
+
+        const today = new Date().getDate();
+        const maxDays = Math.max(thisMonth.daysInMonth, lastMonth.daysInMonth);
+        const maxVolume = Math.max(
+            ...thisMonth.cumulative.map(d => d.volume),
+            ...lastMonth.cumulative.map(d => d.volume),
+            1 // Prevent division by zero
+        );
+        
+        // Chart dimensions
+        const width = 320;
+        const height = 160;
+        const padding = { top: 10, right: 10, bottom: 25, left: 45 };
+        const chartWidth = width - padding.left - padding.right;
+        const chartHeight = height - padding.top - padding.bottom;
+        
+        // Scale functions
+        const xScale = (day) => padding.left + (day / maxDays) * chartWidth;
+        const yScale = (vol) => padding.top + chartHeight - (vol / maxVolume) * chartHeight;
+        
+        // Generate smooth curve path using Catmull-Rom spline
+        const generatePath = (data, upToDay = null) => {
+            const points = data
+                .filter(d => upToDay === null || d.day <= upToDay)
+                .map(d => ({ x: xScale(d.day), y: yScale(d.volume) }));
+            
+            if (points.length < 2) return '';
+            
+            // Catmull-Rom to Bezier for smooth curves
+            let path = `M ${points[0].x} ${points[0].y}`;
+            
+            for (let i = 0; i < points.length - 1; i++) {
+                const p0 = points[Math.max(0, i - 1)];
+                const p1 = points[i];
+                const p2 = points[Math.min(points.length - 1, i + 1)];
+                const p3 = points[Math.min(points.length - 1, i + 2)];
+                
+                const cp1x = p1.x + (p2.x - p0.x) / 6;
+                const cp1y = p1.y + (p2.y - p0.y) / 6;
+                const cp2x = p2.x - (p3.x - p1.x) / 6;
+                const cp2y = p2.y - (p3.y - p1.y) / 6;
+                
+                path += ` C ${cp1x} ${cp1y}, ${cp2x} ${cp2y}, ${p2.x} ${p2.y}`;
+            }
+            
+            return path;
+        };
+        
+        // Current month line (up to today)
+        const thisMonthPath = generatePath(thisMonth.cumulative, today);
+        // Last month full line
+        const lastMonthPath = generatePath(lastMonth.cumulative);
+        
+        // Calculate comparison
+        const thisMonthToDate = thisMonth.cumulative.find(d => d.day === today)?.volume || 0;
+        const lastMonthSameDay = lastMonth.cumulative.find(d => d.day === today)?.volume || 0;
+        const difference = thisMonthToDate - lastMonthSameDay;
+        const percentChange = lastMonthSameDay > 0 ? Math.round((difference / lastMonthSameDay) * 100) : 0;
+        const isAhead = difference >= 0;
+        
+        // Y-axis labels
+        const yLabels = [0, Math.round(maxVolume / 2), Math.round(maxVolume)];
+        const formatVolume = (v) => v >= 1000 ? `${(v / 1000).toFixed(0)}k` : v;
+        
+        return `
+            <div class="analysis-card monthly-weight-chart">
+                <div class="analysis-header">
+                    <span class="analysis-title">MONTHLY WEIGHT LIFTED</span>
+                    <span class="chart-comparison ${isAhead ? 'positive' : 'negative'}">
+                        ${isAhead ? '+' : ''}${formatVolume(difference)} lbs
+                    </span>
+                </div>
+                
+                <div class="chart-legend">
+                    <span class="legend-item current"><span class="legend-line"></span>${thisMonth.monthName}</span>
+                    <span class="legend-item last"><span class="legend-line"></span>${lastMonth.monthName}</span>
+                </div>
+                
+                <div class="chart-container">
+                    <svg viewBox="0 0 ${width} ${height}" class="weight-line-chart">
+                        <!-- Grid lines -->
+                        ${yLabels.map(val => `
+                            <line 
+                                x1="${padding.left}" 
+                                y1="${yScale(val)}" 
+                                x2="${width - padding.right}" 
+                                y2="${yScale(val)}" 
+                                class="grid-line"
+                            />
+                            <text 
+                                x="${padding.left - 5}" 
+                                y="${yScale(val) + 4}" 
+                                class="axis-label y-label"
+                            >${formatVolume(val)}</text>
+                        `).join('')}
+                        
+                        <!-- X-axis labels -->
+                        <text x="${xScale(1)}" y="${height - 5}" class="axis-label">1</text>
+                        <text x="${xScale(Math.round(maxDays / 2))}" y="${height - 5}" class="axis-label">${Math.round(maxDays / 2)}</text>
+                        <text x="${xScale(maxDays)}" y="${height - 5}" class="axis-label">${maxDays}</text>
+                        
+                        <!-- Last month line (full, faded) -->
+                        <path d="${lastMonthPath}" class="line-path last-month" />
+                        
+                        <!-- This month line (up to today, prominent) -->
+                        <path d="${thisMonthPath}" class="line-path this-month" />
+                        
+                        <!-- Today marker -->
+                        ${thisMonthToDate > 0 ? `
+                            <circle 
+                                cx="${xScale(today)}" 
+                                cy="${yScale(thisMonthToDate)}" 
+                                r="4" 
+                                class="today-marker"
+                            />
+                        ` : ''}
+                    </svg>
+                </div>
+                
+                <div class="chart-stats">
+                    <div class="chart-stat">
+                        <span class="stat-label">${thisMonth.monthName} (to date)</span>
+                        <span class="stat-value">${formatVolume(thisMonthToDate)} lbs</span>
+                    </div>
+                    <div class="chart-stat">
+                        <span class="stat-label">${lastMonth.monthName} total</span>
+                        <span class="stat-value">${formatVolume(lastMonth.total)} lbs</span>
+                    </div>
+                </div>
             </div>
         `;
     },

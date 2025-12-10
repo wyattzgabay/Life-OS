@@ -2888,6 +2888,136 @@ button, .btn {
 }
 
 /* ==========================================
+   MONTHLY WEIGHT CHART (Smooth Lines)
+   ========================================== */
+
+.monthly-weight-chart .analysis-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.chart-comparison {
+    font-size: 13px;
+    font-weight: 600;
+    padding: 4px 10px;
+    border-radius: 6px;
+}
+
+.chart-comparison.positive {
+    background: var(--success-muted);
+    color: var(--success);
+}
+
+.chart-comparison.negative {
+    background: var(--error-muted);
+    color: var(--error);
+}
+
+.chart-legend {
+    display: flex;
+    gap: 16px;
+    margin: 12px 0;
+    justify-content: center;
+}
+
+.legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    color: var(--text-muted);
+}
+
+.legend-line {
+    width: 16px;
+    height: 3px;
+    border-radius: 2px;
+}
+
+.legend-item.current .legend-line {
+    background: var(--navy);
+}
+
+.legend-item.last .legend-line {
+    background: var(--text-dim);
+    opacity: 0.5;
+}
+
+.chart-container {
+    margin: 8px 0;
+}
+
+.weight-line-chart {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+
+.weight-line-chart .grid-line {
+    stroke: var(--border);
+    stroke-width: 1;
+}
+
+.weight-line-chart .axis-label {
+    font-family: var(--font-sans);
+    font-size: 10px;
+    fill: var(--text-dim);
+    text-anchor: middle;
+}
+
+.weight-line-chart .y-label {
+    text-anchor: end;
+}
+
+.weight-line-chart .line-path {
+    fill: none;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.weight-line-chart .line-path.this-month {
+    stroke: var(--navy);
+}
+
+.weight-line-chart .line-path.last-month {
+    stroke: var(--text-dim);
+    opacity: 0.35;
+    stroke-dasharray: 4 2;
+}
+
+.weight-line-chart .today-marker {
+    fill: var(--navy);
+    stroke: var(--bg);
+    stroke-width: 2;
+}
+
+.chart-stats {
+    display: flex;
+    justify-content: space-around;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+    margin-top: 8px;
+}
+
+.chart-stat {
+    text-align: center;
+}
+
+.chart-stat .stat-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-bottom: 4px;
+}
+
+.chart-stat .stat-value {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+}
+
+/* ==========================================
    DAY SCORE CARD
    ========================================== */
 
