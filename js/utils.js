@@ -566,30 +566,70 @@ const Utils = {
             }
         }
         
+        // Add debt exercises if any
+        const debt = State.getDebt();
+        let debtExercises = [];
+        
+        if (debt.length > 0) {
+            // For each debt item, add one make-up exercise
+            debt.forEach(d => {
+                // Get exercises from the missed workout type
+                const missedWorkout = Object.values(CONFIG.WORKOUTS).find(w => w.name === d.type);
+                if (missedWorkout && missedWorkout.exercises.length > 0) {
+                    // Add the first exercise from missed workout as debt
+                    const debtExercise = {
+                        ...missedWorkout.exercises[0],
+                        isDebt: true,
+                        debtFrom: d.type,
+                        debtDate: d.date,
+                        detail: '2×10 (debt)', // Reduced volume for debt
+                        xp: Math.round((missedWorkout.exercises[0].xp || 10) * 0.5)
+                    };
+                    debtExercises.push(debtExercise);
+                }
+            });
+        }
+        
         return {
             ...baseWorkout,
-            exercises: cycledExercises,
+            exercises: [...cycledExercises, ...debtExercises],
             isVariation: exerciseWeek > 0,
             volumeAdjusted: adjustmentNotes.length > 0,
             adjustmentNotes,
-            volumeAlerts: volumeAdjustments.alerts
+            volumeAlerts: volumeAdjustments.alerts,
+            hasDebtExercises: debtExercises.length > 0
         };
     },
 
     /**
      * Check and advance exercise week if needed
-     * Should be called weekly (e.g., on Monday)
+     * Advances every 7 days since last rotation
      */
     checkExerciseCycling() {
-        const today = new Date();
-        if (today.getDay() === 1) { // Monday
-            const lastAdvance = localStorage.getItem('lastExerciseCycleDate');
-            const todayStr = today.toISOString().split('T')[0];
-            
-            if (lastAdvance !== todayStr) {
+        const lastRotation = State._data?.lastExerciseRotation;
+        const todayKey = State.getTodayKey();
+        
+        if (!lastRotation) {
+            // First time - set it to today
+            State._data.lastExerciseRotation = todayKey;
+            State.save();
+            return;
+        }
+        
+        // Calculate days since last rotation
+        const lastDate = new Date(lastRotation);
+        const today = new Date(todayKey);
+        const daysSince = Math.floor((today - lastDate) / (1000 * 60 * 60 * 24));
+        
+        // Advance exercise week every 7 days
+        if (daysSince >= 7) {
+            const weeksToAdvance = Math.floor(daysSince / 7);
+            for (let i = 0; i < weeksToAdvance; i++) {
                 State.advanceExerciseWeek();
-                localStorage.setItem('lastExerciseCycleDate', todayStr);
             }
+            State._data.lastExerciseRotation = todayKey;
+            State.save();
+            console.log(`Exercise week advanced ${weeksToAdvance} time(s) to week ${State.getExerciseWeek()}`);
         }
     },
 
