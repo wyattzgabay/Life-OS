@@ -52,16 +52,13 @@ const LiftLogger = {
         modal.classList.add('active');
         
         // Prevent body scroll when modal is open
-        document.body.style.overflow = 'hidden';
-        document.body.style.position = 'fixed';
-        document.body.style.width = '100%';
+        // Don't lock body scroll - let iOS handle keyboard naturally
+        this._scrollY = window.scrollY;
         
         // Enable pull-down-to-dismiss
         if (typeof ModalGestures !== 'undefined') {
             ModalGestures.init(modal, () => this.close());
         }
-        document.body.style.top = `-${window.scrollY}px`;
-        this._scrollY = window.scrollY;
         
         // Prevent close on outside click - require explicit close
         modal.onclick = (e) => {
@@ -262,11 +259,23 @@ const LiftLogger = {
      * Restore body scroll after modal closes
      */
     restoreBodyScroll() {
-        document.body.style.overflow = '';
-        document.body.style.position = '';
-        document.body.style.width = '';
-        document.body.style.top = '';
+        // Scroll back to where user was
         window.scrollTo(0, this._scrollY || 0);
+    },
+    
+    /**
+     * Scroll modal to show inputs above keyboard
+     */
+    scrollToInputs() {
+        setTimeout(() => {
+            const inputRow = document.getElementById('set-input-row');
+            const modalSheet = document.querySelector('.lift-logger');
+            if (inputRow && modalSheet) {
+                // Scroll the modal sheet to show inputs near top
+                const inputTop = inputRow.offsetTop;
+                modalSheet.scrollTo({ top: Math.max(0, inputTop - 100), behavior: 'smooth' });
+            }
+        }, 350);
     },
     
     /**
@@ -449,14 +458,14 @@ const LiftLogger = {
                     <span class="set-number">SET ${nextSetNum}</span>
                     <span class="set-tip">${setGuidance}</span>
                 </div>
-                <div class="input-row ${!showWeight ? 'reps-only' : ''}">
+                <div class="input-row ${!showWeight ? 'reps-only' : ''}" id="set-input-row">
                     ${showWeight ? `
                         <div class="input-col">
                             <label>${weightLabel}</label>
                             <input type="number" id="lift-weight" class="lift-input dark-input" 
                                    value="${isBodyweight ? '' : defaultWeight}" 
                                    placeholder="${weightPlaceholder}" inputmode="decimal"
-                                   onfocus="this.select(); setTimeout(() => this.scrollIntoView({behavior: 'smooth', block: 'center'}), 300)"
+                                   onfocus="this.select(); LiftLogger.scrollToInputs()"
                                    style="color-scheme: dark;">
                         </div>
                     ` : ''}
@@ -464,7 +473,7 @@ const LiftLogger = {
                         <label>REPS</label>
                         <input type="number" id="lift-reps" class="lift-input dark-input" 
                                value="${defaultReps}" placeholder="reps" inputmode="numeric"
-                               onfocus="this.select(); setTimeout(() => this.scrollIntoView({behavior: 'smooth', block: 'center'}), 300)"
+                               onfocus="this.select(); LiftLogger.scrollToInputs()"
                                style="color-scheme: dark;">
                     </div>
                 </div>
