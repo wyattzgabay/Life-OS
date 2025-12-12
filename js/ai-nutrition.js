@@ -1004,7 +1004,6 @@ document.addEventListener('DOMContentLoaded', () => {
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
                 modal.classList.remove('active');
-                modal.innerHTML = '';
                 document.body.style.overflow = '';
             }
         });

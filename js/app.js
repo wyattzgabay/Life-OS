@@ -281,12 +281,13 @@ const App = {
      */
     closeModal(modal) {
         modal.classList.remove('active');
-        modal.innerHTML = '';
         // Restore body scroll in case any logger locked it
         document.body.style.overflow = '';
         document.body.style.position = '';
         document.body.style.width = '';
         document.body.style.top = '';
+        // Restore scroll position
+        window.scrollTo(0, parseInt(document.body.style.top || '0') * -1);
     },
     
     /**
