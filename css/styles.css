@@ -5667,7 +5667,14 @@ details[open] .runs-toggle::after {
    ========================================== */
 
 .lift-logger {
-    max-height: 90vh;
+    max-height: 85vh;
+    padding-bottom: 40px; /* Extra space for keyboard */
+}
+
+/* Ensure inputs scroll into view on focus */
+.lift-input:focus {
+    position: relative;
+    z-index: 10;
 }
 
 .modal-header-row {

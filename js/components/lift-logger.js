@@ -456,7 +456,7 @@ const LiftLogger = {
                             <input type="number" id="lift-weight" class="lift-input dark-input" 
                                    value="${isBodyweight ? '' : defaultWeight}" 
                                    placeholder="${weightPlaceholder}" inputmode="decimal"
-                                   onfocus="this.select()"
+                                   onfocus="this.select(); setTimeout(() => this.scrollIntoView({behavior: 'smooth', block: 'center'}), 300)"
                                    style="color-scheme: dark;">
                         </div>
                     ` : ''}
@@ -464,7 +464,7 @@ const LiftLogger = {
                         <label>REPS</label>
                         <input type="number" id="lift-reps" class="lift-input dark-input" 
                                value="${defaultReps}" placeholder="reps" inputmode="numeric"
-                               onfocus="this.select()"
+                               onfocus="this.select(); setTimeout(() => this.scrollIntoView({behavior: 'smooth', block: 'center'}), 300)"
                                style="color-scheme: dark;">
                     </div>
                 </div>
